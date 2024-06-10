@@ -1,0 +1,42 @@
+/* src/OffersTab.css */
+.offers-tab {
+    padding: 20px;
+    background-color: #111;
+    color: #fff;
+    height: 100%;
+    overflow-y: auto;
+  }
+  
+  .offers-tab h3 {
+    margin: 0;
+    padding: 10px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+  }
+  
+  .offer-item {
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #3b3b3b;
+    border-radius: 5px;
+    border: 1px solid #fff;
+  }
+  
+  .offer-info p {
+    margin: 5px 0;
+  }
+  
+  .delete-offer-btn {
+    padding: 5px 10px;
+    background-color: #f00;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .delete-offer-btn:hover {
+    background-color: #c00;
+  }
+  

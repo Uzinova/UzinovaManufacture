@@ -1,0 +1,27 @@
+/* src/GetOfferForm.css */
+.get-offer-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  
+  .get-offer-form input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .get-offer-form button {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .get-offer-form button:hover {
+    background-color: #0056b3;
+  }
+  

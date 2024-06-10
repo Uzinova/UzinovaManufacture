@@ -1,0 +1,106 @@
+.slick-slide > div {
+    margin: 0px 5px; /* Reduce the margin between slides */
+    display: flex !important; /* Ensure flex layout is respected */
+    justify-content: center; /* Center align the items */
+    align-items: center; /* Center align the items */
+    width: auto !important; /* Prevent 100% width stretching */
+}
+ 
+ .slick-slide  {
+width: 240px;
+ 
+ 
+ }
+  
+ 
+ .containerSale{
+    color: white;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-items: center;
+    align-items: center;
+    
+        width: 120px; /* Adjust the width to make the container smaller */
+        margin: 0 auto; /* Center the container horizontally */
+    
+ 
+  }
+  
+ 
+  
+  .containerSale .boxSale {
+    display: flex;
+    justify-items: center;
+    align-items: center;
+    width: 200px;
+   
+    height: 150px; /* Adjust the height to make the box smaller */
+    padding: 4px; /* Reduce padding */
+ 
+   
+  
+    border-radius: 0.7rem;
+    transition: all ease 0.3s;
+  }
+  .salecontainer{
+    width: 75%;
+    padding: 20px;
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+   
+    border-radius: 20px;
+    background: linear-gradient(0deg , #cc64031c, #e77f09be); /* Gradient background */
+
+  }
+  .saleHeader{
+    font-size: 40px;
+    
+    color: white;
+  }
+  .saleimg{
+    width: 100px; /* Adjust the image width to fit inside the smaller box */
+    height: 100px; /* Adjust the image height to fit inside the smaller box */
+    border-radius: 10px; /* Adjust the border radius for smaller images */
+    object-fit: cover;
+  }
+  .containerSale .boxSale {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .containerSale .boxSale .titleSale {
+    padding: 10px;
+    font-size: 20px;
+    font-weight:  lighter;
+     
+  }
+  
+  .containerSale .boxSale div strong {
+  
+    margin-bottom: 0.5rem;
+  }
+  
+  .container .box div p {
+    margin: 0;
+    font-size: 0.9em;
+    font-weight: 300;
+    letter-spacing: 0.1em;
+  }
+  
+  .container .box div span {
+    font-size: 0.7rem;
+    font-weight: 300;
+  }
+  
+  .container .box div span:nth-child(3) {
+    font-weight: 500;
+    margin-right: 0.2rem;
+  }
+  
+  .container .box:hover {
+    box-shadow: 0px 0px 20px 1px #ffbb763f;
+    border: 1px solid rgba(255, 255, 255, 0.454);
+  }
+  

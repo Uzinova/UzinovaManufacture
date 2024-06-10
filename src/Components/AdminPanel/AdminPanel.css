@@ -1,0 +1,205 @@
+/* src/AdminPanel.css */
+.admin-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #000;
+  color: #fff;
+}
+
+.tabs {
+  display: flex;
+  background-color: #333;
+  border-bottom: 1px solid #ccc;
+}
+
+.tabs button {
+  flex: 1;
+  padding: 10px;
+  background-color: #444;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.tabs button.active {
+  background-color: #555;
+  font-weight: bold;
+}
+
+.user-section {
+  display: flex;
+  height: 100%;
+}
+
+.user-list {
+  width: 20%;
+  background-color: #333;
+  border-right: 1px solid #ccc;
+  overflow-y: auto;
+}
+
+.user-list h3 {
+  margin: 0;
+  padding: 10px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+}
+
+.user-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.user-list li {
+  padding: 10px;
+  cursor: pointer;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+.user-list li:hover, .user-list li.selected {
+  background-color: #777;
+}
+
+.clear-all-users-btn {
+  margin: 10px;
+  padding: 10px 20px;
+  background-color: #f00;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.clear-all-users-btn:hover {
+  background-color: #c00;
+}
+
+.chat-section-admin {
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+  background-color: #111;
+}
+
+.messages-list-admin {
+  flex-grow: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.messages-list-admin h3 {
+  margin: 0;
+  padding: 10px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+}
+
+.message-admin {
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #3b3b3b;
+  border-radius: 5px;
+  border: 1px solid #fff;
+}
+
+.message-content-admin {
+  margin-bottom: 10px;
+}
+
+.message-content-admin p {
+  font-size: 16px;
+  margin: 0;
+}
+
+.message-content-admin small {
+  font-size: 12px;
+  color: #888;
+}
+
+.replies {
+  margin-top: 10px;
+}
+
+.reply {
+  background-color: #333;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #444;
+  margin-bottom: 5px;
+}
+
+.reply.user {
+  background-color: #444;
+}
+
+.reply.admin {
+  background-color: #555;
+}
+
+.reply p {
+  font-size: 14px;
+  margin: 0;
+}
+
+.reply small {
+  font-size: 12px;
+  color: #888;
+}
+
+.reply-form {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-top: 1px solid #444;
+  background-color: #222;
+}
+
+.reply-form textarea {
+  flex-grow: 1;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #444;
+  border-radius: 5px;
+  resize: none;
+  background-color: #333;
+  color: #fff;
+}
+
+.reply-form button {
+  margin-left: 10px;
+  padding: 10px 20px;
+  background-color: #555;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.reply-form button:hover {
+  background-color: #777;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .admin-panel {
+    flex-direction: column;
+  }
+
+  .user-list {
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid #444;
+  }
+
+  .chat-section-admin {
+    width: 100%;
+  }
+}

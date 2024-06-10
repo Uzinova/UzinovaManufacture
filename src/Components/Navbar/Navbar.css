@@ -1,0 +1,143 @@
+/* Sci-fi themed navbar */
+.navbar {
+    display: flex;
+    justify-content: center;
+    padding: 10px 10px 10px 10px 10px; /* Adjust padding for more accurate sizing */
+    width: 900px; /* Use full width of the container */
+    height: 60px; /* Set a more accurate height */
+    border-radius: 20px;
+    background: linear-gradient(135deg, #000000, #1a1a1a);
+    box-shadow: 0 0 15px rgba(255, 165, 0, 0.5), inset 0 0 15px rgba(255, 165, 0, 0.3);
+    animation: glow-pulse 2s infinite;
+
+}
+
+.nav-menu {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    gap: 50px;
+    color: #808080; /* Gray color for non-active items */
+    font-size: 20px;
+    font-weight: 500;
+    font-family: 'Orbitron', sans-serif; /* Futuristic font */
+}
+
+.nav-menu li {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+    cursor: pointer;
+    transition: transform 0.3s ease, color 0.3s ease;
+    position: relative;
+}
+
+.nav-menu li.active {
+    color: #ffffff; /* Glowy white for active items */
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.7), 0 0 20px rgba(255, 255, 255, 0.5);
+}
+
+.nav-menu li::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 3px;
+    border-radius: 10px;
+    background-color: rgb(255, 165, 0);
+    bottom: -10px;
+    transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.nav-menu li:hover::after {
+    width: 100%;
+    background-color: rgb(255, 140, 0); /* Slightly darker orange on hover */
+}
+
+.nav-menu hr {
+    border: none;
+    width: 80%;
+    height: 3px;
+    border-radius: 10px;
+    background-color: rgb(255, 165, 0);
+    transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.nav-menu li:hover hr {
+    width: 100%;
+    background-color: rgb(255, 140, 0); /* Slightly darker orange on hover */
+}
+
+@keyframes click-animation {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.9); }
+    100% { transform: scale(1); }
+}
+
+.nav-menu li:active {
+    animation: click-animation 0.3s ease;
+}
+
+/* Neon text effect */
+.nav-menu li span {
+    position: relative;
+    z-index: 1;
+}
+
+.nav-menu li span::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    box-shadow: 0 0 20px rgba(255, 165, 0, 0.8), 0 0 40px rgba(255, 165, 0, 0.6);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.nav-menu li:hover span::before {
+    opacity: 1;
+}
+
+/* Sci-fi animations */
+@keyframes glow-pulse {
+    0% {
+        box-shadow: 0 0 10px rgba(255, 165, 0, 0.5), 0 0 20px rgba(255, 165, 0, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(255, 165, 0, 0.8), 0 0 40px rgba(255, 165, 0, 0.8);
+    }
+    100% {
+        box-shadow: 0 0 10px rgba(255, 165, 0, 0.5), 0 0 20px rgba(255, 165, 0, 0.5);
+    }
+}
+
+@keyframes rotate-effect {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes text-flicker {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+ 
+ 
+
+.nav-menu li span {
+    animation: text-flicker 3s infinite;
+}

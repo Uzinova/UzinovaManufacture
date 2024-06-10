@@ -1,0 +1,28 @@
+#Frame2 text {
+    font-family: "Raleway", sans-serif;;
+    fill: white;
+    white-space: pre;
+   
+    letter-spacing: 0em;
+  }
+ 
+@keyframes strokeColorChange {
+    0% {
+        stroke: rgb(51, 50, 50);
+   
+    }
+    50% {
+        stroke: rgb(206, 206, 206);
+    }
+    100% {
+        stroke: rgb(51, 50, 50);
+    }
+}   
+
+#sec1 #frm,
+#sec2 #frm,
+#sec3 #frm {
+    stroke-width: 3px;
+    stroke: rgb(51, 50, 50);
+}
+ 

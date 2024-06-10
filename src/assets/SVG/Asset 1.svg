@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 312.5 234.5">
+  <defs>
+    <style>
+      .cls-1, .cls-2 {
+        fill: none;
+        stroke: #fff;
+        stroke-miterlimit: 10;
+      }
+
+      .cls-3 {
+        letter-spacing: -.03em;
+      }
+
+      .cls-2 {
+        stroke-width: .5px;
+      }
+
+      .cls-4 {
+        fill: #000;
+        font-family: MyriadPro-Regular, 'Myriad Pro';
+        font-size: 12px;
+      }
+
+      .cls-5 {
+        letter-spacing: 0em;
+      }
+
+      .cls-6 {
+        letter-spacing: -.02em;
+      }
+    </style>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <text class="cls-4" transform="translate(107.8 86.52)"><tspan class="cls-6" x="0" y="0">X</tspan><tspan class="cls-3" x="6.67" y="0">X</tspan><tspan class="cls-5" x="13.18" y="0">C</tspan></text>
+    <polyline class="cls-1" points="18.37 41.5 18.37 93.1 57.5 93.1"/>
+    <path class="cls-1" d="M312,201.58v-66.81H58v99.23c78.45,0,156.9,0,235.35,0h10.65l8-32.42Z"/>
+    <polyline class="cls-2" points="63 138.77 93.75 138.77 98.57 141.91 141.22 141.91"/>
+    <polyline class="cls-2" points="308 191.84 298 226.2 272.61 226.2"/>
+    <polyline class="cls-1" points="57.5 160.36 18.37 160.36 18.37 93.1"/>
+    <path class="cls-1" d="M311.5,97.46v-29.96H57.5v44.5c78.45,0,156.9,0,235.35,0h10.65l8-14.54Z"/>
+    <polyline class="cls-2" points="62.5 71.5 93.25 71.5 98.07 74.64 140.72 74.64"/>
+    <polyline class="cls-2" points="307.5 93.1 297.5 108.5 272.11 108.5"/>
+    <path class="cls-1" d="M254.5,11.7c0,.92,0,1.83,0,2.75,0,9.02,0,18.03,0,27.05H.5V.5h239.52l14.48,12.12"/>
+    <text/>
+  </g>
+</svg>

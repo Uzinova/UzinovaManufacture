@@ -1,0 +1,92 @@
+/* src/ProductsTab.css */
+
+.products-tab {
+    padding: 20px;
+    color: #fff;
+    background-color: #111;
+    overflow-y: auto;
+    max-height: 80vh;
+}
+
+.product-form, .category-form, .subcategory-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.product-form input[type="text"],
+.product-form input[type="number"],
+.category-form input[type="text"],
+.subcategory-form input[type="text"] {
+    padding: 10px;
+    border: 1px solid #444;
+    border-radius: 5px;
+    background-color: #333;
+    color: #fff;
+}
+
+.product-form label, .category-form label, .subcategory-form label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.product-form button, .category-form button, .subcategory-form button {
+    padding: 10px 20px;
+    background-color: #555;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.product-form button:hover, .category-form button:hover, .subcategory-form button:hover {
+    background-color: #777;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+li {
+    display: flex;
+    flex-direction: row;
+    gap: 40px;
+    padding: 10px;
+    border: 1px solid #444;
+    border-radius: 5px;
+    background-color: #222;
+    margin-bottom: 10px;
+}
+
+li div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+li img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+}
+
+li button {
+    padding: 10px;
+    background-color: #f00;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+li button:hover {
+    background-color: #c00;
+}
+
+.tree-node {
+    margin-left: 20px;
+}

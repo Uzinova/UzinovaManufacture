@@ -1,0 +1,45 @@
+.dropdown-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 20px;
+    justify-content: center;
+    background: linear-gradient(0deg , #0f0f0f, #000000e8); /* Gradient background */
+   width: 100%;
+ 
+    
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+   
+  
+  .dropdown-button:hover {
+    background-color: #c26c33;
+    transform: scale(1.05);
+  }
+  
+  .dropdown-button:active {
+    background-color: #555;
+    transform: scale(1);
+  }
+  /* maindd.css */
+.dropdown-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin: 20px 0;
+  }
+  
+  .dropdown-button {
+    flex: 1;
+    margin: 5px;
+    padding: 10px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    background-color: #eeeeee;
+    color: rgb(0, 0, 0);
+    transition: background-color 0.3s ease;
+  }
+  
+  

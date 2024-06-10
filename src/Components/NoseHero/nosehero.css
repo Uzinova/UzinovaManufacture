@@ -1,0 +1,118 @@
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(-10px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slide2 {
+  0% {
+    stroke: orange;
+    opacity: 0;
+    stroke-width: 0.5;
+  }
+  100% {
+    stroke: white;
+    stroke-width: 2;
+    opacity: 1;
+  }
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes sciFi {
+  0%, 100% {
+    transform: scale(1);
+    stroke: #f1f1f1;
+    stroke-width: 2;
+    opacity: 1;
+  }
+  25% {
+    transform: scale(1.001);
+    opacity: 0.8;
+  }
+  75% {
+    transform: scale(1.01);
+    opacity: 0.6;
+  }
+}
+
+#Frame\ 1 {
+  animation: fadeIn 1s ease-in forwards;
+  will-change: opacity;
+}
+
+#Group\ 1 path,
+
+#Vector_13,
+#Vector_20,
+#Vector_21,
+#Vector_27,
+#Vector_22,
+#Vector_23,
+#Vector_24,
+#Vector_14,
+#Vector_15 {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: dash 2s linear forwards;
+  will-change: stroke-dashoffset;
+}
+#Group\ 2 path{
+
+  stroke-dasharray: 1100;
+  stroke-dashoffset: 1000;
+  animation: dash 2s linear forwards;
+  will-change: stroke-dashoffset;
+
+}
+#Group\ 3 path{
+
+  stroke-dasharray: 1500;
+  stroke-dashoffset: 1000;
+  animation: dash 2s linear forwards;
+  will-change: stroke-dashoffset;
+}
+
+#Vector_13 {
+  stroke-dasharray: 0;
+  stroke-dashoffset: 10;
+  animation: slide2 1s linear forwards;
+}
+
+#mainnoseicon {
+  animation: slideIn 1s ease-out forwards, float 4s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+#Konik,
+#Ojiv,
+#eliptik {
+  animation: slideIn 1s ease-in forwards;
+  will-change: transform, opacity;
+}
+
+#Group\ 1 text,
+#Group\ 2 text,
+#Group\ 3 text {
+  animation: slideIn 1s ease-out forwards;
+  will-change: transform, opacity;
+}
+
+#Vector_29 {
+  animation: sciFi 4s infinite ease-in-out;
+  will-change: transform, stroke-width, opacity;
+}

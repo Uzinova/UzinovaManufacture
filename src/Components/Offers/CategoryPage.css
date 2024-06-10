@@ -1,0 +1,22 @@
+ /* src/CategoryPage.css */
+.category-page {
+    padding-top: 20px;
+  }
+  
+  .category-banner {
+    background-color: #f8f9fa; /* Light gray background */
+    padding: 30px 20px; /* Padding around the text */
+    margin-bottom: 20px; /* Space below the banner */
+    text-align: center; /* Center align text */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  }
+  
+  .category-title {
+    font-size: 2.5rem; /* Large font size */
+    color: #333; /* Darker text color */
+    margin: 0; /* Remove default margin */
+  }
+  
+  /* You can add more styles for other elements */
+  
