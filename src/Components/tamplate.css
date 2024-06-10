@@ -1,11 +1,13 @@
 :root {
-    --primary-color: #F39189; /* Main background color */
-    --secondary-color: #046582; /* Secondary background color */
-    --accent-color: #ff6f61; /* Accent color for buttons and highlights */
+    --primary-color: #734046; /* Main background color */
+    --nav-color: #321F28; /* nav background color */
+    --secondary-color: #A05344; /* Secondary background color */
+    --accent-color: #E79E4F; /* Accent color for buttons and highlights */
+ 
     --accent-hover-color: #ffbdbd; /* Accent color on hover */
     --light-color: #f5f5f5; /* Light text color */
     --dark-color: #121212; /* Dark text color */
-    --mid-gray-color: #3a3a3a; /* Mid gray color for backgrounds */
+    --mid-gray-color: #A05344; /* Mid gray color for backgrounds */
     --light-gray-color: #e0e0e0; /* Light gray color for backgrounds */
     --border-color: #cccccc; /* Border color */
     --hover-background-color: #5a5a5a; /* Hover background color */
@@ -35,10 +37,10 @@
 
 /* Navbar */
 .navcont.container-fluid {
-    background-color: var(--primary-color);
+    background-color: var(--nav-color);
 }
 .headernav {
-    background-color: var(--primary-color);
+    background-color: var(--nav-color);
 }
 
 /* SPECIAL OFFERS COMP */
@@ -96,15 +98,19 @@
     background-color: var(--mid-gray-color);
 }
 .accordion-button {
-    background-color: #495057;
+    background-color: var( --accent-color);
     color: var(--light-color);
 }
 .accordion-button:not(.collapsed) {
     color: var(--light-color);
-    background-color: #6c757d;
+    background-color:var( --accent-color);
+}
+.accordion-body{
+    background-color: var(--secondary-color);
+    border: none;
 }
 .list-group-item {
-    background-color: #495057;
+    background-color: var( --accent-color);
     color: var(--light-color);
 }
 .list-group-item.active {
