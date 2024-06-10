@@ -35,7 +35,7 @@ function App() {
       <div className='menu navbar-nav ml-auto'>
         <a className="nav-item  "target="_blank" rel="noopener noreferrer" href="https://uzinova.com">Biz Kimiz</a>
         <a className="nav-item  " href='#siparis'>Sipariş Takibi</a>
-        <a className="nav-item  " href='/iletisim'>İletişim</a>
+        <a className="nav-item  " href='/contact'>İletişim</a>
         
         <a className="nav-item "><CartIcon /></a>
       </div>
@@ -47,7 +47,7 @@ function App() {
    
 
       <Routes>
-      <Route path="/iletisim" element={<ContactPage/>} />
+      <Route path="/contact" element={<ContactPage/>} />
         <Route path='/' element={<Mainpage />} />
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/cart" element={<Cart />} />
