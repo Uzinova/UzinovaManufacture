@@ -17,9 +17,22 @@
   margin-right: 10px;
   border-radius: 10px;
   width: fit-content;
+ 
   color: white;
 }
-
+ 
+@media (max-width: 1000px) { /* For tablets and small screens */
+  .sidebar {
+  width: 100%;
+  }
+  .accordion {
+    display: flex;
+    flex-direction: column; /* Stack accordion items in a column */
+  }
+}
+.accordion {
+ background-color: #181b1b;
+}
 .accordion-button {
   background-color: #333;
   color: white;
