@@ -13,7 +13,7 @@ function Footer() {
         <div className="footer-section">
           <h3>Follow Us</h3>
           <ul className="social-media">
-            <li><a href="iletisim">İletişim</a></li>
+            <li><a href="/iletisim">İletişim</a></li>
              
           </ul>
         </div>

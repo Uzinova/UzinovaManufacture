@@ -51,7 +51,7 @@ function App() {
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/:categoryName" element={<CategoryPage />} />
-        <Route path="/iletisim" element={<ContactPage />} />
+        <Route path="/iletisim" element={<ContactPage/>} />
       </Routes>
     </Router>
     
