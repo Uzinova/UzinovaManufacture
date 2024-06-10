@@ -427,7 +427,8 @@ html {
   flex-direction: column;
   gap: 10px;
   padding: 15px;
-  
+  margin-top: -40px;
+  overflow-y: scroll;
 }
 
 .info-form input {
@@ -446,6 +447,7 @@ html {
   font-size: 16px;
   border-radius: 5px;
   transition: background-color 0.3s ease;
+  
  
 }
 
