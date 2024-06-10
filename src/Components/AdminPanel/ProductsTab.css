@@ -1,9 +1,7 @@
-/* src/ProductsTab.css */
-
 .products-tab {
     padding: 20px;
-    color: #fff;
-    background-color: #111;
+    color: #111;
+    background-color: #f0f0f0;
     overflow-y: auto;
     max-height: 80vh;
 }
@@ -20,10 +18,10 @@
 .category-form input[type="text"],
 .subcategory-form input[type="text"] {
     padding: 10px;
-    border: 1px solid #444;
+    border: 1px solid #ccc;
     border-radius: 5px;
-    background-color: #333;
-    color: #fff;
+    background-color: #fff;
+    color: #333;
 }
 
 .product-form label, .category-form label, .subcategory-form label {
@@ -34,7 +32,7 @@
 
 .product-form button, .category-form button, .subcategory-form button {
     padding: 10px 20px;
-    background-color: #555;
+    background-color: #007bff;
     color: #fff;
     border: none;
     border-radius: 5px;
@@ -42,7 +40,7 @@
 }
 
 .product-form button:hover, .category-form button:hover, .subcategory-form button:hover {
-    background-color: #777;
+    background-color: #0056b3;
 }
 
 ul {
@@ -54,18 +52,18 @@ ul {
 li {
     display: flex;
     flex-direction: row;
-    gap: 40px;
+    gap: 20px;
     padding: 10px;
-    border: 1px solid #444;
+    border: 1px solid #ccc;
     border-radius: 5px;
-    background-color: #222;
+    background-color: #f9f9f9;
     margin-bottom: 10px;
+    position: relative;
 }
 
 li div {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
 }
 
 li img {
@@ -74,9 +72,15 @@ li img {
     object-fit: cover;
 }
 
+.product-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
 li button {
     padding: 10px;
-    background-color: #f00;
+    background-color: #dc3545;
     color: #fff;
     border: none;
     border-radius: 5px;
@@ -84,9 +88,25 @@ li button {
 }
 
 li button:hover {
-    background-color: #c00;
+    background-color: #c82333;
 }
 
 .tree-node {
     margin-left: 20px;
+}
+
+.tree-node-label {
+    cursor: pointer;
+    padding: 5px;
+    background-color: #e0e0e0;
+    border-radius: 3px;
+    margin: 2px 0;
+}
+
+.tree-node-label:hover {
+    background-color: #ccc;
+}
+
+.tree-node.collapsed {
+    display: none;
 }

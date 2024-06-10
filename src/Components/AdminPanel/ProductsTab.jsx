@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { fetchProducts, addProduct, deleteProduct, updateProduct, fetchCategories, addCategory, addSubcategory } from '../listdata';
-import './ProductsTab.css'; // Adjust the path to your CSS file
+import ReactQuill from 'react-quill'; // Importing ReactQuill for rich text editing
+import 'react-quill/dist/quill.snow.css'; // Quill's styles
+import './ProductsTab.css';
 
 const ProductsTab = () => {
   const [products, setProducts] = useState([]);
@@ -38,6 +40,13 @@ const ProductsTab = () => {
     setNewProduct({
       ...newProduct,
       [name]: type === 'checkbox' ? checked : value,
+    });
+  };
+
+  const handleDescriptionChange = (value) => {
+    setNewProduct({
+      ...newProduct,
+      description: value,
     });
   };
 
@@ -83,23 +92,31 @@ const ProductsTab = () => {
     setCategories(categoriesData);
   };
 
+  const toggleExpand = (e) => {
+    const listItem = e.currentTarget.parentElement;
+    const nestedList = listItem.querySelector('ul');
+    if (nestedList) {
+      nestedList.classList.toggle('collapsed');
+    }
+  };
+
   const renderCategoryTree = (category) => (
     <li key={category.id}>
-      <div>
+      <div onClick={toggleExpand} className="tree-node-label">
         {category.name}
       </div>
       {Object.keys(category.subcategories).length > 0 && (
         <ul className="tree-node">
           {Object.keys(category.subcategories).map(subcategoryName => (
             <li key={subcategoryName}>
-              <div>
+              <div onClick={toggleExpand} className="tree-node-label">
                 {subcategoryName}
               </div>
               {Object.keys(category.subcategories[subcategoryName]).length > 0 && (
                 <ul className="tree-node">
                   {Object.keys(category.subcategories[subcategoryName]).map(subsubcategoryName => (
                     <li key={subsubcategoryName}>
-                      <div>
+                      <div className="tree-node-label">
                         {subsubcategoryName}
                       </div>
                     </li>
@@ -115,101 +132,82 @@ const ProductsTab = () => {
 
   return (
     <div className="products-tab">
-      <h3>{editingProduct ? 'Edit Product' : 'Add New Product'}</h3>
+      <h3>{editingProduct ? 'Ürünü Düzenle' : 'Yeni Ürün Ekle'}</h3>
       <div className="product-form">
-        <input type="text" name="name" value={newProduct.name} onChange={handleChange} placeholder="Name" />
-        <input type="text" name="description" value={newProduct.description} onChange={handleChange} placeholder="Description" />
-        <input type="number" name="price" value={newProduct.price} onChange={handleChange} placeholder="Price" />
+        <input type="text" name="name" value={newProduct.name} onChange={handleChange} placeholder="İsim" />
+        
+        <ReactQuill value={newProduct.description} onChange={handleDescriptionChange} placeholder="Açıklama" />
+        
+        <input type="number" name="price" value={newProduct.price} onChange={handleChange} placeholder="Fiyat" />
         
         <select name="category" value={newProduct.category} onChange={handleChange}>
-          <option value="">Select Category</option>
+          <option value="">Kategori Seçin</option>
           {categories.map(category => (
             <option key={category.id} value={category.name}>{category.name}</option>
           ))}
         </select>
         
         <select name="subcategory" value={newProduct.subcategory} onChange={handleChange}>
-          <option value="">Select Subcategory</option>
+          <option value="">Alt Kategori Seçin</option>
           {categories.find(cat => cat.name === newProduct.category)?.subcategories &&
             Object.keys(categories.find(cat => cat.name === newProduct.category).subcategories).map(subcat => (
               <option key={subcat} value={subcat}>{subcat}</option>
           ))}
         </select>
 
-        <select name="subsubcategory" value={newProduct.subsubcategory} onChange={handleChange}>
-          <option value="">Select Sub-subcategory</option>
-          {categories.find(cat => cat.name === newProduct.category)?.subcategories[newProduct.subcategory] &&
-            Object.keys(categories.find(cat => cat.name === newProduct.category).subcategories[newProduct.subcategory]).map(subsubcat => (
-              <option key={subsubcat} value={subsubcat}>{subsubcat}</option>
-          ))}
-        </select>
+    
         
-        <input type="text" name="image" value={newProduct.image} onChange={handleChange} placeholder="Image URL" />
+        <input type="text" name="image" value={newProduct.image} onChange={handleChange} placeholder="Görsel URL'si" />
         <label>
           <input type="checkbox" name="onSale" checked={newProduct.onSale} onChange={handleChange} />
-          On Sale
+          Fırsat Ürün
         </label>
-        <button onClick={handleAddProduct}>{editingProduct ? 'Update Product' : 'Add Product'}</button>
+        <button onClick={handleAddProduct}>{editingProduct ? 'Ürünü Güncelle' : 'Ürün Ekle'}</button>
       </div>
       
-      <h3>Categories</h3>
+      <h3>Kategoriler</h3>
       <div className="category-form">
-        <input type="text" value={newCategory} onChange={(e) => setNewCategory(e.target.value)} placeholder="New Category" />
-        <button onClick={handleAddCategory}>Add Category</button>
+        <input type="text" value={newCategory} onChange={(e) => setNewCategory(e.target.value)} placeholder="Yeni Kategori" />
+        <button onClick={handleAddCategory}>Kategori Ekle</button>
       </div>
       
-      <h3>Subcategories</h3>
+      <h3>Alt Kategoriler</h3>
       <div className="subcategory-form">
         <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
-          <option value="">Select Category</option>
+          <option value="">Kategori Seçin</option>
           {categories.map(category => (
             <option key={category.id} value={category.name}>{category.name}</option>
           ))}
         </select>
-        <input type="text" value={newSubcategory} onChange={(e) => setNewSubcategory(e.target.value)} placeholder="New Subcategory" />
-        <button onClick={() => handleAddSubcategory()}>Add Subcategory</button>
+        <input type="text" value={newSubcategory} onChange={(e) => setNewSubcategory(e.target.value)} placeholder="Yeni Alt Kategori" />
+        <button onClick={() => handleAddSubcategory()}>Alt Kategori Ekle</button>
       </div>
 
-      <h3>Sub-subcategories</h3>
-      <div className="subcategory-form">
-        <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
-          <option value="">Select Category</option>
-          {categories.map(category => (
-            <option key={category.id} value={category.name}>{category.name}</option>
-          ))}
-        </select>
-        <select value={selectedSubcategory} onChange={(e) => setSelectedSubcategory(e.target.value)}>
-          <option value="">Select Subcategory</option>
-          {categories.find(cat => cat.name === selectedCategory)?.subcategories &&
-            Object.keys(categories.find(cat => cat.name === selectedCategory).subcategories).map(subcat => (
-              <option key={subcat} value={subcat}>{subcat}</option>
-          ))}
-        </select>
-        <input type="text" value={newSubsubcategory} onChange={(e) => setNewSubsubcategory(e.target.value)} placeholder="New Sub-subcategory" />
-        <button onClick={() => handleAddSubcategory()}>Add Sub-subcategory</button>
-      </div>
       
-      <h3>Categories Tree</h3>
+      
+      <h3>Kategori Ağacı</h3>
       <ul>
         {categories.map(category => renderCategoryTree(category))}
       </ul>
 
-      <h3>Products List</h3>
+      <h3>Ürün Listesi</h3>
       <ul>
         {products.map(product => (
           <li key={product.id}>
-            <div>
+            <div className="product-info">
               <img src={product.image} alt={product.name} />
               <div>
                 <h4>{product.name}</h4>
-                <p>{product.description}</p>
+                <div dangerouslySetInnerHTML={{ __html: product.description }}></div>
                 <p>${product.price}</p>
                 <p>{product.category} - {product.subcategory} - {product.subsubcategory}</p>
-                <p>{product.onSale ? 'On Sale' : 'Not On Sale'}</p>
+                <p>{product.onSale ? 'Satışta' : 'Satışta Değil'}</p>
               </div>
             </div>
-            <button onClick={() => handleEditProduct(product)}>Edit</button>
-            <button onClick={() => handleDeleteProduct(product.id)}>Delete</button>
+            <div className="product-actions">
+              <button onClick={() => handleEditProduct(product)}>Düzenle</button>
+              <button onClick={() => handleDeleteProduct(product.id)}>Sil</button>
+            </div>
           </li>
         ))}
       </ul>

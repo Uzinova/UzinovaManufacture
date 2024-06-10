@@ -47,7 +47,7 @@ function App() {
    
 
       <Routes>
-      <Route path="/contact" element={<ContactPage/>} />
+        <Route path="/contact" element={<ContactPage/>} />
         <Route path='/' element={<Mainpage />} />
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/cart" element={<Cart />} />
@@ -55,7 +55,7 @@ function App() {
       
       </Routes>
     </Router>
-    
+    <AdminPanel/>
   </CartProvider>
   <Footer/>
   </div>
