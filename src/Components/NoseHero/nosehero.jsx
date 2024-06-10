@@ -1,5 +1,5 @@
 import './nosehero.css'
-import { motion } from 'framer-motion'
+ 
 export default function nosehero() {
   return (
     <svg
