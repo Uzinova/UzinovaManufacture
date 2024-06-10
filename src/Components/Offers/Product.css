@@ -107,3 +107,20 @@
     transform: scale(1);
   }
 }
+.product-description b {
+  font-weight: bold;
+}
+
+.product-description i {
+  font-style: italic;
+}
+
+.product-description u {
+  text-decoration: underline;
+}
+
+/* Optionally add some margin or padding to <p> tags inside description */
+.product-description p {
+  margin: 0;
+  padding: 5px 0;
+}

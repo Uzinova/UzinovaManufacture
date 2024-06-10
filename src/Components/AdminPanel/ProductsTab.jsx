@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { fetchProducts, addProduct, deleteProduct, updateProduct, fetchCategories, addCategory, addSubcategory } from '../listdata';
-import ReactQuill from 'react-quill'; // Importing ReactQuill for rich text editing
-import 'react-quill/dist/quill.snow.css'; // Quill's styles
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 import './ProductsTab.css';
 
 const ProductsTab = () => {
@@ -81,13 +81,15 @@ const ProductsTab = () => {
   };
 
   const handleAddSubcategory = async () => {
-    if (newSubsubcategory) {
-      await addSubcategory(selectedCategory, selectedSubcategory, newSubsubcategory);
-      setNewSubsubcategory('');
-    } else {
-      await addSubcategory(selectedCategory, newSubcategory);
-      setNewSubcategory('');
-    }
+    await addSubcategory(selectedCategory, newSubcategory);
+    setNewSubcategory('');
+    const categoriesData = await fetchCategories();
+    setCategories(categoriesData);
+  };
+
+  const handleAddSubsubcategory = async () => {
+    await addSubcategory(selectedCategory, newSubsubcategory, selectedSubcategory);
+    setNewSubsubcategory('');
     const categoriesData = await fetchCategories();
     setCategories(categoriesData);
   };
@@ -135,18 +137,14 @@ const ProductsTab = () => {
       <h3>{editingProduct ? 'Ürünü Düzenle' : 'Yeni Ürün Ekle'}</h3>
       <div className="product-form">
         <input type="text" name="name" value={newProduct.name} onChange={handleChange} placeholder="İsim" />
-        
         <ReactQuill value={newProduct.description} onChange={handleDescriptionChange} placeholder="Açıklama" />
-        
         <input type="number" name="price" value={newProduct.price} onChange={handleChange} placeholder="Fiyat" />
-        
         <select name="category" value={newProduct.category} onChange={handleChange}>
           <option value="">Kategori Seçin</option>
           {categories.map(category => (
             <option key={category.id} value={category.name}>{category.name}</option>
           ))}
         </select>
-        
         <select name="subcategory" value={newProduct.subcategory} onChange={handleChange}>
           <option value="">Alt Kategori Seçin</option>
           {categories.find(cat => cat.name === newProduct.category)?.subcategories &&
@@ -154,9 +152,13 @@ const ProductsTab = () => {
               <option key={subcat} value={subcat}>{subcat}</option>
           ))}
         </select>
-
-    
-        
+        <select name="subsubcategory" value={newProduct.subsubcategory} onChange={handleChange}>
+          <option value="">Alt Alt Kategori Seçin</option>
+          {categories.find(cat => cat.name === newProduct.category)?.subcategories[newProduct.subcategory] &&
+            Object.keys(categories.find(cat => cat.name === newProduct.category).subcategories[newProduct.subcategory]).map(subsubcat => (
+              <option key={subsubcat} value={subsubcat}>{subsubcat}</option>
+          ))}
+        </select>
         <input type="text" name="image" value={newProduct.image} onChange={handleChange} placeholder="Görsel URL'si" />
         <label>
           <input type="checkbox" name="onSale" checked={newProduct.onSale} onChange={handleChange} />
@@ -164,13 +166,13 @@ const ProductsTab = () => {
         </label>
         <button onClick={handleAddProduct}>{editingProduct ? 'Ürünü Güncelle' : 'Ürün Ekle'}</button>
       </div>
-      
+
       <h3>Kategoriler</h3>
       <div className="category-form">
         <input type="text" value={newCategory} onChange={(e) => setNewCategory(e.target.value)} placeholder="Yeni Kategori" />
         <button onClick={handleAddCategory}>Kategori Ekle</button>
       </div>
-      
+
       <h3>Alt Kategoriler</h3>
       <div className="subcategory-form">
         <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
@@ -183,8 +185,25 @@ const ProductsTab = () => {
         <button onClick={() => handleAddSubcategory()}>Alt Kategori Ekle</button>
       </div>
 
-      
-      
+      <h3>Alt Alt Kategoriler</h3>
+      <div className="subsubcategory-form">
+        <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
+          <option value="">Kategori Seçin</option>
+          {categories.map(category => (
+            <option key={category.id} value={category.name}>{category.name}</option>
+          ))}
+        </select>
+        <select value={selectedSubcategory} onChange={(e) => setSelectedSubcategory(e.target.value)}>
+          <option value="">Alt Kategori Seçin</option>
+          {categories.find(cat => cat.name === selectedCategory)?.subcategories &&
+            Object.keys(categories.find(cat => cat.name === selectedCategory).subcategories).map(subcat => (
+              <option key={subcat} value={subcat}>{subcat}</option>
+          ))}
+        </select>
+        <input type="text" value={newSubsubcategory} onChange={(e) => setNewSubsubcategory(e.target.value)} placeholder="Yeni Alt Alt Kategori" />
+        <button onClick={() => handleAddSubsubcategory()}>Alt Alt Kategori Ekle</button>
+      </div>
+
       <h3>Kategori Ağacı</h3>
       <ul>
         {categories.map(category => renderCategoryTree(category))}

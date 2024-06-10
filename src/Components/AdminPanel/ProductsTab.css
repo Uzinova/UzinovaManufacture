@@ -1,7 +1,7 @@
 .products-tab {
     padding: 20px;
-    color: #111;
-    background-color: #f0f0f0;
+    color: #ffffff;
+    background-color: #121212;
     overflow-y: auto;
     max-height: 80vh;
 }
@@ -18,10 +18,10 @@
 .category-form input[type="text"],
 .subcategory-form input[type="text"] {
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid #444;
     border-radius: 5px;
-    background-color: #fff;
-    color: #333;
+    background-color: #333;
+    color: #fff;
 }
 
 .product-form label, .category-form label, .subcategory-form label {
@@ -54,9 +54,9 @@ li {
     flex-direction: row;
     gap: 20px;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid #444;
     border-radius: 5px;
-    background-color: #f9f9f9;
+    background-color: #2a2a2a;
     margin-bottom: 10px;
     position: relative;
 }
@@ -98,13 +98,13 @@ li button:hover {
 .tree-node-label {
     cursor: pointer;
     padding: 5px;
-    background-color: #e0e0e0;
+    background-color: #3a3a3a;
     border-radius: 3px;
     margin: 2px 0;
 }
 
 .tree-node-label:hover {
-    background-color: #ccc;
+    background-color: #555;
 }
 
 .tree-node.collapsed {

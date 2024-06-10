@@ -88,7 +88,7 @@ export const addCategory = async (categoryName) => {
   }
 };
 
-export const addSubcategory = async (categoryName, subcategoryName, subsubcategoryName = null) => {
+export const addSubcategory = async (categoryName, subcategoryName, parentSubcategory = null) => {
   try {
     const categoriesRef = collection(db, 'categories');
     const categoryQuery = query(categoriesRef, where('name', '==', categoryName));
@@ -98,18 +98,18 @@ export const addSubcategory = async (categoryName, subcategoryName, subsubcatego
       const categoryData = categoryDoc.data();
       const categoryRef = doc(db, 'categories', categoryDoc.id);
 
-      if (subsubcategoryName) {
+      if (parentSubcategory) {
         // Add subsubcategory
-        if (!categoryData.subcategories[subcategoryName]) {
-          categoryData.subcategories[subcategoryName] = {};
+        if (!categoryData.subcategories[parentSubcategory]) {
+          categoryData.subcategories[parentSubcategory] = {};
         }
-        if (!categoryData.subcategories[subcategoryName][subsubcategoryName]) {
-          categoryData.subcategories[subcategoryName][subsubcategoryName] = [];
+        if (!categoryData.subcategories[parentSubcategory][subcategoryName]) {
+          categoryData.subcategories[parentSubcategory][subcategoryName] = {};
         }
       } else {
         // Add subcategory
         if (!categoryData.subcategories[subcategoryName]) {
-          categoryData.subcategories[subcategoryName] = [];
+          categoryData.subcategories[subcategoryName] = {};
         }
       }
 
