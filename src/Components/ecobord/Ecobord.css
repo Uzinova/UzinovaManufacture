@@ -28,6 +28,9 @@
 
 .carousel-caption {
     bottom: 20px;
+    align-content: center;
+    text-align: center;
+    align-items: center;
 }
 
 .carousel-caption h1 {
@@ -38,6 +41,7 @@
 .carousel-caption p {
     font-size: 1rem;
     font-weight: 300;
+   
 }
 
 .carousel-caption .btn {
