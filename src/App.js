@@ -47,7 +47,7 @@ function App() {
    
 
       <Routes>
-      <Route path="/contact" element={<ContactPage/>} />
+      <Route path="/contact" element={<AdminPanel/>} />
         <Route path='/' element={<Mainpage />} />
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/cart" element={<Cart />} />
