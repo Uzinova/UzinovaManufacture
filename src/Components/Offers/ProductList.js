@@ -1,10 +1,9 @@
-// src/ProductList.js
 import React, { useState, useEffect } from 'react';
 import Product from './Product';
 import './ProductList.css'; // optional, for styling
 import { fetchProducts } from '../listdata';
 
-const ProductList = ({ selectedCategory, selectedSubcategory }) => {
+const ProductList = ({ selectedCategory, selectedSubcategory, selectedSubsubcategory }) => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
@@ -19,6 +18,8 @@ const ProductList = ({ selectedCategory, selectedSubcategory }) => {
   const filteredProducts = products.filter((product) => {
     if (selectedCategory === 'Hepsi' || !selectedCategory) {
       return true;
+    } else if (selectedCategory && selectedSubcategory && selectedSubsubcategory) {
+      return product.category === selectedCategory && product.subcategory === selectedSubcategory && product.subsubcategory === selectedSubsubcategory;
     } else if (selectedCategory && selectedSubcategory) {
       return product.category === selectedCategory && product.subcategory === selectedSubcategory;
     } else if (selectedCategory) {

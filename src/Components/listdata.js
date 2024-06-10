@@ -87,7 +87,48 @@ export const addCategory = async (categoryName) => {
     console.error('Error adding category:', error);
   }
 };
+export const deleteCategory = async (categoryId) => {
+  try {
+    const categoryRef = doc(db, 'categories', categoryId);
+    await deleteDoc(categoryRef);
+  } catch (error) {
+    console.error('Error deleting category:', error);
+  }
+};
 
+export const deleteSubcategory = async (categoryId, subcategoryName) => {
+  try {
+    const categoryRef = doc(db, 'categories', categoryId);
+    const categorySnap = await getDoc(categoryRef);
+    if (categorySnap.exists()) {
+      const categoryData = categorySnap.data();
+      delete categoryData.subcategories[subcategoryName];
+      await updateDoc(categoryRef, { subcategories: categoryData.subcategories });
+    } else {
+      console.error('No such category!');
+    }
+  } catch (error) {
+    console.error('Error deleting subcategory:', error);
+  }
+};
+
+export const deleteSubsubcategory = async (categoryId, subcategoryName, subsubcategoryName) => {
+  try {
+    const categoryRef = doc(db, 'categories', categoryId);
+    const categorySnap = await getDoc(categoryRef);
+    if (categorySnap.exists()) {
+      const categoryData = categorySnap.data();
+      if (categoryData.subcategories[subcategoryName]) {
+        delete categoryData.subcategories[subcategoryName][subsubcategoryName];
+        await updateDoc(categoryRef, { subcategories: categoryData.subcategories });
+      }
+    } else {
+      console.error('No such category!');
+    }
+  } catch (error) {
+    console.error('Error deleting subsubcategory:', error);
+  }
+};
 export const addSubcategory = async (categoryName, subcategoryName, parentSubcategory = null) => {
   try {
     const categoriesRef = collection(db, 'categories');

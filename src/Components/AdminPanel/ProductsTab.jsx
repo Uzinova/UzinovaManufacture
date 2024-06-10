@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { fetchProducts, addProduct, deleteProduct, updateProduct, fetchCategories, addCategory, addSubcategory } from '../listdata';
+import { fetchProducts, addProduct, deleteProduct, updateProduct, fetchCategories, addCategory, addSubcategory  ,deleteCategory,deleteSubcategory,deleteSubsubcategory} from '../listdata';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import './ProductsTab.css';
@@ -79,6 +79,23 @@ const ProductsTab = () => {
     const categoriesData = await fetchCategories();
     setCategories(categoriesData);
   };
+  const handleDeleteCategory = async (categoryId) => {
+    await deleteCategory(categoryId);
+    const categoriesData = await fetchCategories();
+    setCategories(categoriesData);
+  };
+
+  const handleDeleteSubcategory = async (categoryId, subcategoryName) => {
+    await deleteSubcategory(categoryId, subcategoryName);
+    const categoriesData = await fetchCategories();
+    setCategories(categoriesData);
+  };
+
+  const handleDeleteSubsubcategory = async (categoryId, subcategoryName, subsubcategoryName) => {
+    await deleteSubsubcategory(categoryId, subcategoryName, subsubcategoryName);
+    const categoriesData = await fetchCategories();
+    setCategories(categoriesData);
+  };
 
   const handleAddSubcategory = async () => {
     await addSubcategory(selectedCategory, newSubcategory);
@@ -106,6 +123,7 @@ const ProductsTab = () => {
     <li key={category.id}>
       <div onClick={toggleExpand} className="tree-node-label">
         {category.name}
+        <button onClick={() => handleDeleteCategory(category.id)}>Sil</button>
       </div>
       {Object.keys(category.subcategories).length > 0 && (
         <ul className="tree-node">
@@ -113,6 +131,7 @@ const ProductsTab = () => {
             <li key={subcategoryName}>
               <div onClick={toggleExpand} className="tree-node-label">
                 {subcategoryName}
+                <button onClick={() => handleDeleteSubcategory(category.id, subcategoryName)}>Sil</button>
               </div>
               {Object.keys(category.subcategories[subcategoryName]).length > 0 && (
                 <ul className="tree-node">
@@ -120,6 +139,7 @@ const ProductsTab = () => {
                     <li key={subsubcategoryName}>
                       <div className="tree-node-label">
                         {subsubcategoryName}
+                        <button onClick={() => handleDeleteSubsubcategory(category.id, subcategoryName, subsubcategoryName)}>Sil</button>
                       </div>
                     </li>
                   ))}
@@ -131,7 +151,6 @@ const ProductsTab = () => {
       )}
     </li>
   );
-
   return (
     <div className="products-tab">
       <h3>{editingProduct ? 'Ürünü Düzenle' : 'Yeni Ürün Ekle'}</h3>
