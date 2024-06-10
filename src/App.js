@@ -13,7 +13,7 @@ import AdminPanel from './Components/AdminPanel/AdminPanel';
 import Footer from './Components/footer/Footer';
 import CategoryPage from './Components/Offers/CategoryPage';
 import ContactPage from './Components/Contact/ContactPage';
- 
+import "./Components/tamplate.css"
   
 function App() {
   return (
