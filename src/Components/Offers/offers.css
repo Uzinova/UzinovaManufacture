@@ -159,11 +159,14 @@
   }
 }
 
-@media (max-width: 390px) {
+@media (max-width: 690px) {
   .offers-content {
     flex-direction: column;
   }
   .product-list-container {
     padding: 10px;
+  }
+  .orange{
+    font-size: 3rem;
   }
 }
