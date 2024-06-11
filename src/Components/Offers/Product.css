@@ -150,6 +150,10 @@
 .cardPro-img {
   display: flex;
   justify-content: center;
+  align-items: center;
+  width: 100px;
+  margin-left: 25px;
+  height: 200px;
 }
 
 .cardPro-title {
