@@ -164,6 +164,7 @@
 }
 .cardProInfo{
   height: 300px;
+  overflow: hidden;
 }
 .cardPro-subtitle {
   color: #000;
@@ -242,5 +243,16 @@
 @media (max-width: 576px) {
   .product-image {
     max-width: 150px;
+  }
+  .cardPro {
+gap: 0px;
+height: 500px;
+width: 155px;
+  }
+
+  .cardPro-img {
+   
+    margin-left: 0px;
+ 
   }
 }
