@@ -1,13 +1,13 @@
 :root {
-    --primary-color: #734046; /* Main background color */
-    --nav-color: #321F28; /* nav background color */
-    --secondary-color: #A05344; /* Secondary background color */
-    --accent-color: #E79E4F; /* Accent color for buttons and highlights */
- 
+    --primary-color: #000000; /* Main background color */
+    --nav-color: #000000; /* nav background color */
+    --secondary-color: #031b07; /* Secondary background color */
+    --accent-color: #202220; /* Accent color for buttons and highlights */
+    --specialoffer-color: rgb(255, 255, 255);
     --accent-hover-color: #ffbdbd; /* Accent color on hover */
-    --light-color: #f5f5f5; /* Light text color */
+    --light-color: #ffffff; /* Light text color */
     --dark-color: #121212; /* Dark text color */
-    --mid-gray-color: #A05344; /* Mid gray color for backgrounds */
+    --mid-gray-color: #050705; /* Mid gray color for backgrounds */
     --light-gray-color: #e0e0e0; /* Light gray color for backgrounds */
     --border-color: #cccccc; /* Border color */
     --hover-background-color: #5a5a5a; /* Hover background color */
@@ -50,7 +50,7 @@
 
 /* SPECIAL OFFERS TITLE */
 .cattext {
-    color: var(--light-color);
+    color: var(--specialoffer-color);
 }
 .headercatag {
     background-color: var(--secondary-color);
@@ -74,13 +74,13 @@
     background-color: var(--accent-hover-color);
 }
 .product-name {
-    color: var(--light-color);
+    color: var( --specialoffer-color);
 }
 .product-category {
-    color: #cfcfcf;
+    color: var( --specialoffer-color);
 }
 .product-description {
-    color: #d8d8d8;
+    color: var( --specialoffer-color);
 }
 .product-image {
     background-color: var(--primary-color);
@@ -152,13 +152,13 @@
     color: var(--light-color);
 }
 .product-detail-name {
-    color: var(--light-color);
+    color: var( --specialoffer-color);
 }
 .product-detail-category {
-    color: #bbbbbb;
+    color: var( --specialoffer-color);
 }
 .product-detail-description {
-    color: #dddddd;
+    color: var( --specialoffer-color);
 }
 .product-detail-price {
     color: #ff4081;
