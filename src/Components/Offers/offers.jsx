@@ -121,7 +121,7 @@ function Offers() {
             ))}
           </div>
         </div>
-        <div className="col-md-9 product-list-container">
+        <div className="col-md-9 col-sm-9 product-list-container">
           <ProductList selectedCategory={selectedCategory} selectedSubcategory={selectedSubcategory} selectedSubsubcategory={selectedSubsubcategory} />
         </div>
       </div>
