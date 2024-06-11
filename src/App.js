@@ -25,7 +25,7 @@ function App() {
     <nav className='headernav navbar navbar-expand-md navbar-dark navbar-fixed-top'>
   <div className='navcont container-fluid d-flex justify-content-between align-items-center'>
     <Link style={{ textDecoration: 'none' }} to="/"  >
-      <div className='headertxt h1'>UZINOVA</div>
+      <div className='headertxt h1'>UZINOVA<span className="orange">S</span></div>
 
     </Link>
     <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
