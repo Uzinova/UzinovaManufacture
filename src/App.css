@@ -448,7 +448,7 @@ html {
 }
 .orange {
   color: orange;
-  font-size: 100px;
+  font-size: 12vw;
 }
 .info-form button:hover {
   background-color: #2c3e91;
