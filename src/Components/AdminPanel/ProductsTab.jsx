@@ -2,10 +2,20 @@ import React, { useState, useEffect, useRef } from 'react';
 import Modal from 'react-modal';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { fetchProducts, addProduct, deleteProduct, updateProduct, fetchCategories, addCategory, addSubcategory, deleteCategory, deleteSubcategory, deleteSubsubcategory } from '../listdata';
+import {
+  fetchProducts,
+  addProduct,
+  deleteProduct,
+  updateProduct,
+  fetchCategories,
+  addCategory,
+  addSubcategory,
+  deleteCategory,
+  deleteSubcategory,
+  deleteSubsubcategory
+} from '../listdata';
 import './ProductsTab.css';
 
-// Set the app element for react-modal to hide everything outside the modal for screen readers.
 Modal.setAppElement('#root');
 
 const ProductsTab = () => {
@@ -31,7 +41,7 @@ const ProductsTab = () => {
   const [deleteModalIsOpen, setDeleteModalIsOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
 
-  const formRef = useRef(null); // Reference to the form element
+  const formRef = useRef(null);
 
   useEffect(() => {
     const loadProductsAndCategories = async () => {
@@ -46,10 +56,25 @@ const ProductsTab = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setNewProduct({
-      ...newProduct,
-      [name]: type === 'checkbox' ? checked : value,
-    });
+    if (name === 'category') {
+      setNewProduct({
+        ...newProduct,
+        category: value,
+        subcategory: '',
+        subsubcategory: '',
+      });
+    } else if (name === 'subcategory') {
+      setNewProduct({
+        ...newProduct,
+        subcategory: value,
+        subsubcategory: '',
+      });
+    } else {
+      setNewProduct({
+        ...newProduct,
+        [name]: type === 'checkbox' ? checked : value,
+      });
+    }
   };
 
   const handleDescriptionChange = (value) => {
@@ -60,25 +85,29 @@ const ProductsTab = () => {
   };
 
   const handleAddOrUpdateProduct = async () => {
-    if (editingProduct) {
-      await updateProduct(editingProduct.id, newProduct);
-    } else {
-      await addProduct(newProduct);
+    try {
+      if (editingProduct) {
+        await updateProduct(editingProduct.id, newProduct);
+      } else {
+        await addProduct(newProduct);
+      }
+      setNewProduct({
+        name: '',
+        description: '',
+        price: '',
+        category: '',
+        subcategory: '',
+        subsubcategory: '',
+        image: '',
+        onSale: false
+      });
+      setEditingProduct(null);
+      setModalIsOpen(false);
+      const productsData = await fetchProducts();
+      setProducts(productsData);
+    } catch (error) {
+      console.error("Ürün güncellenirken/eklenirken hata oluştu:", error);
     }
-    setNewProduct({
-      name: '',
-      description: '',
-      price: '',
-      category: '',
-      subcategory: '',
-      subsubcategory: '',
-      image: '',
-      onSale: false
-    });
-    setEditingProduct(null);
-    setModalIsOpen(false);
-    const productsData = await fetchProducts();
-    setProducts(productsData);
   };
 
   const handleDeleteProduct = async () => {
@@ -92,10 +121,17 @@ const ProductsTab = () => {
 
   const handleEditProduct = (product) => {
     setEditingProduct(product);
-    setNewProduct(product);
+    setNewProduct({
+      name: product.name || '',
+      description: product.description || '',
+      price: product.price || '',
+      category: product.category || '',
+      subcategory: product.subcategory || '',
+      subsubcategory: product.subsubcategory || '',
+      image: product.image || '',
+      onSale: product.onSale || false,
+    });
     setModalIsOpen(true);
-    // Scroll to the form when an edit button is clicked
-    formRef.current.scrollIntoView({ behavior: 'smooth' });
   };
 
   const handleAddCategory = async () => {
@@ -137,181 +173,131 @@ const ProductsTab = () => {
     setCategories(categoriesData);
   };
 
-  const toggleExpand = (e) => {
-    const listItem = e.currentTarget.parentElement;
-    const nestedList = listItem.querySelector('ul');
-    if (nestedList) {
-      nestedList.classList.toggle('collapsed');
-    }
+  const ensureArray = (value) => {
+    return Array.isArray(value) ? value : [];
   };
 
-  const renderCategoryTree = (category) => (
-    <li key={`category-${category.id}`}>
-      <div onClick={toggleExpand} className="tree-node-label">
-        {category.name}
-        <button onClick={() => handleDeleteCategory(category.id)}>Sil</button>
-      </div>
-      {Object.keys(category.subcategories).length > 0 && (
-        <ul className="tree-node">
-          {Object.keys(category.subcategories).map(subcategoryName => (
-            <li key={`subcategory-${category.id}-${subcategoryName}`}>
-              <div onClick={toggleExpand} className="tree-node-label">
-                {subcategoryName}
-                <button onClick={() => handleDeleteSubcategory(category.id, subcategoryName)}>Sil</button>
-              </div>
-              {Object.keys(category.subcategories[subcategoryName]).length > 0 && (
-                <ul className="tree-node">
-                  {Object.keys(category.subcategories[subcategoryName]).map(subsubcategoryName => (
-                    <li key={`subsubcategory-${category.id}-${subcategoryName}-${subsubcategoryName}`}>
-                      <div className="tree-node-label">
-                        {subsubcategoryName}
-                        <button onClick={() => handleDeleteSubsubcategory(category.id, subcategoryName, subsubcategoryName)}>Sil</button>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </li>
-          ))}
-        </ul>
-      )}
-    </li>
-  );
+  const getSubcategories = (categoryName) => {
+    const category = categories.find(cat => cat.name === categoryName);
+    return category ? ensureArray(Object.keys(category.subcategories)) : [];
+  };
+
+  const getSubsubcategories = (categoryName, subcategoryName) => {
+    const subcategories = getSubcategories(categoryName);
+    const category = categories.find(cat => cat.name === categoryName);
+    const subcategory = category && category.subcategories[subcategoryName];
+    return subcategory ? ensureArray(Object.keys(subcategory)) : [];
+  };
 
   return (
     <div className="products-tab">
-      <h3 ref={formRef}>{editingProduct ? 'Ürünü Düzenle' : 'Yeni Ürün Ekle'}</h3> {/* Added ref to the form header */}
-      <div className="product-form">
-        <input type="text" name="name" value={newProduct.name} onChange={handleChange} placeholder="İsim" />
-        <ReactQuill value={newProduct.description} onChange={handleDescriptionChange} placeholder="Açıklama" />
-        <input type="number" name="price" value={newProduct.price} onChange={handleChange} placeholder="Fiyat" />
-        <select name="category" value={newProduct.category} onChange={handleChange}>
-          <option value="">Kategori Seçin</option>
-          {categories.map(category => (
-            <option key={category.id} value={category.name}>{category.name}</option>
+      <div className="products-list">
+        <h2>Ürünler</h2>
+        <ul>
+          {products.map((product) => (
+            <li key={product.id}>
+              {product.name}
+              <button onClick={() => handleEditProduct(product)}>Düzenle</button>
+              <button onClick={() => { setDeleteModalIsOpen(true); setProductToDelete(product); }}>Sil</button>
+            </li>
           ))}
-        </select>
-        <select name="subcategory" value={newProduct.subcategory} onChange={handleChange}>
-          <option value="">Alt Kategori Seçin</option>
-          {categories.find(cat => cat.name === newProduct.category)?.subcategories &&
-            Object.keys(categories.find(cat => cat.name === newProduct.category).subcategories).map(subcat => (
-              <option key={subcat} value={subcat}>{subcat}</option>
-          ))}
-        </select>
-        <select name="subsubcategory" value={newProduct.subsubcategory} onChange={handleChange}>
-          <option value="">Alt Alt Kategori Seçin</option>
-          {categories.find(cat => cat.name === newProduct.category)?.subcategories[newProduct.subcategory] &&
-            Object.keys(categories.find(cat => cat.name === newProduct.category).subcategories[newProduct.subcategory]).map(subsubcat => (
-              <option key={subsubcat} value={subsubcat}>{subsubcat}</option>
-          ))}
-        </select>
-        <input type="text" name="image" value={newProduct.image} onChange={handleChange} placeholder="Görsel URL'si" />
-        <label>
-          <input type="checkbox" name="onSale" checked={newProduct.onSale} onChange={handleChange} />
-          Fırsat Ürün
-        </label>
-        <button onClick={() => setModalIsOpen(true)}>{editingProduct ? 'Ürünü Güncelle' : 'Ürün Ekle'}</button>
+        </ul>
+        <button onClick={() => setModalIsOpen(true)}>Ürün Ekle</button>
       </div>
-
-      <Modal
-        isOpen={modalIsOpen}
-        onRequestClose={() => setModalIsOpen(false)}
-        className="modal"
-        overlayClassName="modal-overlay"
-      >
-        <h2>{editingProduct ? 'Ürünü Düzenle' : 'Yeni Ürün Ekle'}</h2>
-        <div className="modal-content">
-          <input type="text" name="name" value={newProduct.name} onChange={handleChange} placeholder="İsim" />
-          <ReactQuill value={newProduct.description} onChange={handleDescriptionChange} placeholder="Açıklama" />
-          <input type="number" name="price" value={newProduct.price} onChange={handleChange} placeholder="Fiyat" />
-          <select name="category" value={newProduct.category} onChange={handleChange}>
-            <option value="">Kategori Seçin</option>
-            {categories.map(category => (
-              <option key={category.id} value={category.name}>{category.name}</option>
+      <div className="categories-list">
+        <h2>Kategoriler</h2>
+        <ul>
+          {categories.map((category) => (
+            <li key={category.id}>
+              {category.name}
+              <button onClick={() => handleDeleteCategory(category.id)}>Kategoriyi Sil</button>
+              <ul>
+                {getSubcategories(category.name).map((sub) => (
+                  <li key={sub}>
+                    {sub}
+                    <button onClick={() => handleDeleteSubcategory(category.id, sub)}>Alt Kategoriyi Sil</button>
+                    <ul>
+                      {getSubsubcategories(category.name, sub).map((subsub) => (
+                        <li key={subsub}>
+                          {subsub}
+                          <button onClick={() => handleDeleteSubsubcategory(category.id, sub, subsub)}>Alt Alt Kategoriyi Sil</button>
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ul>
+        <div className="add-category">
+          <input value={newCategory} onChange={(e) => setNewCategory(e.target.value)} placeholder="Yeni Kategori" />
+          <button onClick={handleAddCategory}>Kategori Ekle</button>
+        </div>
+        <div className="add-subcategory">
+          <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
+            <option value="">Kategori Seç</option>
+            {categories.map((cat) => (
+              <option key={cat.name} value={cat.name}>{cat.name}</option>
+            ))}
+          </select>
+          <input value={newSubcategory} onChange={(e) => setNewSubcategory(e.target.value)} placeholder="Yeni Alt Kategori" />
+          <button onClick={handleAddSubcategory}>Alt Kategori Ekle</button>
+        </div>
+        <div className="add-subsubcategory">
+          <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
+            <option value="">Kategori Seç</option>
+            {categories.map((cat) => (
+              <option key={cat.name} value={cat.name}>{cat.name}</option>
+            ))}
+          </select>
+          <select value={selectedSubcategory} onChange={(e) => setSelectedSubcategory(e.target.value)}>
+            <option value="">Alt Kategori Seç</option>
+            {getSubcategories(selectedCategory).map((sub) => (
+              <option key={sub} value={sub}>{sub}</option>
+            ))}
+          </select>
+          <input value={newSubsubcategory} onChange={(e) => setNewSubsubcategory(e.target.value)} placeholder="Yeni Alt Alt Kategori" />
+          <button onClick={handleAddSubsubcategory}>Alt Alt Kategori Ekle</button>
+        </div>
+      </div>
+      <Modal isOpen={modalIsOpen} onRequestClose={() => setModalIsOpen(false)}>
+        <h2>{editingProduct ? "Ürünü Düzenle" : "Ürün Ekle"}</h2>
+        <form ref={formRef} onSubmit={(e) => { e.preventDefault(); handleAddOrUpdateProduct(); }}>
+          <input name="name" value={newProduct.name} onChange={handleChange} placeholder="Ürün Adı" required />
+          <ReactQuill value={newProduct.description} onChange={handleDescriptionChange} placeholder="Ürün Açıklaması" />
+          <input name="price" type="number" value={newProduct.price} onChange={handleChange} placeholder="Ürün Fiyatı" required />
+          <select name="category" value={newProduct.category} onChange={handleChange} required>
+            <option value="">Kategori Seç</option>
+            {categories.map((cat) => (
+              <option key={cat.name} value={cat.name}>{cat.name}</option>
             ))}
           </select>
           <select name="subcategory" value={newProduct.subcategory} onChange={handleChange}>
-            <option value="">Alt Kategori Seçin</option>
-            {categories.find(cat => cat.name === newProduct.category)?.subcategories &&
-              Object.keys(categories.find(cat => cat.name === newProduct.category).subcategories).map(subcat => (
-                <option key={subcat} value={subcat}>{subcat}</option>
+            <option value="">Alt Kategori Seç</option>
+            {getSubcategories(newProduct.category).map((sub) => (
+              <option key={sub} value={sub}>{sub}</option>
             ))}
           </select>
           <select name="subsubcategory" value={newProduct.subsubcategory} onChange={handleChange}>
-            <option value="">Alt Alt Kategori Seçin</option>
-            {categories.find(cat => cat.name === newProduct.category)?.subcategories[newProduct.subcategory] &&
-              Object.keys(categories.find(cat => cat.name === newProduct.category).subcategories[newProduct.subcategory]).map(subsubcat => (
-                <option key={subsubcat} value={subsubcat}>{subsubcat}</option>
+            <option value="">Alt Alt Kategori Seç</option>
+            {getSubsubcategories(newProduct.category, newProduct.subcategory).map((subsub) => (
+              <option key={subsub} value={subsub}>{subsub}</option>
             ))}
           </select>
-          <input type="text" name="image" value={newProduct.image} onChange={handleChange} placeholder="Görsel URL'si" />
+          <input name="image" value={newProduct.image} onChange={handleChange} placeholder="Ürün Resmi URL'si" />
           <label>
-            <input type="checkbox" name="onSale" checked={newProduct.onSale} onChange={handleChange} />
-            Fırsat Ürün
+            <input name="onSale" type="checkbox" checked={newProduct.onSale} onChange={handleChange} />
+            İndirimde
           </label>
-          <button onClick={handleAddOrUpdateProduct}>{editingProduct ? 'Güncelle' : 'Ekle'}</button>
-          <button onClick={() => setModalIsOpen(false)}>İptal</button>
-        </div>
+          <button type="submit">{editingProduct ? "Güncelle" : "Ekle"}</button>
+        </form>
       </Modal>
-
-      <h3>Kategoriler</h3>
-      <input type="text" value={newCategory} onChange={(e) => setNewCategory(e.target.value)} placeholder="Yeni Kategori" />
-      <button onClick={handleAddCategory}>Ekle</button>
-
-      <h4>Alt Kategori Ekle</h4>
-      <select onChange={(e) => setSelectedCategory(e.target.value)}>
-        <option value="">Kategori Seçin</option>
-        {categories.map(category => (
-          <option key={category.id} value={category.name}>{category.name}</option>
-        ))}
-      </select>
-      <input type="text" value={newSubcategory} onChange={(e) => setNewSubcategory(e.target.value)} placeholder="Yeni Alt Kategori" />
-      <button onClick={handleAddSubcategory}>Ekle</button>
-
-      <h4>Alt Alt Kategori Ekle</h4>
-      <select onChange={(e) => setSelectedCategory(e.target.value)}>
-        <option value="">Kategori Seçin</option>
-        {categories.map(category => (
-          <option key={category.id} value={category.name}>{category.name}</option>
-        ))}
-      </select>
-      <select onChange={(e) => setSelectedSubcategory(e.target.value)}>
-        <option value="">Alt Kategori Seçin</option>
-        {categories.find(cat => cat.name === selectedCategory)?.subcategories &&
-          Object.keys(categories.find(cat => cat.name === selectedCategory).subcategories).map(subcat => (
-            <option key={subcat} value={subcat}>{subcat}</option>
-        ))}
-      </select>
-      <input type="text" value={newSubsubcategory} onChange={(e) => setNewSubsubcategory(e.target.value)} placeholder="Yeni Alt Alt Kategori" />
-      <button onClick={handleAddSubsubcategory}>Ekle</button>
-
-      <ul className="category-tree">
-        {categories.map(renderCategoryTree)}
-      </ul>
-
-      <h3>Ürünler</h3>
-      <ul className="products-list">
-        {products.map((product) => (
-          <li key={product.id}>
-            <span>{product.name}</span>
-            <button onClick={() => handleEditProduct(product)}>Düzenle</button>
-            <button onClick={() => { setProductToDelete(product); setDeleteModalIsOpen(true); }}>Sil</button>
-          </li>
-        ))}
-      </ul>
-
-      <Modal
-        isOpen={deleteModalIsOpen}
-        onRequestClose={() => setDeleteModalIsOpen(false)}
-        className="modal"
-        overlayClassName="modal-overlay"
-      >
+      <Modal isOpen={deleteModalIsOpen} onRequestClose={() => setDeleteModalIsOpen(false)}>
         <h2>Ürünü Sil</h2>
-        <div className="modal-content">
-          <p>Bu ürünü silmek istediğinizden emin misiniz?</p>
-          <button onClick={handleDeleteProduct}>Evet</button>
-          <button onClick={() => setDeleteModalIsOpen(false)}>Hayır</button>
-        </div>
+        <p>Bu ürünü silmek istediğinizden emin misiniz?</p>
+        <button onClick={handleDeleteProduct}>Evet</button>
+        <button onClick={() => setDeleteModalIsOpen(false)}>Hayır</button>
       </Modal>
     </div>
   );

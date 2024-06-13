@@ -10,10 +10,12 @@ import Cart from './Components/Cart/Cart';
 import { CartProvider } from './Components/Cart/CartContext';
 import CartIcon from './Components/Cart/CartIcon';
 import AdminPanel from './Components/AdminPanel/AdminPanel';
+ 
 import Footer from './Components/footer/Footer';
 import CategoryPage from './Components/Offers/CategoryPage';
 import ContactPage from './Components/Contact/ContactPage';
 import "./Components/tamplate.css"
+import LoginAdmin from './Components/AdminPanel/loginAdmin';
   
 function App() {
   return (
@@ -48,12 +50,13 @@ function App() {
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/:categoryName" element={<CategoryPage />} />
+        <Route path="/uziadmin" element={<LoginAdmin />} />
       
       </Routes>
     </Router>
  
   </CartProvider>
-  <AdminPanel/>
+ 
   <Footer/>
   </div>
   );
