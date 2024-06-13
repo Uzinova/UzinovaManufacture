@@ -41,49 +41,87 @@ html {
 }
 .headernav {
   display: flex;
-  text-align: center;
+  justify-content: center;
   align-items: center;
   padding: 20px;
-  gap: 0px;
-  z-index: 40;
-  text-decoration: none;
   background-color: #000000;
+  z-index: 40;
 }
- 
-.headertxt.h1{
-  font-size: 5vw; /* Adjusted to be responsive */
-  gap: 0px;
-  margin-left: 40vw;
-  margin-bottom: 4vh;
-  text-align: center;
+
+.logo-container {
+  display: flex;
+  justify-content: center;
   align-items: center;
+  text-decoration: none;
+}
+
+.logoimg {
+  height: auto;
+  width: 30vw;
+  margin-left: 100%;
+
+}
+
+.headertxt {
+  font-size: 5vw;
+  color: white;
+  text-align: center;
+  margin-left: 1vw;
+}
+
+.menu.navbar-nav.ml-auto a {
   color: white;
 }
-@media (max-width: 768px) { /* For tablets and small screens */
-  .headertxt.h1 {
-    font-size: 8vw; /* Adjust this value as needed */
-    margin-left: 220px;
-  }
-  .menu.navbar-nav.ml-auto a{
-    font-size: 10px;
+/* Ensure the collapse takes only the required width */
+.navbar-collapse {
+  flex-grow: 0;
+}
+
+@media (min-width: 768px) {
+  .navbar-collapse {
+    justify-content: flex-end; /* Align items to the right on larger screens */
   }
 }
-@media (max-width: 768px) { /* For tablets and small screens */
-  .headertxt.h1 {
-    font-size: 8vw; /* Adjust this value as needed */
+
+/* Ensure the menu items do not stretch too much */
+.nav-item {
+  margin-left: 15px; /* Add some spacing between menu items */
+}
+
+@media (max-width: 768px) {
+  .logoimg {
+    width: 50vw;
+    
+      margin-left: 10%;
+     
+  }
+
+  .headertxt {
+    font-size: 7vw;
+  }
+
+  .menu.navbar-nav.ml-auto a {
+    font-size: 12px;
   }
 }
-@media (max-width: 600px) { /* For tablets and small screens */
-  .headertxt.h1 {
-    font-size: 10vw; /* Adjust this value as needed */
-    margin-left: 160px;
+
+@media (max-width: 600px) {
+  .logoimg {
+    width: 60vw;
+  }
+
+  .headertxt {
+    font-size: 8vw;
   }
 }
- 
-@media (max-width: 450px) { /* For tablets and small screens */
-  .headertxt.h1 {
-    font-size: 12vw; /* Adjust this value as needed */
-    margin-left: 100px;
+
+@media (max-width: 450px) {
+  .logoimg {
+    width: 70vw;
+  }
+
+  .headertxt {
+    font-size: 10vw;
   }
 }
 .menu {
@@ -107,7 +145,10 @@ html {
 .navcont.container-fluid {
   background-color: black;
 }
+.collapse .navbar-collapse{
+width: fit-content;
 
+}
 
 .mainhero {
   align-items: center;

@@ -23,28 +23,24 @@ function App() {
     <CartProvider>
     <Router>
     <nav className='headernav navbar navbar-expand-md navbar-dark navbar-fixed-top'>
-  <div className='navcont container-fluid d-flex justify-content-between align-items-center'>
-    <Link style={{ textDecoration: 'none' }} to="/"  >
-      <div className='headertxt h1'>UZINOVA<span className="orange">S</span></div>
-
+  <div className='container-fluid d-flex justify-content-between align-items-center'>
+    <Link style={{ textDecoration: 'none' }} to="/">
+      <img className='logoimg' src='image/LOGOZ.png' alt='Logo' />
     </Link>
     <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span className="navbar-toggler-icon"></span>
     </button>
     <div className='collapse navbar-collapse' id='navbarNav'>
       <div className='menu navbar-nav ml-auto'>
-        <a className="nav-item  "target="_blank" rel="noopener noreferrer" href="https://uzinova.com">Biz Kimiz</a>
-        <a className="nav-item  " href='#siparis'>Sipariş Takibi</a>
-        <a className="nav-item  " href='/contact'>İletişim </a>
-        
-        <a className="nav-item "><CartIcon /></a>
+        <a className="nav-item nav-link" target="_blank" rel="noopener noreferrer" href="https://uzinova.com">Biz Kimiz</a>
+        <a className="nav-item nav-link" href='#siparis'>Sipariş Takibi</a>
+        <a className="nav-item nav-link" href='/contact'>İletişim</a>
+        <a className="nav-item nav-link"><CartIcon /></a>
       </div>
     </div>
-  
     <LiveChat />
   </div>
 </nav>
-   
 
       <Routes>
         <Route path="/contact" element={<ContactPage/>} />
