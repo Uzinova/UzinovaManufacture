@@ -16,7 +16,7 @@ const Catagoryslider = () => {
     const getSaleProducts = async () => {
       try {
         const products = await fetchProducts();
-        console.log("Fetched sale products:", products);
+       
         const productsWithTags = products.map(product => ({
           ...product,
          

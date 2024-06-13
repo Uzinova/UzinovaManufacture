@@ -55,7 +55,7 @@ function App() {
       
       </Routes>
     </Router>
-    <AdminPanel/>
+ 
   </CartProvider>
   <Footer/>
   </div>
