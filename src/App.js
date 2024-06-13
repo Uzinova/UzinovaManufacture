@@ -53,6 +53,7 @@ function App() {
     </Router>
  
   </CartProvider>
+  <AdminPanel/>
   <Footer/>
   </div>
   );
