@@ -58,8 +58,8 @@ html {
 .logoimg {
   height: auto;
   width: 30vw;
-  margin-left: 100%;
-
+  margin-left: 110%;
+  scale: 0.7;
 }
 
 .headertxt {
