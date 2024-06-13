@@ -32,7 +32,7 @@ function App() {
     </button>
     <div className='collapse navbar-collapse' id='navbarNav'>
       <div className='menu navbar-nav ml-auto'>
-        <a className="nav-item nav-link" target="_blank" rel="noopener noreferrer" href="https://uzinova.com">Biz Kimiz</a>
+        <a className="nav-item nav-link" target="_blank" rel="noopener noreferrer" href="https://uzinova.com">Hakkımızda</a>
         <a className="nav-item nav-link" href='#siparis'>Sipariş Takibi</a>
         <a className="nav-item nav-link" href='/contact'>İletişim</a>
         <a className="nav-item nav-link"><CartIcon /></a>
