@@ -22,7 +22,9 @@
   overflow: hidden;
   box-sizing: border-box;
 }
-
+.product-detail-description p{
+  color: #fffefe;
+}
 .product-detail-image-section {
   flex: 1;
   background-color: #1a1a1a;

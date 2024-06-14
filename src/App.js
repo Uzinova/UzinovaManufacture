@@ -40,6 +40,12 @@ function App() {
         <a className="nav-item nav-link"><CartIcon /></a>
       </div>
     </div>
+    <div className="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a className="dropdown-item" href="/link1">Link 1</a>
+            <a className="dropdown-item" href="/link2">Link 2</a>
+            <a className="dropdown-item" href="/link3">Link 3</a>
+    </div>
+      
     <LiveChat />
   </div>
 </nav>

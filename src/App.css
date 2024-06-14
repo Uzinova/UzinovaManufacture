@@ -301,6 +301,18 @@ width: fit-content;
 .App-link {
   color: #61dafb;
 }
+.nav-item .dropdown-menu {
+  background-color: #000000;
+  color: white;
+}
+
+.nav-item .dropdown-menu a {
+  color: white;
+}
+
+.nav-item .dropdown-menu a:hover {
+  background-color: #333333;
+}
 /* src/LiveChat.css */
 .chat-container {
   position: fixed;
