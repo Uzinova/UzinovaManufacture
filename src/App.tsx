@@ -44,15 +44,17 @@ function App() {
       // Try multiple possible paths for the image
       const imagePaths = [
         `/seqimg/${String(i).padStart(4, '0')}.webp`,  // Production path
-        `/src/seqimg/${String(i).padStart(4, '0')}.webp`,  // Development path
         `./seqimg/${String(i).padStart(4, '0')}.webp`,  // Relative path
+        `/public/seqimg/${String(i).padStart(4, '0')}.webp`,  // Public path
       ];
 
       let currentPathIndex = 0;
       
       const tryNextPath = () => {
         if (currentPathIndex < imagePaths.length) {
-          img.src = imagePaths[currentPathIndex];
+          const path = imagePaths[currentPathIndex];
+          console.log(`Trying to load image ${i} from path: ${path}`);
+          img.src = path;
           currentPathIndex++;
         } else {
           // If all paths failed, use fallback
