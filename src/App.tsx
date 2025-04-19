@@ -40,9 +40,36 @@ function App() {
     for(let i = 1; i <= totalImages; i++) {
       const img = new Image();
       img.crossOrigin = 'anonymous';
-      img.src = `/src/seqimg/${String(i).padStart(4, '0')}.webp`;
       
+      // Try multiple possible paths for the image
+      const imagePaths = [
+        `/seqimg/${String(i).padStart(4, '0')}.webp`,  // Production path
+        `/src/seqimg/${String(i).padStart(4, '0')}.webp`,  // Development path
+        `./seqimg/${String(i).padStart(4, '0')}.webp`,  // Relative path
+      ];
+
+      let currentPathIndex = 0;
+      
+      const tryNextPath = () => {
+        if (currentPathIndex < imagePaths.length) {
+          img.src = imagePaths[currentPathIndex];
+          currentPathIndex++;
+        } else {
+          // If all paths failed, use fallback
+          console.error(`All paths failed for image ${i}`);
+          const fallbackImg = new Image();
+          fallbackImg.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+          loadimages.push(fallbackImg);
+          loadedCount++;
+          if (loadedCount === totalImages) {
+            setLoadedImages(loadimages);
+          }
+        }
+      };
+
       img.onload = () => {
+        console.log(`Successfully loaded image ${i} from path: ${img.src}`);
+        loadimages.push(img);
         loadedCount++;
         if (loadedCount === totalImages) {
           setLoadedImages(loadimages);
@@ -50,18 +77,12 @@ function App() {
       };
       
       img.onerror = (error) => {
-        console.error(`Error loading image ${i}:`, error);
-        // Create a fallback image with a solid color
-        const fallbackImg = new Image();
-        fallbackImg.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='; // 1x1 transparent pixel
-        loadimages.push(fallbackImg);
-        loadedCount++;
-        if (loadedCount === totalImages) {
-          setLoadedImages(loadimages);
-        }
+        console.error(`Error loading image ${i} from path: ${img.src}`, error);
+        tryNextPath();
       };
       
-      loadimages.push(img);
+      // Start with the first path
+      tryNextPath();
     }
     return loadimages;
   }, []);
@@ -99,11 +120,18 @@ function App() {
           return;
         }
         
-        // Draw the image
-        ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+        try {
+          // Draw the image
+          ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+        } catch (drawError) {
+          console.error('Error drawing image:', drawError);
+          // Draw a placeholder on draw error
+          ctx.fillStyle = '#000000';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
       });
     } catch (error) {
-      console.error('Error drawing image:', error);
+      console.error('Error in renderSeq:', error);
       // Clear the canvas on error
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
