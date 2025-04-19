@@ -51,6 +51,10 @@ function App() {
       
       img.onerror = (error) => {
         console.error(`Error loading image ${i}:`, error);
+        // Create a fallback image with a solid color
+        const fallbackImg = new Image();
+        fallbackImg.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='; // 1x1 transparent pixel
+        loadimages.push(fallbackImg);
         loadedCount++;
         if (loadedCount === totalImages) {
           setLoadedImages(loadimages);
@@ -67,7 +71,7 @@ function App() {
 
   const renderSeq = useCallback((index: number) => {
     const ctx = seqref.current?.getContext('2d');
-    if (!ctx || !loadedImages[index - 1]) return;
+    if (!ctx) return;
     
     const canvas = seqref.current;
     if (!canvas) return;
@@ -81,12 +85,27 @@ function App() {
     try {
       // Use requestAnimationFrame for smooth rendering
       requestAnimationFrame(() => {
-        if (!ctx || !loadedImages[index - 1]) return;
+        if (!ctx) return;
+        
+        // Clear the canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(loadedImages[index - 1], 0, 0, canvas.width, canvas.height);
+        
+        // Check if we have a valid image at this index
+        const image = loadedImages[index - 1];
+        if (!image || image.complete === false) {
+          // Draw a placeholder if image is not ready
+          ctx.fillStyle = '#000000';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          return;
+        }
+        
+        // Draw the image
+        ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
       });
     } catch (error) {
       console.error('Error drawing image:', error);
+      // Clear the canvas on error
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
   }, [loadedImages]);
 
