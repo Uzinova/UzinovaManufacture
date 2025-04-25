@@ -9,6 +9,11 @@ import { useCart } from './contexts/CartContext';
 import { useNotification } from './contexts/NotificationContext';
 import { useMotionValueEvent, useScroll, useTransform } from 'framer-motion';
 import NewsDetail from './pages/NewsDetail';
+import './styles/Button17.css';
+import './styles/StarButton.css';
+import './styles/carousel.css';
+import Carousel from 'react-multi-carousel';
+import 'react-multi-carousel/lib/styles.css';
  
 
 function App() {
@@ -31,6 +36,8 @@ function App() {
   });
   const [sequenceComplete, setSequenceComplete] = useState(false);
   const [loadedImages, setLoadedImages] = useState<HTMLImageElement[]>([]);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const [autoScroll, setAutoScroll] = useState(true);
  
   const seqimages = useMemo( () => {
     const loadimages:HTMLImageElement[] = [];
@@ -70,8 +77,7 @@ function App() {
       };
 
       img.onload = () => {
-        console.log(`Successfully loaded image ${i} from path: ${img.src}`);
-        loadimages.push(img);
+         loadimages.push(img);
         loadedCount++;
         if (loadedCount === totalImages) {
           setLoadedImages(loadimages);
@@ -281,7 +287,6 @@ function App() {
       canvas.height = window.innerHeight;
     };
     resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
 
     // Initialize particles
     const initParticles = () => {
@@ -296,8 +301,6 @@ function App() {
 
     // Animation loop
     let animationFrameId: number;
-   
-  //  animate();
 
     const handleMouseMove = (e: MouseEvent) => {
       const x = (e.clientX / window.innerWidth) * 100;
@@ -321,33 +324,45 @@ function App() {
       });
     };
 
+    // Add event listeners
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('scroll', handleScroll);
     window.addEventListener('resize', handleScroll);
+    window.addEventListener('resize', resizeCanvas);
 
     // Initial check for visible elements
     setTimeout(handleScroll, 100);
 
+    // Auto-scroll for featured products
+    const featuredInterval = setInterval(() => {
+      const maxIndex = Math.max(0, featuredProducts.length - 4);
+      setCurrentImageIndex((prev) => (prev + 1) % (maxIndex + 1));
+    }, 3000);
+
     // Image Rotation
     const imageInterval = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % (heroSlides.length || 1));
-    }, 5000);
+    }, 1000);
 
     // Show promo popup after 3 seconds
     const promoTimeout = setTimeout(() => {
       setShowPromo(true);
-    }, 3000);
+    }, 1000);
 
+    // Cleanup function
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleScroll);
       window.removeEventListener('resize', resizeCanvas);
       clearInterval(imageInterval);
+      clearInterval(featuredInterval);
       clearTimeout(promoTimeout);
-      cancelAnimationFrame(animationFrameId);
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
     };
-  }, []);
+  }, [featuredProducts.length]);
 
   const handleAddToCart = (id: string) => {
     const product = featuredProducts.find(p => p.id === id);
@@ -364,6 +379,39 @@ function App() {
       showNotification('cart', `${product.name} sepete eklendi!`);
     }
   };
+
+  // Add scroll handler
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      setShowScrollTop(scrollTop > 300);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+
+  // Add useEffect for auto-scrolling
+  useEffect(() => {
+    if (!autoScroll || featuredProducts.length === 0) return;
+
+    const maxIndex = Math.ceil(featuredProducts.length / 4) - 1;
+    const interval = setInterval(() => {
+      setCurrentImageIndex(prev => {
+        const next = prev + 1;
+        return next > maxIndex ? 0 : next;
+      });
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [autoScroll, featuredProducts.length]);
 
   return (
     <Routes>
@@ -430,7 +478,25 @@ function App() {
                 <p className="text-xl md:text-2xl mb-8">
                   Profesyonel model roket ve sonda roket çözümleri
                 </p>
-                <Link to="/products" className="inline-block bg-primary text-primary-foreground px-8 py-3 rounded-md text-lg hover:bg-primary/90 transition-colors transform hover:scale-105">
+                <Link to="/products" className="star-button inline-block">
+                  <svg className="star-1" width="50" height="50" viewBox="0 0 512 512">
+                    <path className="fil0" d="M512 198.525l-176.89-25.704-79.11-160.291-79.108 160.291-176.892 25.704 128 124.769-30.216 176.176 158.216-83.179 158.216 83.179-30.217-176.176 128.001-124.769z"/>
+                  </svg>
+                  <svg className="star-2" width="50" height="50" viewBox="0 0 512 512">
+                    <path className="fil0" d="M512 198.525l-176.89-25.704-79.11-160.291-79.108 160.291-176.892 25.704 128 124.769-30.216 176.176 158.216-83.179 158.216 83.179-30.217-176.176 128.001-124.769z"/>
+                  </svg>
+                  <svg className="star-3" width="50" height="50" viewBox="0 0 512 512">
+                    <path className="fil0" d="M512 198.525l-176.89-25.704-79.11-160.291-79.108 160.291-176.892 25.704 128 124.769-30.216 176.176 158.216-83.179 158.216 83.179-30.217-176.176 128.001-124.769z"/>
+                  </svg>
+                  <svg className="star-4" width="50" height="50" viewBox="0 0 512 512">
+                    <path className="fil0" d="M512 198.525l-176.89-25.704-79.11-160.291-79.108 160.291-176.892 25.704 128 124.769-30.216 176.176 158.216-83.179 158.216 83.179-30.217-176.176 128.001-124.769z"/>
+                  </svg>
+                  <svg className="star-5" width="50" height="50" viewBox="0 0 512 512">
+                    <path className="fil0" d="M512 198.525l-176.89-25.704-79.11-160.291-79.108 160.291-176.892 25.704 128 124.769-30.216 176.176 158.216-83.179 158.216 83.179-30.217-176.176 128.001-124.769z"/>
+                  </svg>
+                  <svg className="star-6" width="50" height="50" viewBox="0 0 512 512">
+                    <path className="fil0" d="M512 198.525l-176.89-25.704-79.11-160.291-79.108 160.291-176.892 25.704 128 124.769-30.216 176.176 158.216-83.179 158.216 83.179-30.217-176.176 128.001-124.769z"/>
+                  </svg>
                   Keşfetmeye Başla
                 </Link>
               </div>
@@ -450,7 +516,87 @@ function App() {
             </div>
           </div>
 
-          {/*Sequance Images */}
+          {/* Featured Products Section */}
+          <div className="bg-background py-8 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-b from-accent/10 via-accent/0 to-accent/10" />
+            <div className="interactive-bg" />
+            <div className="max-w-7xl mx-auto px-4">
+              <h2 className="text-2xl font-bold mb-8 scroll-reveal">Öne Çıkan Ürünler</h2>
+              
+              {/* Carousel Container */}
+              <Carousel
+                additionalTransfrom={0}
+                arrows
+                autoPlay
+                autoPlaySpeed={3000}
+                centerMode={false}
+                className=""
+                containerClass="carousel-container"
+                dotListClass=""
+                draggable
+                focusOnSelect={false}
+                infinite
+                itemClass=""
+                keyBoardControl
+                minimumTouchDrag={80}
+                pauseOnHover={false}
+                renderArrowsWhenDisabled={false}
+                renderButtonGroupOutside={false}
+                renderDotsOutside={false}
+                responsive={{
+                  desktop: {
+                    breakpoint: {
+                      max: 3000,
+                      min: 1024
+                    },
+                    items: 6,
+                    partialVisibilityGutter: 20
+                  },
+                  tablet: {
+                    breakpoint: {
+                      max: 1024,
+                      min: 464
+                    },
+                    items: 3,
+                    partialVisibilityGutter: 20
+                  },
+                  mobile: {
+                    breakpoint: {
+                      max: 464,
+                      min: 0
+                    },
+                    items: 2,
+                    partialVisibilityGutter: 15
+                  }
+                }}
+                rewind={false}
+                rewindWithAnimation={false}
+                rtl={false}
+                shouldResetAutoplay
+                showDots
+                sliderClass=""
+                slidesToSlide={2}
+                swipeable
+                customTransition="transform 500ms ease-in-out"
+                ssr={false}
+              >
+                {featuredProducts.map((item, index) => (
+                  <div key={`${item.id}-${index}`} className="px-1">
+                    <div className="bg-card rounded-lg overflow-hidden shadow-lg h-full transform transition-transform hover:scale-105">
+                      <ProductCard
+                        {...item}
+                        allLabels={labels}
+                        onAddToCart={handleAddToCart}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </Carousel>
+            </div>
+          </div>
+
+   
+          {/* Sequance Images */}
          
          
         
@@ -464,7 +610,7 @@ function App() {
               minHeight: '120vh',
               position: 'relative',
               background: '#000000',
-              marginBottom: '-40vh',
+              marginBottom: '-45vh',
               willChange: 'transform'
             }}
           >
@@ -524,58 +670,8 @@ function App() {
             }
           `}</style>
 
-          {/* News Section */}
-          <div className="bg-accent/50 py-16 relative mt-0">
-            <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-background/0 to-background/20" />
-            <div className="max-w-7xl mx-auto px-6">
-              <h2 className="text-3xl font-bold mb-8 scroll-reveal">Son Gelişmeler</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {news.map((item, index) => (
-                  <div key={index} className="news-card group relative h-[500px] overflow-hidden rounded-lg">
-                    <img 
-                      src={item.image || "https://images.unsplash.com/photo-1517976487492-5750f3195933?auto=format&fit=crop&q=80"}
-                      alt={item.title}
-                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent">
-                      <div className="absolute bottom-0 left-0 right-0 p-6">
-                        <div className="flex items-center text-sm text-primary mb-2">
-                          <Calendar className="h-4 w-4 mr-2" />
-                          {item.date}
-                        </div>
-                        <Link 
-                          to={`/news/${item.id}`}
-                          className="text-xl font-bold mb-2 hover:text-primary transition-colors line-clamp-2"
-                        >
-                          {item.title}
-                        </Link>
-                        <p className="text-gray-400 mb-4 line-clamp-3">{item.summary}</p>
-                        <Link 
-                          to={`/news/${item.id}`}
-                          className="flex items-center text-primary hover:text-primary/80 transition-colors"
-                        >
-                          Devamını Oku
-                          <ArrowRight className="h-4 w-4 ml-2" />
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Limited Time Offer Banner */}
-          <div className="bg-primary/10 py-4 scroll-reveal relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-primary/10 to-primary/20" />
-            <div className="max-w-7xl mx-auto px-4 flex items-center justify-center space-x-4">
-              <Timer className="h-5 w-5 text-primary animate-pulse" />
-              <p className="text-sm">
-                <span className="font-bold">Sınırlı Süre:</span> Tüm model roket kitlerinde %20 indirim!
-              </p>
-            </div>
-          </div>
-
+       
+    
           {/* Categories */}
           <div className="max-w-7xl mx-auto px-4 py-16 relative">
             <div className="absolute inset-0 bg-gradient-to-b from-background/10 via-background/0 to-background/10" />
@@ -603,8 +699,8 @@ function App() {
             </div>
           </div>
 
-          {/* Ground Station Section */}
-          <div id="yeristasyonu" className="bg-accent py-16 relative scroll-reveal">
+     {/* Ground Station Section */}
+     <div id="yeristasyonu" className="bg-accent py-16 relative scroll-reveal">
             <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-background/0 to-background/20" />
             <div className="interactive-bg" />
             <div className="max-w-7xl mx-auto px-4">
@@ -650,102 +746,141 @@ function App() {
             </div>
           </div>
 
-          {/* Featured Products */}
-          <div className="bg-background py-16 relative">
-            <div className="absolute inset-0 bg-gradient-to-b from-accent/10 via-accent/0 to-accent/10" />
-            <div className="interactive-bg" />
-            <div className="max-w-7xl mx-auto px-4">
-              <h2 className="text-3xl font-bold mb-8 scroll-reveal">Öne Çıkan Ürünler</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {featuredProducts.map((item, index) => (
-                  <ProductCard
-                    key={item.id}
-                    {...item}
-                    allLabels={labels}
-                    onAddToCart={handleAddToCart}
-                  />
+        
+       {/* News Section with Space Theme */}
+       <div className="py-16 relative overflow-hidden bg-gradient-to-b from-background to-accent/20">
+            {/* Space Background */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_rgba(251,146,60,0.05),_transparent_70%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,_rgba(251,146,60,0.05),_transparent_50%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_70%,_rgba(251,146,60,0.05),_transparent_50%)]" />
+            
+            <div className="max-w-7xl mx-auto px-6 relative z-10">
+              <div className="flex items-center justify-between mb-12">
+                <div className="flex items-center gap-3">
+                  <div className="h-8 w-1 bg-primary rounded-full" />
+                  <h2 className="text-3xl font-bold scroll-reveal text-white">Son Gelişmeler</h2>
+                </div>
+                <Link to="/news" className="flex items-center text-primary hover:text-primary/80 transition-colors group">
+                  Tüm Haberler
+                  <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {news.map((item, index) => (
+                  <div key={index} className="news-card group relative h-[500px] overflow-hidden rounded-lg bg-black/40 hover:bg-black/50 backdrop-blur-sm border border-white/5 hover:border-primary/50 transition-all duration-300">
+                    <div className="absolute inset-0">
+                      <img 
+                        src={item.image || "https://images.unsplash.com/photo-1517976487492-5750f3195933?auto=format&fit=crop&q=80"}
+                        alt={item.title}
+                        className="w-full h-full object-cover opacity-60 group-hover:opacity-40 group-hover:scale-105 transition-all duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent" />
+                    </div>
+                    <div className="absolute inset-x-0 bottom-0 p-6 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-4">
+                          <div className="flex items-center gap-2 text-xs text-primary/90 bg-primary/10 px-3 py-1.5 rounded-full">
+                            <Calendar className="h-3.5 w-3.5" />
+                            {item.date}
+                          </div>
+                          <div className="flex items-center gap-2 text-xs text-primary/90 bg-primary/10 px-3 py-1.5 rounded-full">
+                            <Rocket className="h-3.5 w-3.5" />
+                            Uzay Teknolojileri
+                          </div>
+                        </div>
+                        <Link 
+                          to={`/news/${item.id}`}
+                          className="block group/title"
+                        >
+                          <h3 className="text-xl font-bold mb-3 text-white group-hover/title:text-primary transition-colors line-clamp-2">
+                            {item.title}
+                          </h3>
+                          <p className="text-gray-400 mb-4 line-clamp-3 text-sm">{item.summary}</p>
+                        </Link>
+                        <Link 
+                          to={`/news/${item.id}`}
+                          className="inline-flex items-center text-primary hover:text-primary/80 transition-colors text-sm font-medium group/link"
+                        >
+                          Devamını Oku
+                          <ArrowRight className="h-4 w-4 ml-2 group-hover/link:translate-x-1 transition-transform" />
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
           </div>
 
+     
+          {/* Floating Rocket Button */}
+          <button
+            onClick={scrollToTop}
+            className={`fixed bottom-8 left-8 z-50 p-3 rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary/90 transition-all duration-300 transform hover:scale-110 ${
+              showScrollTop ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'
+            }`}
+          >
+            <Rocket className="h-6 w-6" />
+          </button>
+
           {/* Footer */}
-          <canvas ref={canvasRef} />
-          <footer className="bg-accent mt-16 py-12">
-            <div className="max-w-7xl mx-auto px-4">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div>
-                  <h4 className="font-bold mb-4">Hakkımızda</h4>
-                  <p className="text-gray-400">
-                    2019 yılındna biri bu sektörün öncüsü olan firmamız, model roketçilik ve uzay teknolojileri alanında hizmet vermektedir.  <br />
-                    <a 
-                      href="https://uzinova.com" 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
-                      className="text-primary hover:underline"
-                    >
-                      uzinova.com
-                    </a>
-                  </p>
-                   </div>
-                <div>
-                  <h4 className="font-bold mb-4">Hızlı Bağlantılar</h4>
-                  <ul className="space-y-2 text-gray-400">
-                    <li><Link to="/products" className="hover:text-primary transition-colors">Mağaza</Link></li>
-                    <li><a href="#" className="hover:text-primary transition-colors">Hizmetler</a></li>
-                    <li><a href="#" className="hover:text-primary transition-colors">Destek</a></li>
-                   
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="font-bold mb-4">İletişim</h4>
-                  <ul className="space-y-2 text-gray-400">
-                    <li>E-posta: iletisim@uzinovas.com</li>
-                    <li>Telefon: (0212) 123 45 67</li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="font-bold mb-4">Bülten</h4>
-                  <div className="flex">
-                    <input
-                      type="email"
-                      placeholder="E-posta adresiniz"
-                      className="bg-background px-4 py-2 rounded-l"
-                    />
-                    <button className="bg-primary text-primary-foreground px-4 py-2 rounded-r hover:bg-primary/90 transition-colors">
-                      Abone Ol
-                    </button>
+          <div className="relative">
+            <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
+            <footer className="bg-accent py-12 relative z-10">
+              <div className="max-w-7xl mx-auto px-4">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                  <div>
+                    <h4 className="font-bold mb-4">Hakkımızda</h4>
+                    <p className="text-gray-400">
+                      2019 yılındna biri bu sektörün öncüsü olan firmamız, model roketçilik ve uzay teknolojileri alanında hizmet vermektedir.  <br />
+                      <a 
+                        href="https://uzinova.com" 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="text-primary hover:underline"
+                      >
+                        uzinova.com
+                      </a>
+                    </p>
+                     </div>
+                  <div>
+                    <h4 className="font-bold mb-4">Hızlı Bağlantılar</h4>
+                    <ul className="space-y-2 text-gray-400">
+                      <li><Link to="/products" className="hover:text-primary transition-colors">Mağaza</Link></li>
+                      <li><a href="#" className="hover:text-primary transition-colors">Hizmetler</a></li>
+                      <li><a href="#" className="hover:text-primary transition-colors">Destek</a></li>
+                     
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 className="font-bold mb-4">İletişim</h4>
+                    <ul className="space-y-2 text-gray-400">
+                      <li>E-posta: iletisim@uzinovas.com</li>
+                      <li>Telefon: (0212) 123 45 67</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 className="font-bold mb-4">Bülten</h4>
+                    <div className="flex">
+                      <input
+                        type="email"
+                        placeholder="E-posta adresiniz"
+                        className="bg-background px-4 py-2 rounded-l"
+                      />
+                      <button className="bg-primary text-primary-foreground px-4 py-2 rounded-r hover:bg-primary/90 transition-colors">
+                        Abone Ol
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </footer>
+            </footer>
+          </div>
 
 
 
-          {/* Promotional Popup */}
-          {showPromo && (
-            <div className="fixed bottom-4 right-4 max-w-sm bg-accent rounded-lg shadow-lg p-4 animate-slideIn z-50">
-              <button 
-                onClick={() => setShowPromo(false)}
-                className="absolute top-2 right-2 text-gray-400 hover:text-white"
-              >
-                <X className="h-4 w-4" />
-              </button>
-              <div className="flex items-center space-x-4">
-                <div className="bg-primary/20 p-3 rounded-full">
-                  <Percent className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <h4 className="font-bold mb-1">Özel Teklif!</h4>
-                  <p className="text-sm text-gray-400">İlk siparişinize özel %10 ekstra indirim!</p>
-                </div>
-              </div>
-              <button className="w-full bg-primary text-primary-foreground mt-4 py-2 rounded hover:bg-primary/90 transition-colors">
-                Hemen Yararlan
-              </button>
-            </div>
-          )}
+         
         </div>
       } />
     

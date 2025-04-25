@@ -1,11 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingCart, Menu, X, LogOut, User, Settings, Printer as Printer3D, Search, Wrench, Code, Factory } from 'lucide-react';
+import { ShoppingCart, Menu, X, LogOut, User, Settings, Printer as Printer3D, Search, Code, Factory, ChevronDown } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
 import { db } from '../lib/firebase';
 import type { Product } from '../types/product';
 import logo from '../logo.png';
+
+interface Category {
+  id: string;
+  name: string;
+  subcategories: string[];
+  path?: string[];
+}
 
 interface NavbarProps {
   transparent?: boolean;
@@ -23,6 +30,12 @@ export function Navbar({ transparent = false }: NavbarProps) {
   const { currentUser, logout, isAdmin } = useAuth();
   const { getTotalItems } = useCart();
   const navigate = useNavigate();
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const magazaRef = useRef<HTMLDivElement>(null);
+  
+  // Separate state for mobile expanded categories
+  const [expandedMobileCategory, setExpandedMobileCategory] = useState<string | null>(null);
 
   // Add debug logging
   useEffect(() => {
@@ -59,11 +72,64 @@ export function Navbar({ transparent = false }: NavbarProps) {
       setShowSearchDropdown(false);
       setUserMenuOpen(false);
       setServicesMenuOpen(false);
+      
+      // Don't reset activeDropdown in mobile view to preserve category navigation
+      if (window.innerWidth > 768) {
+        setActiveDropdown(null);
+      }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const categoriesQuery = db.query(
+        db.collection('categories')
+      );
+      
+      const querySnapshot = await db.getDocs(categoriesQuery);
+      const fetchedCategories = querySnapshot.docs.map(doc => {
+        const data = doc.data() as {
+          name: string;
+          subcategories?: string[];
+          path?: string[];
+        };
+        
+        console.log(`Category ${doc.id} raw data:`, data);
+        
+        const subcategories = data.subcategories;
+        console.log(`Category ${doc.id} subcategories:`, subcategories);
+        
+        return {
+          id: doc.id,
+          name: data.name,
+          subcategories: Array.isArray(subcategories) ? subcategories : [],
+          path: Array.isArray(data.path) ? data.path : [data.name]
+        } as Category;
+      });
+
+      console.log('Fetched categories with parsed data:', fetchedCategories);
+      setCategories(fetchedCategories);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
+
+  // Debug the category state
+  useEffect(() => {
+    console.log('Categories state:', categories);
+  }, [categories]);
+
+  // Debug activeDropdown
+  useEffect(() => {
+    console.log('Active dropdown:', activeDropdown);
+  }, [activeDropdown]);
 
   const handleLogout = async () => {
     try {
@@ -154,7 +220,7 @@ export function Navbar({ transparent = false }: NavbarProps) {
               
               {showSearchDropdown && searchResults.length > 0 && (
                 <div 
-                  className="fixed w-64 max-h-80 overflow-y-auto bg-black rounded-lg shadow-xl py-1 z-[9999] border border-orange-500 dropdown-menu"
+                  className="fixed w-64 max-h-80 bg-black rounded-lg shadow-xl py-1 z-[9999] border border-orange-500 dropdown-menu"
                   style={{
                     top: (searchRef.current?.getBoundingClientRect().bottom || 0) + 4,
                     left: searchRef.current?.getBoundingClientRect().left || 0
@@ -187,11 +253,84 @@ export function Navbar({ transparent = false }: NavbarProps) {
           {/* Desktop Navigation */}
           <div className="hidden md:block">
             <div className="flex items-center space-x-6">
-              <Link to="/products" className="nav-link flex items-center text-sm font-medium hover:text-primary transition-colors">
-                <Wrench className="h-4 w-4 mr-1.5" />
-                Roket Malzemeleri
-              </Link>
-              
+              {/* Mağaza Dropdown */}
+              <div className="relative inline-block" ref={magazaRef}>
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveDropdown(activeDropdown === 'magaza' ? null : 'magaza');
+                  }}
+                  className="flex items-center space-x-1 text-sm hover:text-primary transition-colors py-2"
+                >
+                  <span>Mağaza</span>
+                  <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${activeDropdown === 'magaza' ? 'rotate-180' : ''}`} />
+                </button>
+                
+                {/* Main Dropdown Menu */}
+                {activeDropdown === 'magaza' && categories.length > 0 && (
+                  <div className="origin-top-right right-0 mt-2 w-56 rounded-lg shadow-xl bg-black py-1 z-[9999] border border-orange-500 dropdown-menu"
+                  style={{
+                    position: 'fixed',
+                    top: (magazaRef.current?.getBoundingClientRect().bottom || 0) + 4,
+                    left: magazaRef.current?.getBoundingClientRect().left || 0
+                  }}>
+                    {/* Hepsi (All) option */}
+                    <div className="relative group">
+                      <div 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate('/products');
+                          setActiveDropdown(null);
+                        }}
+                        className="flex items-center justify-between w-full px-3 py-1.5 text-sm text-orange-500 hover:bg-orange-500/20 transition-colors cursor-pointer font-medium"
+                      >
+                        <span>Hepsi</span>
+                      </div>
+                    </div>
+                    
+                    {/* Divider */}
+                    <div className="border-t border-orange-500/20 my-1"></div>
+                  
+                    {categories.filter(cat => !cat.path || cat.path.length === 1).map((category) => (
+                      <div key={category.id} className="relative group">
+                        <div 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            console.log('Category clicked:', category.name, 'with subcategories:', category.subcategories);
+                            // Navigate to category page
+                            navigate(`/products?category=${encodeURIComponent(category.name)}`);
+                            setActiveDropdown(null);
+                          }}
+                          className="flex items-center justify-between w-full px-3 py-1.5 text-sm text-orange-500 hover:bg-orange-500/20 transition-colors cursor-pointer"
+                        >
+                          <span>{category.name}</span>
+                        </div>
+                        
+                        {/* Show subcategories inline if available */}
+                        {Array.isArray(category.subcategories) && category.subcategories.length > 0 && (
+                          <div className="pl-4 bg-black/50">
+                            {category.subcategories.map((subcat, index) => (
+                              <div
+                                key={`${category.id}-${index}`}
+                                onClick={() => {
+                                  console.log('Subcategory clicked:', subcat);
+                                  navigate(`/products?category=${encodeURIComponent(category.name)}&subcategory=${encodeURIComponent(subcat)}`);
+                                  setActiveDropdown(null);
+                                }}
+                                className="block px-3 py-1.5 text-sm text-orange-500 hover:bg-orange-500/20 transition-colors cursor-pointer"
+                              >
+                                {subcat}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+       
               <Link to="/products/software" className="nav-link flex items-center text-sm font-medium hover:text-primary transition-colors">
                 <Code className="h-4 w-4 mr-1.5" />
                 Yazılım
@@ -310,59 +449,94 @@ export function Navbar({ transparent = false }: NavbarProps) {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-accent">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            <div className="relative" ref={searchRef}>
-              <form onSubmit={handleSearch} className="relative mb-4">
-                <input
-                  type="text"
-                  placeholder="Ürün ara..."
-                  value={searchQuery}
-                  onChange={handleSearchInput}
-                  onFocus={() => searchQuery.length >= 2 && setShowSearchDropdown(true)}
-                  className="w-full bg-background/50 border border-primary/20 rounded-full px-4 py-2 pr-10 focus:outline-none focus:border-primary transition-colors"
-                />
-                <button 
-                  type="submit"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-primary hover:text-primary/80 transition-colors"
-                >
-                  <Search className="h-5 w-5" />
-                </button>
-              </form>
-
-              {showSearchDropdown && searchResults.length > 0 && (
-                <div className="absolute top-full left-0 mt-2 w-full max-h-96 overflow-y-auto bg-accent rounded-lg shadow-lg py-2 z-50 border border-primary/20">
-                  {searchResults.map((product) => (
-                    <button
-                      key={product.id}
-                      onClick={() => handleProductClick(product.id)}
-                      className="w-full px-4 py-2 text-left hover:bg-primary/10 flex items-center space-x-3"
+        <div className="md:hidden bg-black/90 backdrop-blur-sm border-t border-primary/20">
+          <div className="px-2 pt-2 pb-3 space-y-1">
+            {/* Mağaza Section in Mobile Menu */}
+            <div className="space-y-1">
+              <button
+                onClick={() => {
+                  // Toggle main Mağaza menu
+                  setActiveDropdown(activeDropdown === 'magaza' ? null : 'magaza');
+                  // Reset expanded category when toggling main menu
+                  setExpandedMobileCategory(null);
+                }}
+                className="w-full flex items-center justify-between px-3 py-2 rounded-md hover:bg-primary/20 transition-colors"
+              >
+                <span>Mağaza</span>
+                <ChevronDown className={`h-4 w-4 transition-transform ${
+                  activeDropdown === 'magaza' ? 'rotate-180' : ''
+                }`} />
+              </button>
+              
+              {/* Mobile Categories */}
+              {activeDropdown === 'magaza' && (
+                <div className="pl-4 space-y-1">
+                  {/* Hepsi option for mobile */}
+                  <div className="mb-1">
+                    <Link
+                      to="/products"
+                      className="block w-full px-3 py-2 rounded-md text-sm font-medium hover:bg-primary/20 transition-colors"
+                      onClick={() => setMobileMenuOpen(false)}
                     >
-                      {product.images && product.images.length > 0 && (
-                        <img 
-                          src={product.images[product.mainImageIndex || 0]} 
-                          alt={product.name}
-                          className="w-10 h-10 object-cover rounded"
-                        />
+                      Hepsi
+                    </Link>
+                  </div>
+                  
+                  {/* Divider */}
+                  <div className="border-t border-primary/10 my-1"></div>
+                  
+                  {/* Category list */}
+                  {categories.filter(cat => !cat.path || cat.path.length === 1).map((category) => (
+                    <div key={category.id} className="space-y-1">
+                      {/* Category button */}
+                      <button
+                        onClick={() => {
+                          console.log('Mobile clicked category:', category.id);
+                          // Toggle this category's expanded state
+                          setExpandedMobileCategory(
+                            expandedMobileCategory === category.id ? null : category.id
+                          );
+                        }}
+                        className="w-full flex items-center justify-between px-3 py-2 rounded-md hover:bg-primary/20 transition-colors"
+                      >
+                        <span>{category.name}</span>
+                        {category.subcategories?.length > 0 && (
+                          <ChevronDown className={`h-4 w-4 transition-transform ${
+                            expandedMobileCategory === category.id ? 'rotate-180' : ''
+                          }`} />
+                        )}
+                      </button>
+                      
+                      {/* Mobile Subcategories */}
+                      {expandedMobileCategory === category.id && category.subcategories && category.subcategories.length > 0 && (
+                        <div className="pl-4 space-y-1 bg-primary/5 rounded-md py-1 mb-1">
+                          {/* Category link (view all) */}
+                          <Link
+                            to={`/products?category=${encodeURIComponent(category.name)}`}
+                            className="block px-3 py-2 rounded-md text-sm hover:bg-primary/10 transition-colors font-medium"
+                            onClick={() => setMobileMenuOpen(false)}
+                          >
+                            {category.name} - Tümü
+                          </Link>
+                          
+                          {/* Subcategory links */}
+                          {category.subcategories.map((subcat, index) => (
+                            <Link
+                              key={`${category.id}-${index}`}
+                              to={`/products?category=${encodeURIComponent(category.name)}&subcategory=${encodeURIComponent(subcat)}`}
+                              className="block px-3 py-2 rounded-md text-sm hover:bg-primary/10 transition-colors"
+                              onClick={() => setMobileMenuOpen(false)}
+                            >
+                              {subcat}
+                            </Link>
+                          ))}
+                        </div>
                       )}
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">{product.name}</p>
-                        <p className="text-sm text-gray-400">{product.price} ₺</p>
-                      </div>
-                    </button>
+                    </div>
                   ))}
                 </div>
               )}
             </div>
-
-            <Link 
-              to="/products"
-              className="block px-3 py-2 rounded-md text-base font-medium text-foreground hover:text-primary transition-colors"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              <Wrench className="h-4 w-4 inline-block mr-2" />
-              Roket Malzemeleri
-            </Link>
             
             <Link 
               to="/products/software"

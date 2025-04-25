@@ -1,0 +1,59 @@
+.carousel-container {
+  padding-bottom: 40px;
+}
+
+.react-multi-carousel-dot-list {
+  bottom: 0;
+}
+
+.react-multi-carousel-dot button {
+  border-color: var(--primary);
+  opacity: 0.5;
+  transition: all 0.3s ease;
+  width: 8px;
+  height: 8px;
+}
+
+.react-multi-carousel-dot--active button {
+  background: var(--primary);
+  opacity: 1;
+}
+
+.react-multi-carousel-item {
+  padding: 0.25rem;
+}
+
+/* Custom arrow styles */
+.react-multiple-carousel__arrow {
+  background: rgba(0, 0, 0, 0.5) !important;
+  border-radius: 50% !important;
+  min-width: 35px !important;
+  min-height: 35px !important;
+  transition: all 0.3s ease !important;
+}
+
+.react-multiple-carousel__arrow:hover {
+  background: rgba(0, 0, 0, 0.7) !important;
+}
+
+.react-multiple-carousel__arrow::before {
+  color: white !important;
+  font-size: 18px !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .react-multiple-carousel__arrow {
+    min-width: 30px !important;
+    min-height: 30px !important;
+  }
+  
+  .carousel-container {
+    padding-bottom: 30px;
+  }
+  
+  .react-multi-carousel-dot button {
+    width: 6px;
+    height: 6px;
+  }
+} 

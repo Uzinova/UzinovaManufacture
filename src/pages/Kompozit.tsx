@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Navbar } from '../components/Navbar';
-import { ShoppingCart, Plus, X, Check } from 'lucide-react';
+import { ShoppingCart, Plus, X, Check, ChevronDown, ChevronUp } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { useToast } from '../contexts/ToastContext';
 
@@ -16,6 +16,21 @@ interface RocketPart {
   dimensions: {
     length: string;
     diameter: string;
+    wallThickness: string;
+    shape?: string;
+    shoulderLength?: string;
+    shoulderDiameter?: string;
+    numSections?: string;
+    couplerLength?: string;
+    couplerDiameter?: string;
+    finCount?: string;
+    rootChord?: string;
+    tipChord?: string;
+    sweepLength?: string;
+    height?: string;
+    finThickness?: string;
+    finShape?: string;
+    position?: string;
   };
   material: string;
 }
@@ -26,9 +41,28 @@ const Kompozit: React.FC = () => {
   const [currentPart, setCurrentPart] = useState<string | null>(null);
   const [dimensions, setDimensions] = useState({
     length: '',
-    diameter: ''
+    diameter: '',
+    wallThickness: '2',
+    shape: 'ogive',
+    shoulderLength: '',
+    shoulderDiameter: '',
+    numSections: '1',
+    couplerLength: '',
+    couplerDiameter: '',
+    finCount: '3',
+    rootChord: '',
+    tipChord: '',
+    sweepLength: '',
+    height: '',
+    finThickness: '3',
+    finShape: 'trapezoidal',
+    position: '0'
   });
   const [material, setMaterial] = useState<string>('karbon');
+  const [expandedSections, setExpandedSections] = useState({
+    general: true,
+    partSpecific: true
+  });
 
   const { addToCart } = useCart();
   const toast = useToast();
@@ -51,10 +85,43 @@ const Kompozit: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Reset part-specific dimensions when changing part type
+  useEffect(() => {
+    if (currentPart) {
+      // Reset only part-specific fields, keep general ones
+      setDimensions(prev => ({
+        ...prev,
+        // Reset nose cone specific if not nose
+        shape: currentPart === 'nose' ? prev.shape : 'ogive',
+        shoulderLength: currentPart === 'nose' ? prev.shoulderLength : '',
+        shoulderDiameter: currentPart === 'nose' ? prev.shoulderDiameter : '',
+        // Reset body specific if not body
+        numSections: currentPart === 'body' ? prev.numSections : '1',
+        couplerLength: currentPart === 'body' ? prev.couplerLength : '',
+        couplerDiameter: currentPart === 'body' ? prev.couplerDiameter : '',
+        // Reset fin specific if not tail
+        finCount: currentPart === 'tail' ? prev.finCount : '3',
+        rootChord: currentPart === 'tail' ? prev.rootChord : '',
+        tipChord: currentPart === 'tail' ? prev.tipChord : '',
+        sweepLength: currentPart === 'tail' ? prev.sweepLength : '',
+        height: currentPart === 'tail' ? prev.height : '',
+        finThickness: currentPart === 'tail' ? prev.finThickness : '3',
+        finShape: currentPart === 'tail' ? prev.finShape : 'trapezoidal',
+        position: currentPart === 'tail' ? prev.position : '0',
+      }));
+    }
+  }, [currentPart]);
+
   const handlePartClick = (partId: string) => {
     console.log('Part clicked:', partId); // Debug log
     setCurrentPart(partId);
-    setDimensions({ length: '', diameter: '' });
+    // Basic dimensions will be reset, specific ones are handled in useEffect
+    setDimensions(prev => ({
+      ...prev,
+      length: '',
+      diameter: '',
+      wallThickness: '2', // Default remains
+    }));
     setMaterial('karbon');
   };
 
@@ -67,9 +134,45 @@ const Kompozit: React.FC = () => {
     const partName = 
       currentPart === 'nose' ? 'Burun Konisi' :
       currentPart === 'body' ? 'Gövde' :
-      'Kuyruk';
+      'Kanat';
 
     console.log('Adding part:', { currentPart, partName, dimensions, material }); // Debug log
+
+    // Create part object based on part type with only relevant parameters
+    let partDimensions = {
+      length: dimensions.length,
+      diameter: dimensions.diameter,
+      wallThickness: dimensions.wallThickness,
+    };
+
+    // Add part-specific dimensions
+    if (currentPart === 'nose') {
+      partDimensions = {
+        ...partDimensions,
+        shape: dimensions.shape,
+        shoulderLength: dimensions.shoulderLength || '0',
+        shoulderDiameter: dimensions.shoulderDiameter || '0',
+      };
+    } else if (currentPart === 'body') {
+      partDimensions = {
+        ...partDimensions,
+        numSections: dimensions.numSections,
+        couplerLength: dimensions.couplerLength || '0',
+        couplerDiameter: dimensions.couplerDiameter || '0',
+      };
+    } else if (currentPart === 'tail') {
+      partDimensions = {
+        ...partDimensions,
+        finCount: dimensions.finCount,
+        rootChord: dimensions.rootChord || '0',
+        tipChord: dimensions.tipChord || '0',
+        sweepLength: dimensions.sweepLength || '0',
+        height: dimensions.height || '0',
+        finThickness: dimensions.finThickness,
+        finShape: dimensions.finShape,
+        position: dimensions.position,
+      };
+    }
 
     setSelectedParts(prev => {
       const newParts = {
@@ -77,10 +180,7 @@ const Kompozit: React.FC = () => {
         [currentPart]: {
           id: currentPart,
           name: partName,
-          dimensions: {
-            length: dimensions.length,
-            diameter: dimensions.diameter
-          },
+          dimensions: partDimensions,
           material: material
         }
       };
@@ -89,7 +189,11 @@ const Kompozit: React.FC = () => {
     });
 
     setCurrentPart(null);
-    setDimensions({ length: '', diameter: '' });
+    setDimensions(prev => ({
+      ...prev,
+      length: '',
+      diameter: '',
+    }));
     toast.success('Parça eklendi');
   };
 
@@ -107,13 +211,52 @@ const Kompozit: React.FC = () => {
     if (Object.keys(selectedParts).length > 0) {
       const parts = Object.values(selectedParts);
       parts.forEach(part => {
+        // Create more detailed description based on part type
+        let detailedDescription = `Uzunluk: ${part.dimensions.length}mm, Çap: ${part.dimensions.diameter}mm, Cidar: ${part.dimensions.wallThickness}mm, Malzeme: ${part.material === 'karbon' ? 'Karbon Fiber' : 'Cam Elyaf'}`;
+        
+        if (part.id === 'nose') {
+          const shapeNames = {
+            'ogive': 'Ogive',
+            'conical': 'Konik',
+            'parabolic': 'Parabolik',
+            'elliptical': 'Eliptik',
+            'haack': 'Haack'
+          };
+          detailedDescription += `, Şekil: ${shapeNames[part.dimensions.shape as keyof typeof shapeNames]}`;
+          if (part.dimensions.shoulderLength && part.dimensions.shoulderDiameter) {
+            detailedDescription += `, Omuz: ${part.dimensions.shoulderLength}mm × ${part.dimensions.shoulderDiameter}mm`;
+          }
+        } else if (part.id === 'body') {
+          detailedDescription += `, Bölüm: ${part.dimensions.numSections}`;
+          if (part.dimensions.couplerLength && part.dimensions.couplerDiameter) {
+            detailedDescription += `, Birleştirici: ${part.dimensions.couplerLength}mm × ${part.dimensions.couplerDiameter}mm`;
+          }
+        } else if (part.id === 'tail') {
+          const shapeNames = {
+            'trapezoidal': 'Yamuk',
+            'elliptical': 'Eliptik',
+            'triangular': 'Üçgen',
+            'clipped': 'Kesilmiş Delta'
+          };
+          detailedDescription += `, ${part.dimensions.finCount} Kanat, Şekil: ${shapeNames[part.dimensions.finShape as keyof typeof shapeNames]}, Kalınlık: ${part.dimensions.finThickness}mm`;
+          if (part.dimensions.rootChord && part.dimensions.tipChord) {
+            detailedDescription += `, Kök: ${part.dimensions.rootChord}mm, Uç: ${part.dimensions.tipChord}mm`;
+          }
+          if (part.dimensions.height && part.dimensions.sweepLength) {
+            detailedDescription += `, Yükseklik: ${part.dimensions.height}mm, Süpürme: ${part.dimensions.sweepLength}mm`;
+          }
+          if (part.dimensions.position) {
+            detailedDescription += `, Konum: ${part.dimensions.position}mm`;
+          }
+        }
+        
         const cartItem = {
           productId: part.id,
           name: `Kompozit ${part.name} (${part.material === 'karbon' ? 'Karbon Fiber' : 'Cam Elyaf'})`,
           price: 0, // Price will be determined later
           quantity: 1,
           image: part.id === 'nose' ? rocketNose : part.id === 'body' ? rocketBody : rocketFins,
-          description: `Uzunluk: ${part.dimensions.length}mm, Çap: ${part.dimensions.diameter}mm, Malzeme: ${part.material === 'karbon' ? 'Karbon Fiber' : 'Cam Elyaf'}`
+          description: detailedDescription
         };
         console.log('Adding to cart:', cartItem);
         addToCart(cartItem);
@@ -123,6 +266,13 @@ const Kompozit: React.FC = () => {
     } else {
       toast.error('Lütfen en az bir parça seçin');
     }
+  };
+
+  const toggleSection = (section: 'general' | 'partSpecific') => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
   };
 
   return (
@@ -490,7 +640,7 @@ const Kompozit: React.FC = () => {
                     <div className="flex items-center justify-between mb-6">
                       <h2 className="text-2xl font-semibold text-orange-500">
                         {currentPart === 'nose' ? 'Burun Konisi' : 
-                         currentPart === 'body' ? 'Gövde' : 'Kuyruk'} Seçildi
+                         currentPart === 'body' ? 'Gövde' : 'Kanat'}  
                       </h2>
                       <button
                         onClick={() => setCurrentPart(null)}
@@ -501,54 +651,278 @@ const Kompozit: React.FC = () => {
                     </div>
                     
                     <div className="space-y-6">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium mb-2 text-orange-400">Uzunluk (mm)</label>
-                          <input
-                            type="number"
-                            name="length"
-                            value={dimensions.length}
-                            onChange={(e) => setDimensions(prev => ({ ...prev, length: e.target.value }))}
-                            className="w-full px-4 py-2 bg-black/50 border border-[rgba(249,115,22,0.2)] rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300"
-                            required
-                          />
+                      {/* General Parameters Section - Collapsible */}
+                      <div className="rounded-md border border-[rgba(249,115,22,0.2)] overflow-hidden">
+                        <div 
+                          className="flex justify-between items-center p-3 bg-black/30 cursor-pointer"
+                          onClick={() => toggleSection('general')}
+                        >
+                          <h3 className="text-orange-400 font-medium">Genel Parametreler / General Parameters</h3>
+                          {expandedSections.general ? 
+                            <ChevronUp className="w-5 h-5 text-orange-400" /> : 
+                            <ChevronDown className="w-5 h-5 text-orange-400" />
+                          }
                         </div>
-                        <div>
-                          <label className="block text-sm font-medium mb-2 text-orange-400">Çap (mm)</label>
-                          <input
-                            type="number"
-                            name="diameter"
-                            value={dimensions.diameter}
-                            onChange={(e) => setDimensions(prev => ({ ...prev, diameter: e.target.value }))}
-                            className="w-full px-4 py-2 bg-black/50 border border-[rgba(249,115,22,0.2)] rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300"
-                            required
-                          />
-                        </div>
+                        
+                        {expandedSections.general && (
+                          <div className="p-4 space-y-4">
+                            <div className="grid grid-cols-2 gap-4">
+                              <div>
+                                <label className="block text-sm font-medium mb-2 text-orange-400">Uzunluk / Length (mm)</label>
+                                <input
+                                  type="number"
+                                  name="length"
+                                  value={dimensions.length}
+                                  onChange={(e) => setDimensions(prev => ({ ...prev, length: e.target.value }))}
+                                  className="w-full px-4 py-2 bg-black/50 border border-[rgba(249,115,22,0.2)] rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300"
+                                  required
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium mb-2 text-orange-400">Çap / Diameter (mm)</label>
+                                <input
+                                  type="number"
+                                  name="diameter"
+                                  value={dimensions.diameter}
+                                  onChange={(e) => setDimensions(prev => ({ ...prev, diameter: e.target.value }))}
+                                  className="w-full px-4 py-2 bg-black/50 border border-[rgba(249,115,22,0.2)] rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300"
+                                  required
+                                />
+                              </div>
+                            </div>
+                            
+                            <div>
+                              <label className="block text-sm font-medium mb-2 text-orange-400">Cidar Kalınlığı / Wall Thickness (mm)</label>
+                              <input
+                                type="number"
+                                name="wallThickness"
+                                value={dimensions.wallThickness}
+                                onChange={(e) => setDimensions(prev => ({ ...prev, wallThickness: e.target.value }))}
+                                className="w-full px-4 py-2 bg-black/50 border border-[rgba(249,115,22,0.2)] rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300"
+                              />
+                            </div>
+
+                            {/* Material Selection */}
+                            <div>
+                              <label className="block text-sm font-medium mb-2 text-orange-400">Malzeme / Material</label>
+                              <div className="grid grid-cols-2 gap-4">
+                                <div 
+                                  className={`material-option flex items-center border border-[rgba(249,115,22,0.2)] rounded-md ${material === 'karbon' ? 'selected' : ''}`}
+                                  onClick={() => setMaterial('karbon')}
+                                >
+                                  <div className="p-2 bg-black/30 rounded-l-md">
+                                    {material === 'karbon' && <Check className="w-5 h-5 text-orange-500" />}
+                                  </div>
+                                  <div className="pl-2">Karbon Fiber  </div>
+                                </div>
+                                <div 
+                                  className={`material-option flex items-center border border-[rgba(249,115,22,0.2)] rounded-md ${material === 'cam' ? 'selected' : ''}`}
+                                  onClick={() => setMaterial('cam')}
+                                >
+                                  <div className="p-2 bg-black/30 rounded-l-md">
+                                    {material === 'cam' && <Check className="w-5 h-5 text-orange-500" />}
+                                  </div>
+                                  <div className="pl-2">Cam Elyaf </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </div>
 
-                      {/* Material Selection */}
-                      <div>
-                        <label className="block text-sm font-medium mb-2 text-orange-400">Malzeme</label>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div 
-                            className={`material-option flex items-center border border-[rgba(249,115,22,0.2)] rounded-md ${material === 'karbon' ? 'selected' : ''}`}
-                            onClick={() => setMaterial('karbon')}
-                          >
-                            <div className="p-2 bg-black/30 rounded-l-md">
-                              {material === 'karbon' && <Check className="w-5 h-5 text-orange-500" />}
-                            </div>
-                            <div className="pl-2">Karbon Fiber</div>
-                          </div>
-                          <div 
-                            className={`material-option flex items-center border border-[rgba(249,115,22,0.2)] rounded-md ${material === 'cam' ? 'selected' : ''}`}
-                            onClick={() => setMaterial('cam')}
-                          >
-                            <div className="p-2 bg-black/30 rounded-l-md">
-                              {material === 'cam' && <Check className="w-5 h-5 text-orange-500" />}
-                            </div>
-                            <div className="pl-2">Cam Elyaf</div>
-                          </div>
+                      {/* Part-Specific Parameters Section - Collapsible */}
+                      <div className="rounded-md border border-[rgba(249,115,22,0.2)] overflow-hidden">
+                        <div 
+                          className="flex justify-between items-center p-3 bg-black/30 cursor-pointer"
+                          onClick={() => toggleSection('partSpecific')}
+                        >
+                          <h3 className="text-orange-400 font-medium">
+                            {currentPart === 'nose' ? 'Burun Konisi Detayları / Nose Cone Details' : 
+                             currentPart === 'body' ? 'Gövde Detayları / Body Tube Details' : 
+                             'Kanatçık Detayları / Fin Details'}
+                          </h3>
+                          {expandedSections.partSpecific ? 
+                            <ChevronUp className="w-5 h-5 text-orange-400" /> : 
+                            <ChevronDown className="w-5 h-5 text-orange-400" />
+                          }
                         </div>
+                        
+                        {expandedSections.partSpecific && (
+                          <div className="p-4 space-y-4">
+                            {/* Nose Cone Specific Params */}
+                            {currentPart === 'nose' && (
+                              <>
+                                <div>
+                                  <label className="block text-sm font-medium mb-2 text-orange-400">Burun Şekli / Nose Shape</label>
+                                  <div className="relative">
+                                    <select
+                                      value={dimensions.shape}
+                                      onChange={(e) => setDimensions(prev => ({ ...prev, shape: e.target.value }))}
+                                      className="w-full px-4 py-2 bg-black/50 border border-[rgba(249,115,22,0.2)] rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300 appearance-none"
+                                    >
+                                      <option value="ogive">Ogive / Ogive</option>
+                                      <option value="conical">Konik / Conical</option>
+                                      <option value="parabolic">Parabolik / Parabolic</option>
+                                      <option value="elliptical">Eliptik / Elliptical</option>
+                                      <option value="haack">Haack / Haack</option>
+                                    </select>
+                                    <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                                      <ChevronDown className="w-5 h-5 text-orange-400" />
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                  <div>
+                                    <label className="block text-sm font-medium mb-2 text-orange-400">Omuz Uzunluğu / Shoulder Length (mm)</label>
+                                    <input
+                                      type="number"
+                                      value={dimensions.shoulderLength}
+                                      onChange={(e) => setDimensions(prev => ({ ...prev, shoulderLength: e.target.value }))}
+                                      className="w-full px-4 py-2 bg-black/50 border border-[rgba(249,115,22,0.2)] rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="block text-sm font-medium mb-2 text-orange-400">Omuz Çapı / Shoulder Diameter (mm)</label>
+                                    <input
+                                      type="number"
+                                      value={dimensions.shoulderDiameter}
+                                      onChange={(e) => setDimensions(prev => ({ ...prev, shoulderDiameter: e.target.value }))}
+                                      className="w-full px-4 py-2 bg-black/50 border border-[rgba(249,115,22,0.2)] rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300"
+                                    />
+                                  </div>
+                                </div>
+                              </>
+                            )}
+
+                            {/* Body Tube Specific Params */}
+                            {currentPart === 'body' && (
+                              <>
+                                <div>
+                                  <label className="block text-sm font-medium mb-2 text-orange-400">Bölüm Sayısı / Number of Sections</label>
+                                  <input
+                                    type="number"
+                                    value={dimensions.numSections}
+                                    onChange={(e) => setDimensions(prev => ({ ...prev, numSections: e.target.value }))}
+                                    className="w-full px-4 py-2 bg-black/50 border border-[rgba(249,115,22,0.2)] rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300"
+                                  />
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                  <div>
+                                    <label className="block text-sm font-medium mb-2 text-orange-400">Birleştirici Uzunluğu / Couplers Length (mm)</label>
+                                    <input
+                                      type="number"
+                                      value={dimensions.couplerLength}
+                                      onChange={(e) => setDimensions(prev => ({ ...prev, couplerLength: e.target.value }))}
+                                      className="w-full px-4 py-2 bg-black/50 border border-[rgba(249,115,22,0.2)] rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="block text-sm font-medium mb-2 text-orange-400">Birleştirici Çapı / Couplers Diameter (mm)</label>
+                                    <input
+                                      type="number"
+                                      value={dimensions.couplerDiameter}
+                                      onChange={(e) => setDimensions(prev => ({ ...prev, couplerDiameter: e.target.value }))}
+                                      className="w-full px-4 py-2 bg-black/50 border border-[rgba(249,115,22,0.2)] rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300"
+                                    />
+                                  </div>
+                                </div>
+                              </>
+                            )}
+
+                            {/* Fin Specific Params */}
+                            {currentPart === 'tail' && (
+                              <>
+                                <div className="grid grid-cols-2 gap-4">
+                                  <div>
+                                    <label className="block text-sm font-medium mb-2 text-orange-400">Kanat Sayısı / Number of Fins</label>
+                                    <input
+                                      type="number"
+                                      value={dimensions.finCount}
+                                      onChange={(e) => setDimensions(prev => ({ ...prev, finCount: e.target.value }))}
+                                      className="w-full px-4 py-2 bg-black/50 border border-[rgba(249,115,22,0.2)] rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="block text-sm font-medium mb-2 text-orange-400">Kanat Kalınlığı / Fin Thickness (mm)</label>
+                                    <input
+                                      type="number"
+                                      value={dimensions.finThickness}
+                                      onChange={(e) => setDimensions(prev => ({ ...prev, finThickness: e.target.value }))}
+                                      className="w-full px-4 py-2 bg-black/50 border border-[rgba(249,115,22,0.2)] rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300"
+                                    />
+                                  </div>
+                                </div>
+                                <div>
+                                  <label className="block text-sm font-medium mb-2 text-orange-400">Kanat Şekli / Fin Shape</label>
+                                  <div className="relative">
+                                    <select
+                                      value={dimensions.finShape}
+                                      onChange={(e) => setDimensions(prev => ({ ...prev, finShape: e.target.value }))}
+                                      className="w-full px-4 py-2 bg-black/50 border border-[rgba(249,115,22,0.2)] rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300 appearance-none"
+                                    >
+                                      <option value="trapezoidal">Yamuk / Trapezoidal</option>
+                                      <option value="elliptical">Eliptik / Elliptical</option>
+                                      <option value="triangular">Üçgen / Triangular</option>
+                                      <option value="clipped">Kesilmiş Delta / Clipped Delta</option>
+                                    </select>
+                                    <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                                      <ChevronDown className="w-5 h-5 text-orange-400" />
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                  <div>
+                                    <label className="block text-sm font-medium mb-2 text-orange-400">Kök Uzunluğu / Root Chord (mm)</label>
+                                    <input
+                                      type="number"
+                                      value={dimensions.rootChord}
+                                      onChange={(e) => setDimensions(prev => ({ ...prev, rootChord: e.target.value }))}
+                                      className="w-full px-4 py-2 bg-black/50 border border-[rgba(249,115,22,0.2)] rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="block text-sm font-medium mb-2 text-orange-400">Uç Uzunluğu / Tip Chord (mm)</label>
+                                    <input
+                                      type="number"
+                                      value={dimensions.tipChord}
+                                      onChange={(e) => setDimensions(prev => ({ ...prev, tipChord: e.target.value }))}
+                                      className="w-full px-4 py-2 bg-black/50 border border-[rgba(249,115,22,0.2)] rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300"
+                                    />
+                                  </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                  <div>
+                                    <label className="block text-sm font-medium mb-2 text-orange-400">Süpürme Uzunluğu / Sweep Length (mm)</label>
+                                    <input
+                                      type="number"
+                                      value={dimensions.sweepLength}
+                                      onChange={(e) => setDimensions(prev => ({ ...prev, sweepLength: e.target.value }))}
+                                      className="w-full px-4 py-2 bg-black/50 border border-[rgba(249,115,22,0.2)] rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="block text-sm font-medium mb-2 text-orange-400">Yükseklik / Height (mm)</label>
+                                    <input
+                                      type="number"
+                                      value={dimensions.height}
+                                      onChange={(e) => setDimensions(prev => ({ ...prev, height: e.target.value }))}
+                                      className="w-full px-4 py-2 bg-black/50 border border-[rgba(249,115,22,0.2)] rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300"
+                                    />
+                                  </div>
+                                </div>
+                                <div>
+                                  <label className="block text-sm font-medium mb-2 text-orange-400">Konum / Position (mm from body end)</label>
+                                  <input
+                                    type="number"
+                                    value={dimensions.position}
+                                    onChange={(e) => setDimensions(prev => ({ ...prev, position: e.target.value }))}
+                                    className="w-full px-4 py-2 bg-black/50 border border-[rgba(249,115,22,0.2)] rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300"
+                                  />
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        )}
                       </div>
 
                       <button
@@ -557,7 +931,7 @@ const Kompozit: React.FC = () => {
                         className="w-full bg-orange-500 text-white py-3 px-6 rounded-md hover:bg-orange-600 transition-all duration-300 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-black disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <Plus className="w-5 h-5 inline-block mr-2" />
-                        Parça Ekle
+                        Parça Ekle / Add Part
                       </button>
                     </div>
                   </div>
@@ -577,21 +951,70 @@ const Kompozit: React.FC = () => {
                 <div className="space-y-4">
                   {Object.values(selectedParts).map((part) => (
                     <div key={part.id} className="flex items-center justify-between bg-black/50 p-4 rounded-lg border border-[rgba(249,115,22,0.1)]">
-                      <div>
-                        <h4 className="text-orange-400 font-medium">{part.name}</h4>
-                        <p className="text-sm text-orange-200/70">
-                          {part.dimensions.length}mm × {part.dimensions.diameter}mm
+                      <div className="w-full">
+                        <div className="flex justify-between">
+                          <h4 className="text-orange-400 font-medium">{part.name}</h4>
+                          <button
+                            onClick={() => handleRemovePart(part.id)}
+                            className="text-orange-500 hover:text-orange-400 transition-colors"
+                          >
+                            <X className="w-5 h-5" />
+                          </button>
+                        </div>
+                        
+                        {/* General Specs */}
+                        <p className="text-sm text-orange-200/70 mb-2">
+                          <b>Temel:</b> {part.dimensions.length}mm × {part.dimensions.diameter}mm, Cidar: {part.dimensions.wallThickness}mm
                         </p>
-                        <p className="text-sm text-orange-200/70">
-                          Malzeme: {part.material === 'karbon' ? 'Karbon Fiber' : 'Cam Elyaf'}
+                        <p className="text-sm text-orange-200/70 mb-2">
+                          <b>Malzeme:</b> {part.material === 'karbon' ? 'Karbon Fiber' : 'Cam Elyaf'}
                         </p>
+                        
+                        {/* Specific Parameters */}
+                        {part.id === 'nose' && (
+                          <div className="text-sm text-orange-200/70">
+                            <p><b>Şekil:</b> {
+                              part.dimensions.shape === 'ogive' ? 'Ogive' :
+                              part.dimensions.shape === 'conical' ? 'Konik' : 
+                              part.dimensions.shape === 'parabolic' ? 'Parabolik' :
+                              part.dimensions.shape === 'elliptical' ? 'Eliptik' : 'Haack'
+                            }</p>
+                            {part.dimensions.shoulderLength && part.dimensions.shoulderDiameter && (
+                              <p><b>Omuz:</b> {part.dimensions.shoulderLength}mm × {part.dimensions.shoulderDiameter}mm çap</p>
+                            )}
+                          </div>
+                        )}
+                        
+                        {part.id === 'body' && (
+                          <div className="text-sm text-orange-200/70">
+                            <p><b>Bölüm Sayısı:</b> {part.dimensions.numSections}</p>
+                            {part.dimensions.couplerLength && part.dimensions.couplerDiameter && (
+                              <p><b>Birleştirici:</b> {part.dimensions.couplerLength}mm × {part.dimensions.couplerDiameter}mm çap</p>
+                            )}
+                          </div>
+                        )}
+                        
+                        {part.id === 'tail' && (
+                          <div className="text-sm text-orange-200/70">
+                            <p>
+                              <b>Kanatlar:</b> {part.dimensions.finCount} adet, 
+                              {part.dimensions.finShape === 'trapezoidal' ? 'Yamuk' : 
+                               part.dimensions.finShape === 'elliptical' ? 'Eliptik' : 
+                               part.dimensions.finShape === 'triangular' ? 'Üçgen' : 'Kesilmiş Delta'}, 
+                              {part.dimensions.finThickness}mm kalınlık
+                            </p>
+                            {part.dimensions.rootChord && part.dimensions.tipChord && (
+                              <p><b>Boyut:</b> Kök {part.dimensions.rootChord}mm, Uç {part.dimensions.tipChord}mm</p>
+                            )}
+                            {part.dimensions.height && part.dimensions.sweepLength && (
+                              <p><b>Geometri:</b> {part.dimensions.height}mm yükseklik, {part.dimensions.sweepLength}mm süpürme</p>
+                            )}
+                            {part.dimensions.position && (
+                              <p><b>Konum:</b> Gövde ucundan {part.dimensions.position}mm</p>
+                            )}
+                          </div>
+                        )}
                       </div>
-                      <button
-                        onClick={() => handleRemovePart(part.id)}
-                        className="text-orange-500 hover:text-orange-400 transition-colors"
-                      >
-                        <X className="w-5 h-5" />
-                      </button>
                     </div>
                   ))}
                   {Object.keys(selectedParts).length === 0 && (
@@ -599,7 +1022,7 @@ const Kompozit: React.FC = () => {
                   )}
                 </div>
                 
-                {/* Add to Cart Button - Moved here */}
+                {/* Add to Cart Button */}
                 <div className="mt-6">
                   <button
                     onClick={handleAddToCart}
