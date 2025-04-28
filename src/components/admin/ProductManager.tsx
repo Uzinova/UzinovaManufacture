@@ -20,7 +20,7 @@ interface ProductLabel {
 }
 
 interface Product {
-  id: string;
+  id?: string;
   name: string;
   price: number;
   description: string;
@@ -186,8 +186,9 @@ export function ProductManager() {
         });
       } else {
         // Create new product
+        const { id, ...productData } = editingProduct;
         await db.addDoc(db.collection('products'), {
-          ...editingProduct,
+          ...productData,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         });
@@ -216,21 +217,17 @@ export function ProductManager() {
       switch (action) {
         case 'delete':
           await Promise.all(
-            selectedProducts.map(id =>
-              db.deleteDoc(db.doc(db, 'products', id))
-            )
+            selectedProducts.map(id => id && db.deleteDoc(db.doc(db, 'products', id)))
           );
           break;
 
         case 'feature':
         case 'unfeature':
           await Promise.all(
-            selectedProducts.map(id =>
-              db.updateDoc(db.doc(db, 'products', id), {
-                featured: action === 'feature',
-                updated_at: new Date().toISOString()
-              })
-            )
+            selectedProducts.map(id => id && db.updateDoc(db.doc(db, 'products', id), {
+              featured: action === 'feature',
+              updated_at: new Date().toISOString()
+            }))
           );
           break;
       }
@@ -334,7 +331,6 @@ export function ProductManager() {
         <h2 className="text-2xl font-bold">Products</h2>
         <button
           onClick={() => setEditingProduct({
-            id: '',
             name: '',
             description: '',
             price: 0,
@@ -426,7 +422,7 @@ export function ProductManager() {
                   type="checkbox"
                   onChange={(e) => {
                     if (e.target.checked) {
-                      setSelectedProducts(filteredProducts.map(p => p.id));
+                      setSelectedProducts(filteredProducts.map(p => p.id).filter((id): id is string => typeof id === 'string'));
                     } else {
                       setSelectedProducts([]);
                     }
@@ -449,11 +445,11 @@ export function ProductManager() {
                 <td className="p-3">
                   <input
                     type="checkbox"
-                    checked={selectedProducts.includes(product.id)}
+                    checked={product.id ? selectedProducts.includes(product.id) : false}
                     onChange={(e) => {
-                      if (e.target.checked) {
+                      if (e.target.checked && product.id) {
                         setSelectedProducts([...selectedProducts, product.id]);
-                      } else {
+                      } else if (product.id) {
                         setSelectedProducts(selectedProducts.filter(id => id !== product.id));
                       }
                     }}
@@ -541,7 +537,7 @@ export function ProductManager() {
                       <Edit2 className="h-4 w-4" />
                     </button>
                     <button
-                      onClick={() => handleDeleteProduct(product.id)}
+                      onClick={() => product.id && handleDeleteProduct(product.id)}
                       className="text-red-500 hover:text-red-600 transition-colors"
                     >
                       <Trash2 className="h-4 w-4" />

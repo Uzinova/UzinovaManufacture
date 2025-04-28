@@ -260,7 +260,7 @@ function ProductPage() {
         <div className="max-w-7xl mx-auto">
           {/* Search and Filter */}
           <div className="mb-8 space-y-4">
-            <div className="flex items-center bg-accent rounded-lg p-2">
+            <div className="flex items-center bg-accent rounded-lg p-2" key="search-bar">
               <Search className="h-5 w-5 text-gray-400 mr-2" />
               <input
                 type="text"
@@ -272,11 +272,12 @@ function ProductPage() {
             </div>
             
             {/* Category filters */}
-            <div className="flex items-center space-x-2 overflow-x-auto pb-2">
+            <div className="flex items-center space-x-2 overflow-x-auto pb-2" key="category-filters">
               <Filter className="h-5 w-5 text-primary flex-shrink-0" />
               
               {/* All Products button */}
               <button
+                key="all-products-button"
                 onClick={() => handleCategorySelect(null)}
                 className={`px-4 py-2 rounded-full whitespace-nowrap transition-colors ${
                   !selectedCategory
@@ -290,7 +291,7 @@ function ProductPage() {
               {/* Category buttons */}
               {mainCategories.map(category => (
                 <button
-                  key={category.id}
+                  key={`category-${category.id}`}
                   onClick={() => handleCategorySelect(category)}
                   className={`px-4 py-2 rounded-full whitespace-nowrap transition-colors ${
                     selectedCategory === category.name
@@ -305,8 +306,9 @@ function ProductPage() {
 
             {/* Subcategory filters - show only when a category is selected */}
             {selectedCategory && (
-              <div className="flex items-center space-x-2 overflow-x-auto pb-2 pl-6">
+              <div className="flex items-center space-x-2 overflow-x-auto pb-2 pl-6" key="subcategory-filters">
                 <button
+                  key={`subcategory-all-${selectedCategory}`}
                   onClick={() => {
                     setSelectedSubcategory(null);
                     const params = new URLSearchParams(searchParams);
@@ -324,9 +326,9 @@ function ProductPage() {
                 
                 {categories
                   .find(cat => cat.name === selectedCategory)
-                  ?.subcategories.map((subcat, index) => (
+                  ?.subcategories.map((subcat) => (
                     <button
-                      key={`${selectedCategory}-${index}`}
+                      key={`${selectedCategory}-subcategory-${subcat}`}
                       onClick={() => {
                         setSelectedSubcategory(subcat);
                         const params = new URLSearchParams(searchParams);
@@ -347,7 +349,7 @@ function ProductPage() {
           </div>
 
           {/* Product Count */}
-          <div className="mb-4">
+          <div className="mb-4" key="product-count">
             <p className="text-sm text-gray-500">
               {filteredProducts.length} ürün bulundu
               {selectedCategory ? ` "${selectedCategory}" kategorisinde` : ''}
@@ -358,19 +360,21 @@ function ProductPage() {
 
           {/* Product Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredProducts.map(product => (
-              <ProductCard
-                key={product.id}
-                {...product}
-                allLabels={labels}
-                onAddToCart={handleAddToCart}
-              />
+            {filteredProducts.map((product, index) => (
+              <div key={`product-${product.id}-${index}`}>
+                <ProductCard
+                  key={`product-card-${product.id}-${index}`}
+                  {...product}
+                  allLabels={labels}
+                  onAddToCart={handleAddToCart}
+                />
+              </div>
             ))}
           </div>
           
           {/* No Products Found */}
           {filteredProducts.length === 0 && (
-            <div className="text-center py-10">
+            <div key="no-products-found" className="text-center py-10">
               <p className="text-xl text-gray-500">Ürün bulunamadı</p>
               <p className="text-gray-400 mt-2">Farklı bir kategori seçin veya arama terimini değiştirin</p>
             </div>

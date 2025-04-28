@@ -37,15 +37,39 @@ function ProductDetail() {
     const fetchProduct = async () => {
       if (!id) return;
       try {
-        const docRef = db.doc(db, 'products', id);
-        const docSnap = await db.getDocs(db.query(db.collection('products'), db.where('__name__', '==', id)));
+        const productQuery = db.query(
+          db.collection('products'),
+          db.where('__name__', '==', id)
+        );
         
-        if (!docSnap.docs.length) {
+        const querySnapshot = await db.getDocs(productQuery);
+        
+        if (querySnapshot.docs.length === 0) {
+          console.log("No product found with ID:", id);
           setLoading(false);
           return; // Product not found
         }
         
-        setProduct({ id: docSnap.docs[0].id, ...docSnap.docs[0].data() } as Product);
+        // Get the first (and should be only) document
+        const productDoc = querySnapshot.docs[0];
+        const productData = productDoc.data() as {
+          name: string;
+          price: number;
+          description: string;
+          category: string;
+          categoryPath: string[];
+          images: string[];
+          mainImageIndex: number;
+          stock: number;
+          featured: boolean;
+        };
+        
+        setProduct({ 
+          id: productDoc.id, 
+          ...productData 
+        });
+        
+        console.log("Product loaded successfully:", productDoc.id);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching product:', error);
