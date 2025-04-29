@@ -808,9 +808,15 @@ function App() {
                 <h1 className="text-4xl md:text-6xl font-bold mb-4 glow-effect">
                   Model Roketçilikte Yeni Nesil
                 </h1>
-                <p className="text-xl md:text-2xl mb-8">
-                  Profesyonel model roket ve sonda roket çözümleri
-                </p>
+                <div className="relative h-24 mb-8 overflow-hidden">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-2xl md:text-3xl font-bold tracking-wider space-text">
+                      <span className="inline-block animate-typing delay-100 text-white space-word">Hayal Et </span> ,
+                      <span className="inline-block animate-typing delay-200 text-white ml-4 space-word">Tasarla </span>,
+                      <span className="inline-block animate-typing delay-300 text-white ml-4 space-word">Fırlat!</span>
+                    </div>
+                  </div>
+                </div>
                 <Link to="/products" className="star-button inline-block">
                   <svg className="star-1" width="50" height="50" viewBox="0 0 512 512">
                     <path className="fil0" d="M512 198.525l-176.89-25.704-79.11-160.291-79.108 160.291-176.892 25.704 128 124.769-30.216 176.176 158.216-83.179 158.216 83.179-30.217-176.176 128.001-124.769z"/>
@@ -1288,6 +1294,69 @@ function App() {
                   
                   .animate-dash {
                     animation: dash 15s linear infinite;
+                  }
+
+                  .space-text {
+                    position: relative;
+                  }
+
+                  .space-word {
+                    position: relative;
+                    animation: float 3s ease-in-out infinite;
+                    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+                  }
+
+                  .space-word::before {
+                    content: '';
+                    position: absolute;
+                    top: -2px;
+                    left: -2px;
+                    right: -2px;
+                    bottom: -2px;
+                    background: linear-gradient(45deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.8));
+                    background-size: 400%;
+                    z-index: -1;
+                    filter: blur(8px);
+                    opacity: 0;
+                    transition: opacity 0.3s ease;
+                    animation: glow 2s linear infinite;
+                  }
+
+                  .space-word:hover::before {
+                    opacity: 0.7;
+                  }
+
+                  @keyframes float {
+                    0%, 100% {
+                      transform: translateY(0);
+                    }
+                    50% {
+                      transform: translateY(-10px);
+                    }
+                  }
+
+                  @keyframes glow {
+                    0% {
+                      background-position: 0 0;
+                    }
+                    50% {
+                      background-position: 400% 0;
+                    }
+                    100% {
+                      background-position: 0 0;
+                    }
+                  }
+
+                  .space-word:nth-child(1) {
+                    animation-delay: 0s;
+                  }
+
+                  .space-word:nth-child(2) {
+                    animation-delay: 0.2s;
+                  }
+
+                  .space-word:nth-child(3) {
+                    animation-delay: 0.4s;
                   }
                 `}
               </style>
