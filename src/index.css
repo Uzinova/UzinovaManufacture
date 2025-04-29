@@ -6,52 +6,76 @@
  
  /* Isolated Canvas Styling - Using unique prefixes to avoid conflicts */
 .isolated-canvas-container {
-  padding-top: 4rem;
-  padding-bottom: 4rem;
+  padding: 0 !important;
+  margin: 0 !important;
   background-color: rgba(236, 242, 248, 0.5);
+  width: 100vw !important;
+  height: 100vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  overflow: hidden !important;
 }
 
 .isolated-canvas-inner {
-  max-width: 80rem;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 1rem;
-  padding-right: 1rem;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  height: 100% !important;
 }
 
 .isolated-canvas-wrapper {
-  height: 50vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  position: relative !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
 .isolated-canvas-holder {
-  height: 100%;
-  width: 50%;
+  width: 100% !important;
+  height: 100% !important;
+  position: relative !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
 .isolated-canvas-element {
-  border: 10px solid red;
-  width: 100%;
-  height: 100%;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  border: none !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
 }
 
+/* Remove any conflicting styles */
+@media (min-width: 768px) {
+  .isolated-canvas-wrapper,
+  .isolated-canvas-holder,
+  .isolated-canvas-element {
+    width: 100% !important;
+    height: 100% !important;
+  }
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+@media (min-width: 1024px) {
+  .isolated-canvas-wrapper,
+  .isolated-canvas-holder,
+  .isolated-canvas-element {
+    width: 100% !important;
+    height: 100% !important;
+  }
+}
 
 @layer base {
   :root {
@@ -88,13 +112,6 @@
     scroll-behavior: smooth;
 
   }
-  div {
-    overflow: hidden;
-    position: static; /* Varsayılan olarak static yapın */
-    z-index: auto; /* Z-index değerini kaldırın */
-  }
-  /* General canvas style - not for model viewer */
- 
 }
  
 /* Rich Text Content Styles */
@@ -517,4 +534,35 @@
 .ProseMirror a {
   color: hsl(var(--primary));
   text-decoration: underline;
+}
+
+.starfield {
+    z-index: 3;
+    background: rgba(2, 1, 0, 0.11);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    display: block;
+}
+
+.sun-gradient {
+    background: radial-gradient(ellipse at bottom, rgba(137,155,216,0.15), transparent);
+    height: 100vh;
+    width: 100vw;
+    z-index: 4;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+.top-gradient {
+    background: linear-gradient(rgba(14, 15, 18, 1), rgba(0, 0, 0, 0));
+    z-index: 3;
+    height: 20%;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
 }

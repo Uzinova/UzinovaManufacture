@@ -14,6 +14,7 @@ import './styles/StarButton.css';
 import './styles/carousel.css';
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
+import logo from './logo.png';
  
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
   const [news, setNews] = useState<any[]>([]);
   const seqref = useRef<HTMLCanvasElement>(null); 
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const starfieldRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<Array<{x: number; y: number; vx: number; vy: number}>>([]);
   const mouseRef = useRef<{x: number; y: number}>({ x: 0, y: 0 });
   const { addToCart } = useCart();
@@ -39,6 +41,337 @@ function App() {
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [autoScroll, setAutoScroll] = useState(true);
  
+  // Add useEffect for starfield animation
+  useEffect(() => {
+    const starfield = starfieldRef.current;
+    if (!starfield) return;
+    const c = starfield.getContext('2d');
+    if (!c) return;
+
+    let windowWidth = window.innerWidth;
+    let windowHeight = window.innerHeight;
+    starfield.width = windowWidth;
+    starfield.height = windowHeight;
+
+    let stars: any[] = [];
+    let initAnimation = true;
+    let STARS_NUMBER = windowWidth / 4;
+    const MIN_STAR_OPACITY = 4;
+    const MAX_STAR_OPACITY = 10;
+
+    function getStarsTypes(windowWidth: number, windowHeight: number) {
+      return [
+        {
+          name: 'left',
+          amount: 0.2,
+          minSize: 2,
+          maxSize: 2.5,
+          minSpeed: 10,
+          maxSpeed: 20,
+          direction: -1,
+          startX: -2 * windowWidth,
+          startY: windowHeight/2,
+          radius: 2 * windowWidth + 0.2 * windowWidth,
+          startAngle: 70,
+          endAngle: 110, 
+        },
+        {
+          name: 'left-small',
+          amount: 0.2,
+          minSize: 1,
+          maxSize: 2,
+          minSpeed: 10,
+          maxSpeed: 20,
+          direction: -1,
+          startX: -2 * windowWidth,
+          startY: windowHeight/2,
+          radius: 2 * windowWidth + 0.3 * windowWidth,
+          startAngle: 70,
+          endAngle: 110, 
+        },
+        {
+          name: 'left-medium',
+          amount: 0.2,
+          minSize: 1,
+          maxSize: 2,
+          minSpeed: 10,
+          maxSpeed: 20,
+          direction: -1,
+          startX: -windowWidth/2,
+          startY: -2 * windowHeight,
+          radius: 2 * windowHeight + 0.9 * windowHeight,
+          startAngle: 340,
+          endAngle: 60, 
+        },
+        {
+          name: 'left-small',
+          amount: 0.1,
+          minSize: 1,
+          maxSize: 2,
+          minSpeed: 10,
+          maxSpeed: 20,
+          direction: -1,
+          startX: -windowWidth/2 + windowWidth * 0.5,
+          startY: -2 * windowHeight - windowHeight * 0.1,
+          radius: 2 * windowHeight + 0.9 * windowHeight,
+          startAngle: 340,
+          endAngle: 60, 
+        },
+        {
+          name: 'center-small',
+          amount: 0.3,
+          minSize: 0.5,
+          maxSize: 1,
+          minSpeed: 10,
+          maxSpeed: 20,
+          direction: -1,
+          startX: windowWidth/2,
+          startY: -2 * windowHeight,
+          radius: 2 * windowHeight + 0.8 * windowHeight,
+          startAngle: 340,
+          endAngle: 30, 
+        },
+        {
+          name: 'right-big',
+          amount: 0.1,
+          minSize: 1,
+          maxSize: 3,
+          minSpeed: 10,
+          maxSpeed: 20,
+          direction: 1,
+          startX: 2 * windowWidth,
+          startY: windowHeight/2,
+          radius: 2 * windowWidth - 0.9 * windowWidth,
+          startAngle: 290,
+          endAngle: 230, 
+        },
+        {
+          name: 'right-small',
+          amount: 0.1,
+          minSize: 1,
+          maxSize: 2,
+          minSpeed: 10,
+          maxSpeed: 20,
+          direction: 1,
+          startX: 2 * windowWidth,
+          startY: windowHeight/2,
+          radius: 2 * windowWidth - 0.7 * windowWidth,
+          startAngle: 290,
+          endAngle: 230, 
+        },
+        {
+          name: 'right-center',
+          amount: 0.3,
+          minSize: 1,
+          maxSize: 2,
+          minSpeed: 10,
+          maxSpeed: 20,
+          direction: 1,
+          startX: 2 * windowWidth,
+          startY: windowHeight/2,
+          radius: 2 * windowWidth - 0.5 * windowWidth,
+          startAngle: 290,
+          endAngle: 230, 
+        },
+      ];
+    }
+
+    function Star(this: any, x: number, y: number, radius: number, speed: number, size: number, opacity: number, direction: number, startAngle: number, endAngle: number, maxSize: number, defaultStartAngle: number) {
+      this.x = x;
+      this.y = y;
+      this.radius = radius;
+      this.startX = x;
+      this.startY = y;
+      this.speed = speed;
+      this.size = size;
+      this.defaultSize = size;
+      this.opacity = opacity;
+      this.age = 0;
+      this.defaultOpacity = opacity;
+      this.direction = -direction;
+      this.startAngle = startAngle;
+      this.endAngle = endAngle;
+      this.angleReachZero = false;
+      this.maxSize = maxSize;
+      this.defaultStartAngle = defaultStartAngle;
+      this.updateCalls = 0;
+    }
+
+    Star.prototype.update = function() {
+      this.age += this.direction * this.speed;
+      this.updateCalls += 1;
+
+      let radAngle = (this.age * Math.PI + this.startAngle * Math.PI)/180 ;
+      let sin = Math.sin(radAngle); 
+      let cos = Math.cos(radAngle);
+      
+      this.x = this.radius * sin + this.startX;
+      this.y = this.radius * cos + this.startY;
+      
+      if (this.direction > 0) {
+        if (this.startAngle < this.endAngle) {
+          if (getAngle(sin, cos) > this.endAngle) {
+            this.age = 0;
+            this.startAngle = this.defaultStartAngle;
+            this.size = this.defaultSize;
+          }
+        } else {
+          if (getAngle(sin, cos) < this.endAngle) {
+            this.angleReachZero = true;
+          }
+          if (this.angleReachZero && getAngle(sin, cos) > this.endAngle) {
+            this.age = 0;
+            this.startAngle = this.defaultStartAngle;
+            this.size = this.defaultSize;
+            this.angleReachZero = false;
+          } 
+        }
+      } else {
+        if (this.startAngle > this.endAngle) {
+          if (getAngle(sin, cos) < this.endAngle) {
+            this.age = 0;
+            this.startAngle = this.defaultStartAngle;
+            this.size = this.defaultSize;
+          }
+        } else {
+          if (getAngle(sin, cos) > this.endAngle) {
+            this.angleReachZero = true;
+          }
+          if (this.angleReachZero && getAngle(sin, cos) < this.endAngle) {
+            this.age = 0;
+            this.startAngle = this.defaultStartAngle;
+            this.size = this.defaultSize;
+            this.angleReachZero = false;
+          } 
+        }
+      }
+      
+      if (this.y < windowHeight / 2 && this.size < this.maxSize + 1 ) {
+        this.size += this.speed/100;
+      }
+
+      if (this.y > windowHeight / 2 && this.size > this.minSize * 0.1 ) {
+        this.size -= this.speed;
+      }
+
+      drawStar(this.x, this.y, this.size, this.opacity);
+    }
+
+    function createAllStars() {
+      let starsTypes = getStarsTypes(windowWidth, windowHeight);
+      for (let i = 0; i < starsTypes.length; i++) {
+        for(let j = 0; j < STARS_NUMBER * starsTypes[i].amount; j++) {
+          createStar(starsTypes[i])
+        }
+      }
+      if (initAnimation) {
+        drawAndUpdate();
+      }
+    }
+
+    function createStar(star: any) {
+      let startX = getRandomIntInclusive(star.startX - windowWidth * 0.2, star.startX + windowWidth * 0.2);
+      let startY = getRandomIntInclusive(star.startY - windowHeight * 0.2, star.startY + windowHeight * 0.2);
+      let direction = star.direction;
+      let radius = getRandomIntInclusive(star.radius, star.radius);
+      let startAngle = getRandomAngle(star.startAngle, star.endAngle);
+      let endAngle = star.endAngle;
+      let speed = getRandomIntInclusive(star.minSpeed, star.maxSpeed) * 0.0003;
+      let size = getRandomIntInclusive(star.minSize, star.maxSize);
+      let opacity = getRandomIntInclusive(MIN_STAR_OPACITY, MAX_STAR_OPACITY) * 0.1;
+      stars.push(
+        new (Star as any)(
+          startX, 
+          startY, 
+          radius, 
+          speed, 
+          size, 
+          opacity, 
+          direction, 
+          startAngle, 
+          endAngle,
+          star.maxSize,
+          star.startAngle
+        )
+      );
+    }
+
+    function drawStar(x: number, y: number, size: number, opacity: number){
+      if (!c) return;
+      c.beginPath();
+      c.arc(x, y, size, 0, Math.PI * 2, false);
+      c.closePath();
+      c.fillStyle = `rgba(155, 165, 193, ${opacity})`;
+      c.fill();
+    }
+
+    function drawAndUpdate() {
+      if (!c) return;
+      c.clearRect(0, 0, windowWidth, windowHeight);
+      if (stars.length > 0) {
+        stars.forEach(el => {
+          el.update();
+        });
+        window.requestAnimationFrame(drawAndUpdate);
+      }
+    }
+
+    function resetStars() {
+      initAnimation = false;
+      stars = [];
+      windowWidth = window.innerWidth;
+      windowHeight = window.innerHeight;
+      if (starfield) {
+        starfield.width = windowWidth;
+        starfield.height = windowHeight;
+      }
+      if (c) {
+        c.clearRect(0, 0, windowWidth, windowHeight);
+      }
+      STARS_NUMBER = windowWidth / 4;
+      createAllStars();
+    }
+
+    function getRandomIntInclusive(min: number, max: number) {
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      return Math.floor(Math.random() * (max - min + 1) + min)
+    }
+
+    function getAngle(sin: number, cos: number) {
+      if ( sin > 0 && cos > 0  ) {
+        return Math.asin(sin)*180/Math.PI;
+      }
+      if ( sin > 0 && cos < 0  ) {
+        return 180 - Math.asin(sin)*180/Math.PI;
+      }
+      if ( sin < 0 && cos < 0  ) {
+        return 180 - Math.asin(sin)*180/Math.PI;
+      }
+      if ( sin < 0 && cos > 0  ) {
+        return 360 + Math.asin(sin)*180/Math.PI; 
+      }
+      return 0;
+    }
+
+    function getRandomAngle(startAngle: number, endAngle: number) {
+      if (endAngle - startAngle < 0 && endAngle < 180) {
+        let randomAngle = getRandomIntInclusive(0, 360 - startAngle + endAngle)
+        return startAngle + randomAngle > 360 ? getRandomIntInclusive(0, endAngle) : startAngle + randomAngle;
+      }
+      if (endAngle - startAngle < 0) {
+        return getRandomIntInclusive(endAngle, startAngle);
+      }
+      return getRandomIntInclusive(startAngle, endAngle);
+    }
+
+    createAllStars();
+    window.addEventListener('resize', resetStars);
+    return () => {
+      window.removeEventListener('resize', resetStars);
+    };
+  }, []);
+
   const seqimages = useMemo( () => {
     const loadimages:HTMLImageElement[] = [];
     let loadedCount = 0;
@@ -417,10 +750,10 @@ function App() {
     <Routes>
       <Route path="/news/:id" element={<NewsDetail />} />
       <Route path="/" element={
-        <div className="min-h-screen bg-background text-foreground relative">
+        <div className="min-h-screen bg-background text-foreground relative" style={{zIndex: 1}}>
           {/* Navigation */}
           <Navbar transparent={false} />
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 px-4 md:px-8 lg:px-12">
             <Link to="/kompozit" className="text-white hover:text-primary transition-colors">
               Kompozit Üretim
             </Link>
@@ -432,7 +765,7 @@ function App() {
             </Link>
           </div>
          {/* Hero Section */}
-         <div style={{ }} className="relative h-screen  ">
+         <div style={{ zIndex: 30 }} className="relative h-screen  ">
             {heroSlides.map((slide, index) => (
               <div
                 key={slide.id}
@@ -516,150 +849,452 @@ function App() {
             </div>
           </div>
 
-          {/* Featured Products Section */}
-          <div className="bg-background py-8 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-b from-accent/10 via-accent/0 to-accent/10" />
-            <div className="interactive-bg" />
-            <div className="max-w-7xl mx-auto px-4">
-              <h2 className="text-2xl font-bold mb-8 scroll-reveal">Öne Çıkan Ürünler</h2>
-              
-              {/* Carousel Container */}
-              <Carousel
-                additionalTransfrom={0}
-                arrows
-                autoPlay
-                autoPlaySpeed={3000}
-                centerMode={false}
-                className=""
-                containerClass="carousel-container"
-                dotListClass=""
-                draggable
-                focusOnSelect={false}
-                infinite
-                itemClass=""
-                keyBoardControl
-                minimumTouchDrag={80}
-                pauseOnHover={false}
-                renderArrowsWhenDisabled={false}
-                renderButtonGroupOutside={false}
-                renderDotsOutside={false}
-                responsive={{
-                  desktop: {
-                    breakpoint: {
-                      max: 3000,
-                      min: 1024
-                    },
-                    items: 6,
-                    partialVisibilityGutter: 20
-                  },
-                  tablet: {
-                    breakpoint: {
-                      max: 1024,
-                      min: 464
-                    },
-                    items: 3,
-                    partialVisibilityGutter: 20
-                  },
-                  mobile: {
-                    breakpoint: {
-                      max: 464,
-                      min: 0
-                    },
-                    items: 2,
-                    partialVisibilityGutter: 15
+      
+
+          {/* Services Binti Box with Space Theme */}
+          <div className="py-20 bg-black relative overflow-hidden">
+            <canvas ref={starfieldRef} className="starfield"></canvas>
+            
+            {/* Space Background Elements - keep as fallback */}
+            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?q=80&w=2071')] bg-cover bg-center opacity-5"></div>
+            <div className="absolute inset-0 bg-gradient-to-b from-black/90 via-black/70 to-black/90"></div>
+            
+            {/* Add CSS for stars */}
+            <style>
+              {`
+                .stars-container {
+                  perspective: 500px;
+                  position: absolute !important;
+                  overflow: visible !important;
+                  top: 0;
+                  left: 0;
+                  right: 0;
+                  bottom: 0;
+                  z-index: 1 !important;
+                }
+                
+                .stars, .stars2, .stars3 {
+                  position: absolute !important;
+                  overflow: visible !important;
+                  top: 0;
+                  left: 0;
+                  right: 0;
+                  bottom: 0;
+                  z-index: 1 !important;
+                  background-image: 
+                    radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
+                    radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
+                    radial-gradient(1px 1px at 90px 40px, #fff, rgba(0,0,0,0)),
+                    radial-gradient(2px 2px at 160px 120px, #ddd, rgba(0,0,0,0)),
+                    radial-gradient(1px 1px at 230px 190px, #fff, rgba(0,0,0,0));
+                  background-repeat: repeat;
+                  background-size: 250px 250px;
+                  animation: zoom 10s infinite;
+                  transform-origin: center;
+                }
+                
+                .stars, .stars2, .stars3 {
+                  opacity: 0.7 !important;
+                  background-image: 
+                    radial-gradient(3px 3px at 20px 30px, white, rgba(0,0,0,0)),
+                    radial-gradient(3px 3px at 40px 70px, white, rgba(0,0,0,0)),
+                    radial-gradient(2px 2px at 90px 40px, white, rgba(0,0,0,0)),
+                    radial-gradient(3px 3px at 160px 120px, white, rgba(0,0,0,0)),
+                    radial-gradient(2px 2px at 230px 190px, white, rgba(0,0,0,0));
+                  background-size: 200px 200px;
+                }
+                
+                .stars {
+                  background-position: 0 0;
+                  animation-delay: 0s;
+                }
+                .stars2 {
+                  background-position: 100px 50px;
+                  animation-delay: 3s;
+                }
+                .stars3 {
+                  background-position: 50px 100px;
+                  animation-delay: 6s;
+                }
+                
+                @keyframes zoom {
+                  0% {
+                    opacity: 0.7;
+                    transform: scale(0.5) translateZ(-400px) rotate(0deg);
                   }
-                }}
-                rewind={false}
-                rewindWithAnimation={false}
-                rtl={false}
-                shouldResetAutoplay
-                showDots
-                sliderClass=""
-                slidesToSlide={2}
-                swipeable
-                customTransition="transform 500ms ease-in-out"
-                ssr={false}
-              >
-                {featuredProducts.map((item, index) => (
-                  <div key={`${item.id}-${index}`} className="px-1">
-                    <div className="bg-card rounded-lg overflow-hidden shadow-lg h-full transform transition-transform hover:scale-105">
-                      <ProductCard
-                        {...item}
-                        allLabels={labels}
-                        onAddToCart={handleAddToCart}
-                      />
+                  50% {
+                    opacity: 1;
+                  }
+                  100% {
+                    opacity: 0.7;
+                    transform: scale(1.5) translateZ(0) rotate(360deg);
+                  }
+                }
+                
+                .bg-gradient-radial {
+                  background: radial-gradient(circle at center, var(--tw-gradient-from), var(--tw-gradient-via), var(--tw-gradient-to));
+                }
+              `}
+            </style>
+            
+            <div className="max-w-[95%] mx-auto px-4 md:px-8 lg:px-12 relative z-10">
+              {/* Main Header */}
+              <div className="text-center mb-16">
+                <div className="flex justify-center mb-4">
+                  <img src={logo} alt="Uzinovas Logo" className="h-20 w-auto" />
+                </div>
+                <h1 className="text-white-600 mx-auto" style={{ fontStyle: 'italic', fontSize: '30px'}}>
+                  "Uzinovas İle Tam İrtifa"
+                </h1>
+              </div>
+              
+              {/* NEW MODERN SERVICES LAYOUT */}
+              <div className="grid grid-cols-12 gap-6 mb-20">
+                {/* Launch Systems Box - Large Box */}
+                <div className="col-span-12 md:col-span-8 h-[400px] relative group overflow-hidden rounded-2xl shadow-2xl">
+                  {/* Background Image */}
+                  <div className="absolute inset-0">
+                    <img 
+                      src="https://images.unsplash.com/photo-1516849841032-87cbac4d88f7?q=80&w=2070" 
+                      alt="Rocket Launch" 
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent"></div>
+                  </div>
+                  
+                  {/* Content */}
+                  <div className="absolute inset-0 p-10 flex flex-col justify-end">
+                    <div className="mb-6 inline-flex items-center space-x-2 bg-orange-500/30 backdrop-blur-sm p-2 rounded-full w-fit">
+                      <Rocket className="h-7 w-7 text-orange-400" />
+                      <span className="text-white font-bold pr-1">ROCKET SYSTEMS</span>
+                    </div>
+                    <h3 className="text-5xl font-black uppercase text-white mb-4 tracking-tighter leading-tight">
+                      FIRLATMA<br/>SİSTEMLERİ
+                    </h3>
+                    <div className="max-w-lg">
+                      <p className="text-gray-300 mb-6 leading-relaxed">
+                        Tam profesyonel fırlatma rampaları, ateşleme sistemleri ve güvenlik protokolleri ile roketlerinizi güvenle gökyüzüne ulaştırın.
+                      </p>
+                      <ul className="space-y-2 mb-8 text-gray-300 flex flex-wrap gap-3">
+                        <li className="bg-black/30 backdrop-blur-sm rounded-full px-4 py-2 border border-orange-500/30 flex items-center">
+                          <div className="h-2 w-2 rounded-full bg-orange-400 mr-2"></div>
+                          <span>Fırlatma rampası tasarımı</span>
+                        </li>
+                        <li className="bg-black/30 backdrop-blur-sm rounded-full px-4 py-2 border border-orange-500/30 flex items-center">
+                          <div className="h-2 w-2 rounded-full bg-orange-400 mr-2"></div>
+                          <span>Ateşleme sistemleri</span>
+                        </li>
+                        
+                      </ul>
+                      <button className="group/btn bg-orange-500 hover:bg-orange-600 text-white py-3 px-6 rounded-full font-bold flex items-center space-x-2 transition-all duration-300 transform hover:translate-x-1">
+                        <span>KEŞFET</span>
+                        <ArrowRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
+                      </button>
                     </div>
                   </div>
-                ))}
-              </Carousel>
-            </div>
-          </div>
-
-   
-          {/* Sequance Images */}
-         
-         
-        
-
-
-          {/* Sequence Animation Section */}
-          <div 
-            id="sequence-section"
-            className="sequence-section"
-            style={{ 
-              minHeight: '120vh',
-              position: 'relative',
-              background: '#000000',
-              marginBottom: '-45vh',
-              willChange: 'transform'
-            }}
-          >
-            <div 
-              className="sequence-container"
-              style={{ 
-                position: 'sticky',
-                top: 0,
-                width: '100%',
-                height: '100vh',
-                display: 'flex',
-                alignItems: 'flex-end',
-                justifyContent: 'center',
-                background: '#000000',
-                willChange: 'transform'
-              }}
-            >
-              <div 
-                className="sequence-canvas-wrapper"
-                style={{ 
-                  width: '80%',
-                  height: '80vh',
-                  maxWidth: '600px',
-                  position: 'relative',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  transform: `translateY(${yTransform.get()}%)`,
-                  marginBottom: '5vh',
-                  willChange: 'transform'
-                }}
-              >
-                <canvas 
-                  ref={seqref} 
-                  className="sequence-canvas"
-                  style={{ 
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'contain',
-                    display: 'block',
-                    imageRendering: 'auto',
-                    position: 'relative',
-                    zIndex: 2
-                  }}
-                />
+                </div>
+                
+                {/* Composite Materials Box - Vertical Box */}
+                <div className="col-span-12 md:col-span-4 h-[400px] relative group overflow-hidden rounded-2xl shadow-2xl">
+                  {/* Background Image */}
+                  <div className="absolute inset-0">
+                    <img 
+                      src="https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?q=80&w=2070" 
+                      alt="Composite Materials" 
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent"></div>
+                  </div>
+                  
+                  {/* Content */}
+                  <div className="absolute inset-0 p-8 flex flex-col justify-end">
+                    <div className="mb-6 inline-flex items-center space-x-2 bg-blue-500/30 backdrop-blur-sm p-2 rounded-full w-fit">
+                      <svg className="h-5 w-5 text-blue-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      <span className="text-white font-bold pr-1">MATERIALS</span>
+                    </div>
+                    <h3 className="text-3xl font-black uppercase text-white mb-4 tracking-tighter leading-tight">
+                      KOMPOZİT<br/>MALZEMELER
+                    </h3>
+                    <div>
+                      <p className="text-gray-300 mb-6 text-sm leading-relaxed">
+                        Hafif, dayanıklı ve yüksek performanslı kompozit malzemelerle roketlerinizin performansını maksimuma çıkarın.
+                      </p>
+                      <button className="group/btn bg-blue-500 hover:bg-blue-600 text-white py-3 px-6 rounded-full font-bold flex items-center space-x-2 transition-all duration-300 transform hover:translate-x-1">
+                        <span>KEŞFET</span>
+                        <ArrowRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Telemetry Systems Box - Horizontal Box */}
+                <div className="col-span-12 md:col-span-6 h-[300px] relative group overflow-hidden rounded-2xl shadow-2xl">
+                  {/* Background Image */}
+                  <div className="absolute inset-0">
+                    <img 
+                      src="https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?q=80&w=2070" 
+                      alt="Telemetry Systems" 
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent"></div>
+                  </div>
+                  
+                  {/* Content */}
+                  <div className="absolute inset-0 p-8 flex flex-col justify-end">
+                    <div className="mb-6 inline-flex items-center space-x-2 bg-green-500/30 backdrop-blur-sm p-2 rounded-full w-fit">
+                      <svg className="h-5 w-5 text-green-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 3V21M9 3H15M5 7L19 17M5 17L19 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                      </svg>
+                      <span className="text-white font-bold pr-1">DATA SYSTEMS</span>
+                    </div>
+                    <h3 className="text-3xl font-black uppercase text-white mb-4 tracking-tighter">
+                      TELEMETRİ SİSTEMLERİ
+                    </h3>
+                    <div className="flex flex-wrap gap-3 mb-6">
+                      <span className="bg-black/30 backdrop-blur-sm rounded-full px-4 py-2 border border-green-500/30 text-gray-300 text-sm">Uçuş veri toplama</span>
+                      <span className="bg-black/30 backdrop-blur-sm rounded-full px-4 py-2 border border-green-500/30 text-gray-300 text-sm">GPS entegrasyonu</span>
+                      <span className="bg-black/30 backdrop-blur-sm rounded-full px-4 py-2 border border-green-500/30 text-gray-300 text-sm">Gerçek zamanlı veri analizi</span>
+                    </div>
+                    <button className="group/btn bg-green-500 hover:bg-green-600 text-white py-3 px-6 rounded-full font-bold flex items-center space-x-2 transition-all duration-300 transform hover:translate-x-1 w-fit">
+                      <span>KEŞFET</span>
+                      <ArrowRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
+                    </button>
+                  </div>
+                </div>
+                
+                {/* Ground Station Box - Medium Box */}
+                <div className="col-span-12 md:col-span-6 h-[300px] relative group overflow-hidden rounded-2xl shadow-2xl">
+                  {/* Background Image */}
+                  <div className="absolute inset-0">
+                    <img 
+                      src="https://images.unsplash.com/photo-1581092334247-48c84a21aae9?q=80&w=2070" 
+                      alt="Ground Station" 
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent"></div>
+                  </div>
+                  
+                  {/* Content */}
+                  <div className="absolute inset-0 p-8 flex flex-col justify-end">
+                    <div className="mb-6 inline-flex items-center space-x-2 bg-purple-500/30 backdrop-blur-sm p-2 rounded-full w-fit">
+                      <svg className="h-5 w-5 text-purple-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5 12l-2 0M21 12l-2 0M12 5l0 -2M12 21l0 -2" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                        <path d="M8 8l-1.5 -1.5M17.5 17.5l-1.5 -1.5M16 8l1.5 -1.5M6.5 17.5l1.5 -1.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                        <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="2"/>
+                      </svg>
+                      <span className="text-white font-bold pr-1">GROUND TECH</span>
+                    </div>
+                    <h3 className="text-3xl font-black uppercase text-white mb-4 tracking-tighter">
+                      YER İSTASYONU SİSTEMLERİ
+                    </h3>
+                    <p className="text-gray-300 mb-6 text-sm leading-relaxed max-w-md">
+                      Profesyonel yer istasyonu ekipmanları ile roketlerinizi kontrol edin, verileri analiz edin ve uçuşlarınızı optimize edin.
+                    </p>
+                    <button className="group/btn bg-purple-500 hover:bg-purple-600 text-white py-3 px-6 rounded-full font-bold flex items-center space-x-2 transition-all duration-300 transform hover:translate-x-1 w-fit">
+                      <span>KEŞFET</span>
+                      <ArrowRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
+                    </button>
+                  </div>
+                </div>
               </div>
+              
+              {/* Middle - Sequence Animation */}
+              <div className="mb-20 relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-orange-600/20 via-red-600/20 to-amber-600/20 rounded-xl opacity-30"></div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 backdrop-blur-sm border border-orange-500/20 rounded-xl">
+                  <div className="flex flex-col justify-center">
+                    <h3 className="text-4xl font-black uppercase text-white mb-6 tracking-tight">
+                      ROKET UÇUŞ <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500">SİMÜLASYONU</span>
+                    </h3>
+                    
+                    <p className="text-gray-300 mb-6">
+                      Gelişmiş algoritmalarımız ve hassas sensörlerimiz sayesinde roketinizin uçuşunu önceden simüle ederek performansını optimize edebilirsiniz.
+                    </p>
+                    
+                    <div className="flex gap-4">
+                      <button className="bg-gradient-to-r from-orange-600 to-red-600 text-white py-3 px-6 rounded-lg font-bold hover:from-orange-700 hover:to-red-700 transition-all duration-300">
+                        Simülasyon Başlat
+                      </button>
+                      <button className="bg-transparent border border-orange-500 text-white py-3 px-6 rounded-lg font-bold hover:bg-orange-900/30 transition-all duration-300">
+                        Detaylar
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-center relative">
+                    <div id="sequence-canvas-container" className="relative w-full h-80 overflow-hidden rounded-lg bg-black/50">
+                      <canvas 
+                        ref={seqref}
+                        className="absolute inset-0 w-full h-full object-contain"
+                      />
+                      
+                      {/* Rocket Flight Path */}
+                      <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                        <path 
+                          d="M 10,90 Q 50,10 90,90" 
+                          fill="none" 
+                          stroke="rgba(249, 115, 22, 0.4)" 
+                          strokeWidth="1" 
+                          strokeDasharray="2,2"
+                          className="animate-dash"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Bottom Row - Featured Products */}
+              <div className="mb-16">
+                <div className="flex items-center justify-between mb-8">
+                  <div className="flex items-center gap-3">
+                    <div className="h-12 w-1.5 bg-gradient-to-b from-orange-500 to-red-500 rounded-full"></div>
+                    <h2 className="text-3xl md:text-4xl font-black uppercase text-white">ÖNE ÇIKAN ÜRÜNLER</h2>
+                  </div>
+                  <button className="flex items-center gap-2 bg-transparent border border-orange-500/50 text-white py-2 px-5 rounded-full text-sm font-bold hover:bg-orange-900/30 transition-colors">
+                    <span>TÜM ÜRÜNLER</span>
+                    <ArrowRight className="h-4 w-4" />
+                  </button>
+                </div>
+                
+                <div className="bg-gradient-to-r from-zinc-900/70 via-zinc-900/70 to-zinc-900/70 backdrop-blur-sm p-8 rounded-xl border border-orange-500/20">
+                  <Carousel
+                    additionalTransfrom={0}
+                    arrows
+                    autoPlay
+                    autoPlaySpeed={3000}
+                    centerMode={false}
+                    containerClass="carousel-container"
+                    dotListClass=""
+                    draggable
+                    focusOnSelect={false}
+                    infinite
+                    itemClass="px-3"
+                    keyBoardControl
+                    minimumTouchDrag={80}
+                    pauseOnHover
+                    renderArrowsWhenDisabled={false}
+                    renderButtonGroupOutside={false}
+                    renderDotsOutside={false}
+                    responsive={{
+                      desktop: {
+                        breakpoint: {
+                          max: 3000,
+                          min: 1024
+                        },
+                        items: 4,
+                        partialVisibilityGutter: 20
+                      },
+                      tablet: {
+                        breakpoint: {
+                          max: 1024,
+                          min: 464
+                        },
+                        items: 2,
+                        partialVisibilityGutter: 20
+                      },
+                      mobile: {
+                        breakpoint: {
+                          max: 464,
+                          min: 0
+                        },
+                        items: 1,
+                        partialVisibilityGutter: 15
+                      }
+                    }}
+                    rewind={false}
+                    rewindWithAnimation={false}
+                    rtl={false}
+                    shouldResetAutoplay
+                    showDots={false}
+                    sliderClass=""
+                    slidesToSlide={1}
+                    swipeable
+                    customTransition="transform 500ms ease-in-out"
+                    ssr={false}
+                  >
+                    {featuredProducts.map((item, index) => (
+                      <div key={`${item.id}-${index}`} className="h-full">
+                        <div className="bg-zinc-800/80 backdrop-blur-sm rounded-lg overflow-hidden shadow-lg shadow-orange-500/10 border border-orange-500/20 h-full transform transition-transform hover:scale-105">
+                          <ProductCard
+                            {...item}
+                            allLabels={labels}
+                            onAddToCart={handleAddToCart}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </Carousel>
+                </div>
+              </div>
+              
+              {/* Bottom Section - CTA and Back to Top */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Contact CTA */}
+                <div className="bg-gradient-to-r from-zinc-900/70 to-zinc-900/70 backdrop-blur-sm p-8 rounded-xl border border-orange-500/20">
+                  <h3 className="text-3xl font-black uppercase text-white mb-6">
+                    UZAY YOLCULUĞUNUZ <br />BAŞLASIN
+                  </h3>
+                  <p className="text-gray-300 mb-6">
+                    Profesyonel ekibimiz ve ileri teknolojimizle uzay projelerinizde yanınızdayız.
+                  </p>
+                  <div className="flex gap-4">
+                    <a 
+                      href="mailto:info@uzinova.com" 
+                      className="bg-gradient-to-r from-orange-600 to-red-600 text-white py-3 px-6 rounded-lg font-bold hover:from-orange-700 hover:to-red-700 transition-all duration-300"
+                    >
+                      İLETİŞİME GEÇ
+                    </a>
+                  </div>
+                </div>
+                
+                {/* Back to Top Button */}
+                <div className="bg-gradient-to-r from-zinc-900/70 to-zinc-900/70 backdrop-blur-sm p-8 rounded-xl border border-orange-500/20 flex flex-col justify-between">
+                  <div className="text-3xl font-black uppercase text-white">
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-400">GERİ</span><br />
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-400">DÖNÜŞ</span>
+                  </div>
+                  <div className="flex justify-end">
+                    <button 
+                      onClick={scrollToTop}
+                      className="w-14 h-14 bg-gradient-to-r from-orange-600 to-red-600 rounded-full flex items-center justify-center hover:from-orange-700 hover:to-red-700 transition-all duration-300 shadow-lg shadow-orange-500/20"
+                    >
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 5L5 12H19L12 5Z" fill="white"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Add CSS for animations */}
+              <style>
+                {`
+                  @keyframes twinkle {
+                    0%, 100% { opacity: 0.3; }
+                    50% { opacity: 1; }
+                  }
+                  
+                  @keyframes dash {
+                    to {
+                      stroke-dashoffset: 10;
+                    }
+                  }
+                  
+                  .animate-dash {
+                    animation: dash 15s linear infinite;
+                  }
+                `}
+              </style>
             </div>
           </div>
 
+  
           {/* Add CSS styles for responsive design */}
           <style>{`
             @media (min-width: 768px) {
@@ -669,83 +1304,6 @@ function App() {
               }
             }
           `}</style>
-
-       
-    
-          {/* Categories */}
-          <div className="max-w-7xl mx-auto px-4 py-16 relative">
-            <div className="absolute inset-0 bg-gradient-to-b from-background/10 via-background/0 to-background/10" />
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-              <div className="feature-card hover:shadow-xl transition-all duration-300">
-                <Rocket className="h-12 w-12 text-primary mb-4 floating" />
-                <h3 className="text-xl font-bold mb-2">Kompozit Üretim</h3>
-                <p className="text-gray-400">Yüksek performanslı roket bileşenleri ve güvenilir mühendislik</p>
-              </div>
-              <Link to="/services/3d-printing" className="feature-card hover:shadow-xl transition-all duration-300">
-                <Printer3D className="h-12 w-12 text-primary mb-4 floating" />
-                <h3 className="text-xl font-bold mb-2">3D Baskı Hizmeti</h3>
-                <p className="text-gray-400">Havacılık sınıfı malzemelerle özel parça baskısı</p>
-              </Link>
-              <div className="feature-card hover:shadow-xl transition-all duration-300">
-                <Radio className="h-12 w-12 text-primary mb-4 floating" />
-                <h3 className="text-xl font-bold mb-2">Roket Ekipmanları</h3>
-                <p className="text-gray-400">Profesyonel roket ekipmanları ve kontrol sistemleri</p>
-              </div>
-              <div className="feature-card hover:shadow-xl transition-all duration-300">
-                <Satellite className="h-12 w-12 text-primary mb-4 floating" />
-                <h3 className="text-xl font-bold mb-2">Yer İstasyonu</h3>
-                <p className="text-gray-400">Gelişmiş telemetri ve kontrol yazılımları</p>
-              </div>
-            </div>
-          </div>
-
-     {/* Ground Station Section */}
-     <div id="yeristasyonu" className="bg-accent py-16 relative scroll-reveal">
-            <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-background/0 to-background/20" />
-            <div className="interactive-bg" />
-            <div className="max-w-7xl mx-auto px-4">
-              <div className="text-center mb-12">
-                <h2 className="text-3xl font-bold mb-4">Yer İstasyonu Yazılımı</h2>
-                <p className="text-xl text-gray-400">Profesyonel roket takibi ve telemetri çözümleri</p>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-                <div className="bg-background p-8 rounded-lg pulse hover:shadow-xl transition-all duration-300">
-                  <div className="flex items-center mb-6">
-                    <Activity className="h-8 w-8 text-primary mr-4" />
-                    <h3 className="text-2xl font-bold">Gerçek Zamanlı Yer İstasyonu</h3>
-                  </div>
-                  <ul className="space-y-4">
-                    <li className="flex items-center">
-                      <Download className="h-5 w-5 text-primary mr-3" />
-                      <span>Anlık veri aktarımı ve kayıt</span>
-                    </li>
-                    <li className="flex items-center">
-                      <Upload className="h-5 w-5 text-primary mr-3" />
-                      <span>Komut gönderimi ve kontrol</span>
-                    </li>
-                    <li className="flex items-center">
-                      <Wifi className="h-5 w-5 text-primary mr-3" />
-                      <span>Güçlü sinyal işleme</span>
-                    </li>
-                    <li className="flex items-center">
-                      <Settings className="h-5 w-5 text-primary mr-3" />
-                      <span>Özelleştirilebilir arayüz</span>
-                    </li>
-                  </ul>
-                </div>
-                <div className="relative hover:shadow-xl transition-all duration-300">
-                  <img 
-                    src="https://resimyukle.app/i/6NDdpPrs.png"
-                    alt="Yer İstasyonu"
-                    className="rounded-lg shadow-2xl hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-lg" />
-                </div>
-              </div>
-            </div>
-          </div>
-
         
        {/* News Section with Space Theme */}
        <div className="py-16 relative overflow-hidden bg-gradient-to-b from-background to-accent/20">

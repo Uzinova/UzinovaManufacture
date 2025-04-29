@@ -186,7 +186,8 @@ export function ProductManager() {
         });
       } else {
         // Create new product
-        const { id, ...productData } = editingProduct;
+        const productData = { ...editingProduct };
+        delete productData.id;
         await db.addDoc(db.collection('products'), {
           ...productData,
           created_at: new Date().toISOString(),
