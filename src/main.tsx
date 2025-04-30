@@ -1,5 +1,5 @@
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
-import { StrictMode } from 'react';
+import { StrictMode, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import AdminPanel from './pages/AdminPanel.tsx';
@@ -21,35 +21,75 @@ import { NotificationProvider } from './contexts/NotificationContext.tsx';
 import { ToastProvider } from './contexts/ToastContext.tsx';
 import './index.css';
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <NotificationProvider>
-      <AuthProvider>
-        <CartProvider>
-          <ToastProvider>
-            <Router>
-              <div className="min-h-screen bg-background">
-                <Routes>
-                  <Route path="/" element={<App />} />
-                  <Route path="/admin" element={<AdminPanel />} />
-                  <Route path="/products" element={<ProductPage />} />
-                  <Route path="/products/:id" element={<ProductDetail />} />
-                  <Route path="/news" element={<NewsPage />} />
-                  <Route path="/news/:id" element={<NewsDetail />} />
-                  <Route path="/login" element={<LoginPage />} />
-                  <Route path="/register" element={<RegisterPage />} />
-                  <Route path="/cart" element={<CartPage />} />
-                  <Route path="/offer-success/:id" element={<OfferSuccessPage />} />
-                  <Route path="/3d-model" element={<PrintingServicePage />} />
-                  <Route path="/services/composite-manufacturing" element={<Kompozit />} />
-                  <Route path="/ground-station" element={<GroundStation />} />
-                  <Route path="/contact" element={<ContactPage />} />
-                </Routes>
-              </div>
-            </Router>
-          </ToastProvider>
-        </CartProvider>
-      </AuthProvider>
-    </NotificationProvider>
-  </StrictMode>
-);
+const SplashScreen = () => {
+  return (
+    <div className="fixed inset-0 bg-black flex items-center justify-center z-[9999]">
+      <div className="text-center">
+        <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="filter drop-shadow-[0_0_15px_rgba(249,115,22,0.5)]">
+          <path d="M60 20L80 90H40L60 20Z" fill="#f97316" className="filter drop-shadow-[0_0_10px_rgba(249,115,22,0.8)]"/>
+          <path d="M40 90L30 100H50L40 90Z" fill="#f97316"/>
+          <path d="M80 90L70 100H90L80 90Z" fill="#f97316"/>
+          <path d="M50 100C50 100 60 120 70 100H50Z" fill="#fbbf24" className="origin-top animate-[flame_0.5s_infinite_alternate]"/>
+        </svg>
+        <h1 className="text-white text-4xl font-bold mt-4">UZINOVAS</h1>
+        <p className="text-orange-500 text-xl mt-2">Geleceği Şekillendiriyoruz</p>
+      </div>
+    </div>
+  );
+};
+
+const AppWrapper = () => {
+  const [showSplash, setShowSplash] = useState(() => {
+    const hasVisited = localStorage.getItem('hasVisited');
+    return !hasVisited;
+  });
+
+  useEffect(() => {
+    if (showSplash) {
+      const timer = setTimeout(() => {
+        setShowSplash(false);
+        localStorage.setItem('hasVisited', 'true');
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [showSplash]);
+
+  return (
+    <StrictMode>
+      <NotificationProvider>
+        <AuthProvider>
+          <CartProvider>
+            <ToastProvider>
+              <Router>
+                <div className="min-h-screen bg-background">
+                  {showSplash ? (
+                    <SplashScreen />
+                  ) : (
+                    <Routes>
+                      <Route path="/" element={<App />} />
+                      <Route path="/admin" element={<AdminPanel />} />
+                      <Route path="/products" element={<ProductPage />} />
+                      <Route path="/products/:id" element={<ProductDetail />} />
+                      <Route path="/news" element={<NewsPage />} />
+                      <Route path="/news/:id" element={<NewsDetail />} />
+                      <Route path="/login" element={<LoginPage />} />
+                      <Route path="/register" element={<RegisterPage />} />
+                      <Route path="/cart" element={<CartPage />} />
+                      <Route path="/offer-success/:id" element={<OfferSuccessPage />} />
+                      <Route path="/3d-model" element={<PrintingServicePage />} />
+                      <Route path="/services/composite-manufacturing" element={<Kompozit />} />
+                      <Route path="/ground-station" element={<GroundStation />} />
+                      <Route path="/contact" element={<ContactPage />} />
+                    </Routes>
+                  )}
+                </div>
+              </Router>
+            </ToastProvider>
+          </CartProvider>
+        </AuthProvider>
+      </NotificationProvider>
+    </StrictMode>
+  );
+};
+
+createRoot(document.getElementById('root')!).render(<AppWrapper />);

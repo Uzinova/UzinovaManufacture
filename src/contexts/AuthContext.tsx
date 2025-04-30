@@ -1,8 +1,8 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User } from 'firebase/auth';
 import { auth, loginUser, registerUser, logoutUser } from '../lib/firebase';
-import { LoadingScreen } from '../components/LoadingScreen';
 import { isAdminEmail } from '../config/adminConfig';
+import { SplashScreen } from '../components/SplashScreen';
 
 interface AuthContextType {
   currentUser: User | null;
@@ -31,15 +31,29 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [showSplash, setShowSplash] = useState<boolean>(true);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
-      setCurrentUser(user);
-      setIsAdmin(isAdminEmail(user?.email));
+      if (user) {
+        setCurrentUser(user);
+        setIsAdmin(isAdminEmail(user.email));
+      } else {
+        setCurrentUser(null);
+        setIsAdmin(false);
+      }
       setIsLoading(false);
     });
 
-    return unsubscribe;
+    // Show splash screen for at least 3 seconds
+    const timer = setTimeout(() => {
+      setShowSplash(false);
+    }, 3000);
+
+    return () => {
+      unsubscribe();
+      clearTimeout(timer);
+    };
   }, []);
 
   const login = async (email: string, password: string) => {
@@ -68,8 +82,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     logout
   };
 
+  if (showSplash) {
+    return <SplashScreen />;
+  }
+
   if (isLoading) {
-    return <LoadingScreen message="Loading authentication status..." />;
+    return null;
   }
 
   return (

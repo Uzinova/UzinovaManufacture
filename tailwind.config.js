@@ -15,6 +15,7 @@ export default {
       },
       animation: {
         shimmer: 'shimmer 2s infinite',
+        twinkle: 'twinkle 2s ease-in-out infinite',
       },
       keyframes: {
         shimmer: {
@@ -22,6 +23,10 @@ export default {
             transform: 'translateX(100%)',
           },
         },
+        twinkle: {
+          '0%, 100%': { opacity: 1 },
+          '50%': { opacity: 0.3 },
+        }
       },
     },
   },

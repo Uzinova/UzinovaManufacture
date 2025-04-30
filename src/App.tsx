@@ -18,6 +18,7 @@ import './styles/carousel.css';
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
 import logo from './logo.png';
+import { SplashScreen } from './components/SplashScreen';
  
 
 function App() {
@@ -43,6 +44,8 @@ function App() {
   const [loadedImages, setLoadedImages] = useState<HTMLImageElement[]>([]);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [autoScroll, setAutoScroll] = useState(true);
+  const [isScrolling, setIsScrolling] = useState(false);
+  const [loading, setLoading] = useState(false);
  
   // Add useEffect for starfield animation
   useEffect(() => {
@@ -728,10 +731,20 @@ function App() {
   }, []);
 
   const scrollToTop = () => {
+    // Set scrolling state to true
+    setIsScrolling(true);
+    
+    // Scroll to top with smooth behavior
     window.scrollTo({
       top: 0,
       behavior: 'smooth'
     });
+    
+    // Use a longer timeout for the animation reset to ensure scroll completes
+    // Force animation to completely stop by removing classes
+    setTimeout(() => {
+      setIsScrolling(false);
+    }, 1500);
   };
 
   // Add useEffect for auto-scrolling
@@ -753,6 +766,20 @@ function App() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  useEffect(() => {
+    if (loading) {
+      const timer = setTimeout(() => {
+        setLoading(false);
+        localStorage.setItem('hasVisited', 'true');
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [loading]);
+
+  if (loading) {
+    return <SplashScreen />;
+  }
 
   return (
     <Routes>
@@ -1016,12 +1043,12 @@ function App() {
                       <div className="inline-flex items-center space-x-2 bg-orange-500/30 backdrop-blur-sm p-2 rounded-full w-fit">
                         <Rocket className="h-4 w-4 md:h-5 md:w-5 text-orange-400" />
                         <span className="text-white font-bold pr-1 text-sm md:text-base">COMPOSITE</span>
-                      </div>
+                    </div>
                       
                       <div>
                         <h3 className="text-2xl md:text-4xl lg:text-5xl font-black uppercase text-white tracking-tighter leading-tight">
                           KOMPOZİT<br/>ÜRETİMİ
-                        </h3>
+                    </h3>
                         <p className="text-gray-300 mt-2 md:mt-3 text-sm md:text-base max-w-lg leading-relaxed">
                           Yüksek performanslı kompozit malzemeler ve ileri üretim teknikleri ile roketlerinizin performansını maksimuma çıkarın.
                         </p>
@@ -1041,7 +1068,7 @@ function App() {
                       {/* For Composite Production Box */}
                       <button className="group/btn bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 md:py-2.5 md:px-5 rounded-full font-bold flex items-center space-x-2 transition-all duration-300 transform hover:translate-x-1 text-sm md:text-base w-fit">
                         <a href="https://uzinovas.com/#/services/composite-manufacturing" className="flex items-center space-x-2">
-                          <span>KEŞFET</span>
+                        <span>KEŞFET</span>
                           <ArrowRight className="h-3 w-3 md:h-4 md:w-4 transition-transform group-hover/btn:translate-x-1" />
                         </a>
                       </button>
@@ -1067,11 +1094,11 @@ function App() {
                       <div className="inline-flex items-center space-x-2 bg-blue-500/30 backdrop-blur-sm p-2 rounded-full w-fit">
                         <svg className="h-4 w-4 md:h-5 md:w-5 text-blue-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M6 20h12M12 4v16m0-16l6 3m-6-3L6 7m0 13l6-3 6 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
+                      </svg>
                         <span className="text-white font-bold pr-1 text-sm md:text-base">3D PRINT</span>
-                      </div>
+                    </div>
                       
-                      <div>
+                    <div>
                         <h3 className="text-2xl md:text-3xl font-black uppercase text-white tracking-tighter leading-tight">
                           3D BASKI<br/>HİZMETİ
                         </h3>
@@ -1094,7 +1121,7 @@ function App() {
                       {/* For 3D Printing Box */}
                       <button className="group/btn bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 md:py-2.5 md:px-5 rounded-full font-bold flex items-center space-x-2 transition-all duration-300 transform hover:translate-x-1 text-sm md:text-base w-fit">
                         <a href="https://uzinovas.com/#/3d-model" className="flex items-center space-x-2">
-                          <span>KEŞFET</span>
+                        <span>KEŞFET</span>
                           <ArrowRight className="h-3 w-3 md:h-4 md:w-4 transition-transform group-hover/btn:translate-x-1" />
                         </a>
                       </button>
@@ -1120,15 +1147,15 @@ function App() {
                       <div className="inline-flex items-center space-x-2 bg-green-500/30 backdrop-blur-sm p-2 rounded-full w-fit">
                         <svg className="h-4 w-4 md:h-5 md:w-5 text-green-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M20 7h-3m3 0v3m0-3l-3 3M4 17h3m-3 0v-3m0 3l3-3M20 17h-3m3 0v-3m0 3l-3-3M4 7h3M4 7v3m0-3l3 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                        </svg>
+                      </svg>
                         <span className="text-white font-bold pr-1 text-sm md:text-base">FLIGHT CONTROL</span>
-                      </div>
+                    </div>
                       
                       <div>
                         <h3 className="text-2xl md:text-3xl font-black uppercase text-white tracking-tighter">
                           UÇUŞ KONTROL<br/>KARTLARI
-                        </h3>
-                      </div>
+                    </h3>
+                    </div>
 
                       <div className="flex flex-wrap gap-2 md:gap-3">
                         <div className="bg-black/30 backdrop-blur-sm rounded-full px-3 py-1.5 md:px-4 md:py-2 border border-green-500/30 flex items-center text-xs md:text-sm">
@@ -1146,9 +1173,9 @@ function App() {
                       </div>
 
                       <button className="group/btn bg-green-500 hover:bg-green-600 text-white py-2 px-4 md:py-2.5 md:px-5 rounded-full font-bold flex items-center space-x-2 transition-all duration-300 transform hover:translate-x-1 text-sm md:text-base w-fit">
-                        <span>KEŞFET</span>
+                      <span>KEŞFET</span>
                         <ArrowRight className="h-3 w-3 md:h-4 md:w-4 transition-transform group-hover/btn:translate-x-1" />
-                      </button>
+                    </button>
                     </div>
                   </div>
                 </div>
@@ -1171,13 +1198,13 @@ function App() {
                       <div className="inline-flex items-center space-x-2 bg-purple-500/30 backdrop-blur-sm p-2 rounded-full w-fit">
                         <svg className="h-4 w-4 md:h-5 md:w-5 text-purple-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M12 2L4 7v10l8 5 8-5V7l-8-5zM4 7l8 5m-8-5l8-5m0 10v10m0-10l8-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
+                      </svg>
                         <span className="text-white font-bold pr-1 text-sm md:text-base">ROCKET PARTS</span>
-                      </div>
+                    </div>
                       
                       <h3 className="text-2xl md:text-3xl font-black uppercase text-white tracking-tighter">
                         ROKET UÇUŞ<br/>MALZEMELERİ
-                      </h3>
+                    </h3>
                       
                       <div className="flex flex-wrap gap-2 md:gap-3">
                         <div className="bg-black/30 backdrop-blur-sm rounded-full px-3 py-1.5 md:px-4 md:py-2 border border-purple-500/30 flex items-center text-xs md:text-sm">
@@ -1197,10 +1224,10 @@ function App() {
                       {/* For Rocket Materials Box */}
                       <button className="group/btn bg-purple-500 hover:bg-purple-600 text-white py-2 px-4 md:py-3 md:px-6 rounded-full font-bold flex items-center space-x-2 transition-all duration-300 transform hover:translate-x-1 w-fit text-sm md:text-base">
                         <a href="https://uzinovas.com/#/products" className="flex items-center space-x-2">
-                          <span>KEŞFET</span>
+                      <span>KEŞFET</span>
                           <ArrowRight className="h-3 w-3 md:h-4 md:w-4 transition-transform group-hover/btn:translate-x-1" />
                         </a>
-                      </button>
+                    </button>
                     </div>
                   </div>
                 </div>
@@ -1537,21 +1564,21 @@ function App() {
             {/* Rocket Launch Container */}
             <div className="relative w-full h-full flex items-center justify-center">
               {/* Pulsing Background Effect */}
-              <div className="absolute inset-0 bg-gradient-to-t from-blue-500 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/30 to-pink-500/30 rounded-full scale-0 group-hover:scale-100 transition-transform duration-700"></div>
+              <div className={`absolute inset-0 bg-gradient-to-t from-blue-500 to-indigo-600 transition-opacity duration-300 ${isScrolling ? 'opacity-100' : 'opacity-0'}`}></div>
+              <div className={`absolute inset-0 bg-gradient-to-br from-purple-500/30 to-pink-500/30 rounded-full transition-transform duration-700 ${isScrolling ? 'scale-100' : 'scale-0'}`}></div>
               
               {/* Launch Platform */}
-              <div className="absolute bottom-1 w-8 h-1 bg-gray-700 rounded-full opacity-100 group-hover:opacity-0 transition-all duration-500 delay-300"></div>
+              <div className={`absolute bottom-1 w-8 h-1 bg-gray-700 rounded-full transition-all duration-500 delay-300 ${isScrolling ? 'opacity-0' : 'opacity-100'}`}></div>
               
               {/* Model Rocket SVG - Thin with pointed tip */}
-              <div className="relative transform transition-all duration-700 ease-out group-hover:-translate-y-8 z-10">
+              <div className={`relative transform transition-all duration-700 ease-out z-10 ${isScrolling ? '-translate-y-8' : 'translate-y-0'}`}>
                 <svg 
-                  className="w-10 h-10 transform group-hover:scale-90"
+                  className={`w-10 h-10 transform transition-transform duration-300 ${isScrolling ? 'scale-90' : 'scale-100'}`}
                   viewBox="0 0 24 60" 
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  {/* Sharp Nose Cone */}
+                  {/* Shape Nose Cone */}
                   <path 
                     d="M12 2L9 12L15 12L12 2Z" 
                     fill="#f5f5f5" 
@@ -1631,34 +1658,34 @@ function App() {
                 </svg>
               
                 {/* Flame Effects - Attached to rocket bottom */}
-                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3 opacity-0 group-hover:opacity-100 transition-all duration-300 origin-top">
+                <div className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-3 transition-opacity duration-300 origin-top ${isScrolling ? 'opacity-100' : 'opacity-0'}`}>
                   {/* Main Flame */}
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1 h-3 
+                  <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-1 h-3 
                     bg-gradient-to-t from-orange-500 via-yellow-400 to-red-500 
-                    group-hover:animate-flame rounded-full blur-[2px]"></div>
+                    rounded-full blur-[2px] ${isScrolling ? 'animate-flame' : ''}`}></div>
                   
                   {/* Side Flames */}
-                  <div className="absolute top-0 left-1/2 -translate-x-[5px] w-0.5 h-2 
+                  <div className={`absolute top-0 left-1/2 -translate-x-[5px] w-0.5 h-2 
                     bg-gradient-to-t from-orange-500 via-yellow-400 to-red-500 
-                    group-hover:animate-flame-side-1 rounded-full blur-[1px]"></div>
-                  <div className="absolute top-0 left-1/2 -translate-x-[-1px] w-0.5 h-2 
+                    rounded-full blur-[1px] ${isScrolling ? 'animate-flame-side-1' : ''}`}></div>
+                  <div className={`absolute top-0 left-1/2 -translate-x-[-1px] w-0.5 h-2 
                     bg-gradient-to-t from-orange-500 via-yellow-400 to-red-500 
-                    group-hover:animate-flame-side-2 rounded-full blur-[1px]"></div>
+                    rounded-full blur-[1px] ${isScrolling ? 'animate-flame-side-2' : ''}`}></div>
                 </div>
               </div>
               
               {/* Smoke/Cloud Particles - These remain at the base position */}
-              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-10 h-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-8 scale-0 group-hover:scale-100 transition-transform duration-1000">
-                  <div className="absolute w-2 h-2 rounded-full bg-white/30 blur-[3px] group-hover:animate-particle-1"></div>
-                  <div className="absolute w-2 h-2 rounded-full bg-white/20 blur-[4px] group-hover:animate-particle-2 delay-100"></div>
-                  <div className="absolute w-3 h-3 rounded-full bg-white/30 blur-[3px] group-hover:animate-particle-3 delay-150"></div>
-                  <div className="absolute w-2 h-2 rounded-full bg-white/20 blur-[2px] group-hover:animate-particle-4 delay-75"></div>
+              <div className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-10 h-10 transition-opacity duration-300 ${isScrolling ? 'opacity-100' : 'opacity-0'}`}>
+                <div className={`absolute bottom-1 left-1/2 -translate-x-1/2 w-8 transition-transform duration-1000 ${isScrolling ? 'scale-100' : 'scale-0'}`}>
+                  <div className={`absolute w-2 h-2 rounded-full bg-white/30 blur-[3px] ${isScrolling ? 'animate-particle-1' : ''}`}></div>
+                  <div className={`absolute w-2 h-2 rounded-full bg-white/20 blur-[4px] delay-100 ${isScrolling ? 'animate-particle-2' : ''}`}></div>
+                  <div className={`absolute w-3 h-3 rounded-full bg-white/30 blur-[3px] delay-150 ${isScrolling ? 'animate-particle-3' : ''}`}></div>
+                  <div className={`absolute w-2 h-2 rounded-full bg-white/20 blur-[2px] delay-75 ${isScrolling ? 'animate-particle-4' : ''}`}></div>
                 </div>
               </div>
               
               {/* Orbit Ring */}
-              <div className="absolute inset-0 rounded-full border border-white/20 scale-0 group-hover:scale-100 transition-transform duration-1000 group-hover:animate-orbit"></div>
+              <div className={`absolute inset-0 rounded-full border border-white/20 transition-transform duration-1000 ${isScrolling ? 'scale-100 animate-orbit' : 'scale-0'}`}></div>
             </div>
           </button>
 
@@ -1708,35 +1735,35 @@ function App() {
               100% { transform: scale(1.2) rotate(360deg); }
             }
             
-            .group:hover .animate-flame {
+            .animate-flame {
               animation: flame 0.8s infinite;
             }
             
-            .group:hover .animate-flame-side-1 {
+            .animate-flame-side-1 {
               animation: flame-side-1 0.9s infinite;
             }
             
-            .group:hover .animate-flame-side-2 {
+            .animate-flame-side-2 {
               animation: flame-side-2 0.9s infinite;
             }
             
-            .group:hover .animate-particle-1 {
+            .animate-particle-1 {
               animation: particle-1 1.5s ease-out infinite;
             }
             
-            .group:hover .animate-particle-2 {
+            .animate-particle-2 {
               animation: particle-2 1.7s ease-out infinite;
             }
             
-            .group:hover .animate-particle-3 {
+            .animate-particle-3 {
               animation: particle-3 1.6s ease-out infinite;
             }
             
-            .group:hover .animate-particle-4 {
+            .animate-particle-4 {
               animation: particle-4 1.4s ease-out infinite;
             }
             
-            .group:hover .animate-orbit {
+            .animate-orbit {
               animation: orbit 8s linear infinite;
             }
           `}</style>
