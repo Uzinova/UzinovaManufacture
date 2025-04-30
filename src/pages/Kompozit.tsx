@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Navbar } from '../components/Navbar';
-import { ShoppingCart, Plus, X, Check, ChevronDown, ChevronUp } from 'lucide-react';
+import { ShoppingCart, Plus, X, Check, ChevronDown, ChevronUp, MessageCircle } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { useToast } from '../contexts/ToastContext';
 
@@ -66,6 +66,11 @@ const Kompozit: React.FC = () => {
 
   const { addToCart } = useCart();
   const toast = useToast();
+
+  // Add useEffect to scroll to top on page load
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   // Generate stars effect
   useEffect(() => {
@@ -379,9 +384,9 @@ const Kompozit: React.FC = () => {
           {/* Stats Section */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-16">
             {([
-              { label: 'Başarılı Proje', value: '150+' },
-              { label: 'Müşteri Memnuniyeti', value: '%98' },
-              { label: 'Yıllık Tecrübe', value: '10+' },
+              { label: 'Başarılı Proje', value: '20+' },
+              { label: 'Müşteri Memnuniyeti', value: '%99' },
+              { label: 'Yıllık Tecrübe', value: '6+' },
               { label: 'Test Başarı Oranı', value: '%99.9' }
             ] as const).map((stat, index) => (
               <div key={index} className="bg-black p-6 rounded-lg border border-[rgba(249,115,22,0.2)]">
@@ -1085,6 +1090,29 @@ const Kompozit: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* WhatsApp Floating Button */}
+      <a
+        href="https://wa.me/905365821902?text=Merhaba, Uzinovas ile ilgili bilgi almak istiyorum."
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed right-6 bottom-6 z-50 group"
+      >
+        <div className="relative">
+          {/* Floating Animation */}
+          <div className="absolute -inset-2 bg-primary/20 rounded-full animate-ping" />
+          
+          {/* Button */}
+          <div className="relative flex items-center justify-center w-14 h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-full shadow-lg transform transition-all duration-300 group-hover:scale-110 group-hover:rotate-12">
+            <MessageCircle className="w-7 h-7 text-white" />
+          </div>
+          
+          {/* Tooltip */}
+          <div className="absolute right-16 top-1/2 -translate-y-1/2 bg-black/80 text-white px-4 py-2 rounded-lg text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+            Bize WhatsApp'tan Ulaşın
+          </div>
+        </div>
+      </a>
     </>
   );
 };

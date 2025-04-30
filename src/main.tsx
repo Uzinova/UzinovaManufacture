@@ -13,6 +13,8 @@ import CartPage from './pages/CartPage.tsx';
 import OfferSuccessPage from './pages/OfferSuccessPage.tsx';
 import PrintingServicePage from './pages/PrintingServicePage.tsx';
 import Kompozit from './pages/Kompozit.tsx';
+import GroundStation from './pages/GroundStation.tsx';
+import ContactPage from './pages/ContactPage.tsx';
 import { AuthProvider } from './contexts/AuthContext.tsx';
 import { CartProvider } from './contexts/CartContext.tsx';
 import { NotificationProvider } from './contexts/NotificationContext.tsx';
@@ -40,6 +42,8 @@ createRoot(document.getElementById('root')!).render(
                   <Route path="/offer-success/:id" element={<OfferSuccessPage />} />
                   <Route path="/3d-model" element={<PrintingServicePage />} />
                   <Route path="/services/composite-manufacturing" element={<Kompozit />} />
+                  <Route path="/ground-station" element={<GroundStation />} />
+                  <Route path="/contact" element={<ContactPage />} />
                 </Routes>
               </div>
             </Router>

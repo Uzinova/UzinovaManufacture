@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
-import { Rocket, Printer as Printer3D, Radio      , Satellite, Download, Upload, Wifi, Settings, Activity, X, Timer, Percent, Calendar, ArrowRight } from 'lucide-react';
+import { Rocket, Printer as Printer3D, Radio, Satellite, Download, Upload, Wifi, Settings, Activity, X, Timer, Percent, Calendar, ArrowRight, MessageCircle } from 'lucide-react';
 import { Link, Routes, Route } from 'react-router-dom';
 import { db } from './lib/firebase';
 import { ProductCard } from './components/ProductCard';
@@ -9,6 +9,9 @@ import { useCart } from './contexts/CartContext';
 import { useNotification } from './contexts/NotificationContext';
 import { useMotionValueEvent, useScroll, useTransform } from 'framer-motion';
 import NewsDetail from './pages/NewsDetail';
+import GroundStation from './pages/GroundStation';
+import Kompozit from './pages/Kompozit';
+import ContactPage from './pages/ContactPage';
 import './styles/Button17.css';
 import './styles/StarButton.css';
 import './styles/carousel.css';
@@ -746,11 +749,42 @@ function App() {
     return () => clearInterval(interval);
   }, [autoScroll, featuredProducts.length]);
 
+  // Add useEffect to scroll to top on page load
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <Routes>
       <Route path="/news/:id" element={<NewsDetail />} />
+      <Route path="/ground-station" element={<GroundStation />} />
+      <Route path="/services/composite-manufacturing" element={<Kompozit />} />
+      <Route path="/contact" element={<ContactPage />} />
       <Route path="/" element={
         <div className="min-h-screen bg-background text-foreground relative" style={{zIndex: 1}}>
+          {/* Floating WhatsApp Button */}
+          <a
+            href="https://wa.me/905365821902?text=Merhaba, Uzinovas ile ilgili bilgi almak istiyorum."
+            target="_blank"
+            rel="noopener noreferrer"
+            className="fixed right-6 bottom-6 z-50 group"
+          >
+            <div className="relative">
+              {/* Floating Animation */}
+              <div className="absolute -inset-2 bg-primary/20 rounded-full animate-ping" />
+              
+              {/* Button */}
+              <div className="relative flex items-center justify-center w-14 h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-full shadow-lg transform transition-all duration-300 group-hover:scale-110 group-hover:rotate-12">
+                <MessageCircle className="w-7 h-7 text-white" />
+              </div>
+              
+              {/* Tooltip */}
+              <div className="absolute right-16 top-1/2 -translate-y-1/2 bg-black/80 text-white px-4 py-2 rounded-lg text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                Bize WhatsApp'tan Ulaşın
+              </div>
+            </div>
+          </a>
+
           {/* Navigation */}
           <Navbar transparent={false} />
           <div className="flex items-center space-x-4 px-4 md:px-8 lg:px-12">
@@ -817,7 +851,15 @@ function App() {
                     </div>
                   </div>
                 </div>
-                <Link to="/products" className="star-button inline-block">
+                <button 
+                  onClick={() => {
+                    const servicesSection = document.getElementById('services-section');
+                    if (servicesSection) {
+                      servicesSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }}
+                  className="star-button inline-block"
+                >
                   <svg className="star-1" width="50" height="50" viewBox="0 0 512 512">
                     <path className="fil0" d="M512 198.525l-176.89-25.704-79.11-160.291-79.108 160.291-176.892 25.704 128 124.769-30.216 176.176 158.216-83.179 158.216 83.179-30.217-176.176 128.001-124.769z"/>
                   </svg>
@@ -837,7 +879,7 @@ function App() {
                     <path className="fil0" d="M512 198.525l-176.89-25.704-79.11-160.291-79.108 160.291-176.892 25.704 128 124.769-30.216 176.176 158.216-83.179 158.216 83.179-30.217-176.176 128.001-124.769z"/>
                   </svg>
                   Keşfetmeye Başla
-                </Link>
+                </button>
               </div>
             </div>
             
@@ -858,7 +900,7 @@ function App() {
       
 
           {/* Services Binti Box with Space Theme */}
-          <div className="py-20 bg-black relative overflow-hidden">
+          <div id="services-section" className="py-20 bg-black relative overflow-hidden">
             <canvas ref={starfieldRef} className="starfield"></canvas>
             
             {/* Space Background Elements - keep as fallback */}
@@ -955,9 +997,9 @@ function App() {
               </div>
               
               {/* NEW MODERN SERVICES LAYOUT */}
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 mb-20">
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-6 mb-20">
                 {/* Composite Production Box - Large Box */}
-                <div className="col-span-1 md:col-span-8 h-[300px] md:h-[400px] relative group overflow-hidden rounded-2xl shadow-2xl">
+                <div className="col-span-1 md:col-span-8 min-h-[400px] relative group overflow-hidden rounded-2xl shadow-2xl">
                   {/* Background Image */}
                   <div className="absolute inset-0">
                     <img 
@@ -970,14 +1012,14 @@ function App() {
                   
                   {/* Content */}
                   <div className="absolute inset-0 flex flex-col justify-end">
-                    <div className="p-4 md:p-8 space-y-3 md:space-y-4">
+                    <div className="p-6 md:p-8 space-y-4">
                       <div className="inline-flex items-center space-x-2 bg-orange-500/30 backdrop-blur-sm p-2 rounded-full w-fit">
                         <Rocket className="h-4 w-4 md:h-5 md:w-5 text-orange-400" />
                         <span className="text-white font-bold pr-1 text-sm md:text-base">COMPOSITE</span>
                       </div>
                       
                       <div>
-                        <h3 className="text-3xl md:text-4xl lg:text-5xl font-black uppercase text-white tracking-tighter leading-tight">
+                        <h3 className="text-2xl md:text-4xl lg:text-5xl font-black uppercase text-white tracking-tighter leading-tight">
                           KOMPOZİT<br/>ÜRETİMİ
                         </h3>
                         <p className="text-gray-300 mt-2 md:mt-3 text-sm md:text-base max-w-lg leading-relaxed">
@@ -1008,7 +1050,7 @@ function App() {
                 </div>
                 
                 {/* 3D Printing Box - Vertical Box */}
-                <div className="col-span-1 md:col-span-4 h-[300px] md:h-[400px] relative group overflow-hidden rounded-2xl shadow-2xl">
+                <div className="col-span-1 md:col-span-4 min-h-[400px] relative group overflow-hidden rounded-2xl shadow-2xl">
                   {/* Background Image */}
                   <div className="absolute inset-0">
                     <img 
@@ -1021,7 +1063,7 @@ function App() {
                   
                   {/* Content */}
                   <div className="absolute inset-0 flex flex-col justify-end">
-                    <div className="p-4 md:p-8 space-y-3 md:space-y-4">
+                    <div className="p-6 md:p-8 space-y-4">
                       <div className="inline-flex items-center space-x-2 bg-blue-500/30 backdrop-blur-sm p-2 rounded-full w-fit">
                         <svg className="h-4 w-4 md:h-5 md:w-5 text-blue-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M6 20h12M12 4v16m0-16l6 3m-6-3L6 7m0 13l6-3 6 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -1061,7 +1103,7 @@ function App() {
                 </div>
                 
                 {/* Flight Control Cards Box - Horizontal Box */}
-                <div className="col-span-1 md:col-span-6 h-[250px] md:h-[300px] relative group overflow-hidden rounded-2xl shadow-2xl">
+                <div className="col-span-1 md:col-span-6 min-h-[350px] relative group overflow-hidden rounded-2xl shadow-2xl">
                   {/* Background Image */}
                   <div className="absolute inset-0">
                     <img 
@@ -1074,7 +1116,7 @@ function App() {
                   
                   {/* Content */}
                   <div className="absolute inset-0 flex flex-col justify-end">
-                    <div className="p-4 md:p-8 space-y-3 md:space-y-4">
+                    <div className="p-6 md:p-8 space-y-4">
                       <div className="inline-flex items-center space-x-2 bg-green-500/30 backdrop-blur-sm p-2 rounded-full w-fit">
                         <svg className="h-4 w-4 md:h-5 md:w-5 text-green-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M20 7h-3m3 0v3m0-3l-3 3M4 17h3m-3 0v-3m0 3l3-3M20 17h-3m3 0v-3m0 3l-3-3M4 7h3M4 7v3m0-3l3 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
@@ -1112,7 +1154,7 @@ function App() {
                 </div>
                 
                 {/* Rocket Flight Materials Box - Medium Box */}
-                <div className="col-span-1 md:col-span-6 h-[250px] md:h-[300px] relative group overflow-hidden rounded-2xl shadow-2xl">
+                <div className="col-span-1 md:col-span-6 min-h-[350px] relative group overflow-hidden rounded-2xl shadow-2xl">
                   {/* Background Image */}
                   <div className="absolute inset-0">
                     <img 
@@ -1124,37 +1166,42 @@ function App() {
                   </div>
                   
                   {/* Content */}
-                  <div className="absolute inset-0 p-4 md:p-8 flex flex-col justify-end">
-                    <div className="mb-4 md:mb-6 inline-flex items-center space-x-2 bg-purple-500/30 backdrop-blur-sm p-2 rounded-full w-fit">
-                      <svg className="h-4 w-4 md:h-5 md:w-5 text-purple-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 2L4 7v10l8 5 8-5V7l-8-5zM4 7l8 5m-8-5l8-5m0 10v10m0-10l8-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                      <span className="text-white font-bold pr-1 text-sm md:text-base">ROCKET PARTS</span>
+                  <div className="relative h-full flex flex-col justify-end p-6 md:p-8">
+                    <div className="space-y-4">
+                      <div className="inline-flex items-center space-x-2 bg-purple-500/30 backdrop-blur-sm p-2 rounded-full w-fit">
+                        <svg className="h-4 w-4 md:h-5 md:w-5 text-purple-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M12 2L4 7v10l8 5 8-5V7l-8-5zM4 7l8 5m-8-5l8-5m0 10v10m0-10l8-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        <span className="text-white font-bold pr-1 text-sm md:text-base">ROCKET PARTS</span>
+                      </div>
+                      
+                      <h3 className="text-2xl md:text-3xl font-black uppercase text-white tracking-tighter">
+                        ROKET UÇUŞ<br/>MALZEMELERİ
+                      </h3>
+                      
+                      <div className="flex flex-wrap gap-2 md:gap-3">
+                        <div className="bg-black/30 backdrop-blur-sm rounded-full px-3 py-1.5 md:px-4 md:py-2 border border-purple-500/30 flex items-center text-xs md:text-sm">
+                          <div className="h-1.5 w-1.5 md:h-2 md:w-2 rounded-full bg-purple-400 mr-2"></div>
+                          <span className="text-gray-300">Motor yuvası</span>
+                        </div>
+                        <div className="bg-black/30 backdrop-blur-sm rounded-full px-3 py-1.5 md:px-4 md:py-2 border border-purple-500/30 flex items-center text-xs md:text-sm">
+                          <div className="h-1.5 w-1.5 md:h-2 md:w-2 rounded-full bg-purple-400 mr-2"></div>
+                          <span className="text-gray-300">Paraşüt sistemleri</span>
+                        </div>
+                        <div className="bg-black/30 backdrop-blur-sm rounded-full px-3 py-1.5 md:px-4 md:py-2 border border-purple-500/30 flex items-center text-xs md:text-sm">
+                          <div className="h-1.5 w-1.5 md:h-2 md:w-2 rounded-full bg-purple-400 mr-2"></div>
+                          <span className="text-gray-300">Kanatçıklar</span>
+                        </div>
+                      </div>
+                      
+                      {/* For Rocket Materials Box */}
+                      <button className="group/btn bg-purple-500 hover:bg-purple-600 text-white py-2 px-4 md:py-3 md:px-6 rounded-full font-bold flex items-center space-x-2 transition-all duration-300 transform hover:translate-x-1 w-fit text-sm md:text-base">
+                        <a href="https://uzinovas.com/#/products" className="flex items-center space-x-2">
+                          <span>KEŞFET</span>
+                          <ArrowRight className="h-3 w-3 md:h-4 md:w-4 transition-transform group-hover/btn:translate-x-1" />
+                        </a>
+                      </button>
                     </div>
-                    <h3 className="text-2xl md:text-3xl font-black uppercase text-white mb-2 md:mb-4 tracking-tighter">
-                      ROKET UÇUŞ<br/>MALZEMELERİ
-                    </h3>
-                    <div className="flex flex-wrap gap-2 md:gap-3 mb-4 md:mb-6">
-                      <div className="bg-black/30 backdrop-blur-sm rounded-full px-3 py-1.5 md:px-4 md:py-2 border border-purple-500/30 flex items-center text-xs md:text-sm">
-                        <div className="h-1.5 w-1.5 md:h-2 md:w-2 rounded-full bg-purple-400 mr-2"></div>
-                        <span className="text-gray-300">Motor yuvası</span>
-                      </div>
-                      <div className="bg-black/30 backdrop-blur-sm rounded-full px-3 py-1.5 md:px-4 md:py-2 border border-purple-500/30 flex items-center text-xs md:text-sm">
-                        <div className="h-1.5 w-1.5 md:h-2 md:w-2 rounded-full bg-purple-400 mr-2"></div>
-                        <span className="text-gray-300">Paraşüt sistemleri</span>
-                      </div>
-                      <div className="bg-black/30 backdrop-blur-sm rounded-full px-3 py-1.5 md:px-4 md:py-2 border border-purple-500/30 flex items-center text-xs md:text-sm">
-                        <div className="h-1.5 w-1.5 md:h-2 md:w-2 rounded-full bg-purple-400 mr-2"></div>
-                        <span className="text-gray-300">Kanatçıklar</span>
-                      </div>
-                    </div>
-                    {/* For Rocket Materials Box */}
-                    <button className="group/btn bg-purple-500 hover:bg-purple-600 text-white py-2 px-4 md:py-3 md:px-6 rounded-full font-bold flex items-center space-x-2 transition-all duration-300 transform hover:translate-x-1 w-fit text-sm md:text-base">
-                      <a href="https://uzinovas.com/#/products" className="flex items-center space-x-2">
-                        <span>KEŞFET</span>
-                        <ArrowRight className="h-3 w-3 md:h-4 md:w-4 transition-transform group-hover/btn:translate-x-1" />
-                      </a>
-                    </button>
                   </div>
                 </div>
               </div>
@@ -1173,19 +1220,22 @@ function App() {
                       TEKNOFEST hakem yer istasyonu ile tam uyumlu, takımınıza özel tasarlanmış yer istasyonu sistemleri. Gerçek zamanlı telemetri verisi, uçuş takibi ve veri kaydı özellikleriyle roket uçuşlarınızı profesyonel düzeyde kontrol edin.
                     </p>
                     <div className="flex flex-wrap gap-2 md:gap-3 mb-4 md:mb-6">
-                      <span className="bg-black/30 backdrop-blur-sm rounded-full px-3 py-1.5 md:px-4 md:py-2 border border-orange-500/30 text-gray-300 text-xs md:text-sm">Telemetri Sistemi</span>
+                      <span className="bg-black/30 backdrop-blur-sm rounded-full px-3 py-1.5 md:px-4 md:py-2 border border-orange-500/30 text-gray-300 text-xs md:text-sm"> Veri Takip Sistemi</span>
                       <span className="bg-black/30 backdrop-blur-sm rounded-full px-3 py-1.5 md:px-4 md:py-2 border border-orange-500/30 text-gray-300 text-xs md:text-sm">Veri Analizi</span>
-                      <span className="bg-black/30 backdrop-blur-sm rounded-full px-3 py-1.5 md:px-4 md:py-2 border border-orange-500/30 text-gray-300 text-xs md:text-sm">Hakem Uyumlu</span>
+                      <span className="bg-black/30 backdrop-blur-sm rounded-full px-3 py-1.5 md:px-4 md:py-2 border border-orange-500/30 text-gray-300 text-xs md:text-sm">Teknofest Hakem Yer İstasyonuna Uyumlu</span>
                     </div>
                     <div className="flex gap-4">
-                      <button className="bg-gradient-to-r from-orange-600 to-red-600 text-white py-3 px-6 rounded-lg font-bold hover:from-orange-700 hover:to-red-700 transition-all duration-300">
+                      <Link 
+                        to="/ground-station" 
+                        className="bg-gradient-to-r from-orange-600 to-red-600 text-white py-3 px-6 rounded-lg font-bold hover:from-orange-700 hover:to-red-700 transition-all duration-300"
+                      >
                         KEŞFET
-                      </button>
+                      </Link>
                     </div>
                   </div>
                   
                   <div className="flex items-center justify-center relative">
-                    <div id="sequence-canvas-container" className="relative w-full h-80 overflow-hidden rounded-lg bg-black/50">
+                    <div id="sequence-canvas-container" className="relative w-full h-80 overflow-hidden rounded-lg bg-black">
                       <canvas 
                         ref={seqref}
                         className="absolute inset-0 w-full h-full object-contain"
@@ -1298,35 +1348,20 @@ function App() {
                     UZAY YOLCULUĞUNUZ <br />BAŞLASIN
                   </h3>
                   <p className="text-gray-300 mb-6">
-                    Profesyonel ekibimiz ve ileri teknolojimizle uzay projelerinizde yanınızdayız.
+                    Profesyonel ekibimiz ve projelerinizde etkin çözümlerle yanınızdayız.
                   </p>
                   <div className="flex gap-4">
-                    <a 
-                      href="mailto:info@uzinova.com" 
+                    <Link 
+                      to="/contact" 
                       className="bg-gradient-to-r from-orange-600 to-red-600 text-white py-3 px-6 rounded-lg font-bold hover:from-orange-700 hover:to-red-700 transition-all duration-300"
                     >
                       İLETİŞİME GEÇ
-                    </a>
+                    </Link>
                   </div>
                 </div>
                 
                 {/* Back to Top Button */}
-                <div className="bg-gradient-to-r from-zinc-900/70 to-zinc-900/70 backdrop-blur-sm p-8 rounded-xl border border-orange-500/20 flex flex-col justify-between">
-                  <div className="text-3xl font-black uppercase text-white">
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-400">GERİ</span><br />
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-400">DÖNÜŞ</span>
-                  </div>
-                  <div className="flex justify-end">
-                    <button 
-                      onClick={scrollToTop}
-                      className="w-14 h-14 bg-gradient-to-r from-orange-600 to-red-600 rounded-full flex items-center justify-center hover:from-orange-700 hover:to-red-700 transition-all duration-300 shadow-lg shadow-orange-500/20"
-                    >
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 5L5 12H19L12 5Z" fill="white"/>
-                      </svg>
-                    </button>
-                  </div>
-                </div>
+                
               </div>
 
               {/* Add CSS for animations */}
@@ -1492,15 +1527,219 @@ function App() {
           </div>
 
      
-          {/* Floating Rocket Button */}
+          {/* Floating Rocket Button with Advanced Animation */}
           <button
             onClick={scrollToTop}
-            className={`fixed bottom-8 left-8 z-50 p-3 rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary/90 transition-all duration-300 transform hover:scale-110 ${
+            className={`fixed bottom-8 left-8 z-50 w-16 h-16 rounded-full bg-gradient-to-br from-blue-600 to-indigo-800 text-white shadow-[0_0_15px_rgba(59,130,246,0.5)] transition-all duration-500 transform ${
               showScrollTop ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'
-            }`}
+            } hover:shadow-[0_0_30px_rgba(59,130,246,0.8)] group overflow-hidden`}
           >
-            <Rocket className="h-6 w-6" />
+            {/* Rocket Launch Container */}
+            <div className="relative w-full h-full flex items-center justify-center">
+              {/* Pulsing Background Effect */}
+              <div className="absolute inset-0 bg-gradient-to-t from-blue-500 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/30 to-pink-500/30 rounded-full scale-0 group-hover:scale-100 transition-transform duration-700"></div>
+              
+              {/* Launch Platform */}
+              <div className="absolute bottom-1 w-8 h-1 bg-gray-700 rounded-full opacity-100 group-hover:opacity-0 transition-all duration-500 delay-300"></div>
+              
+              {/* Model Rocket SVG - Thin with pointed tip */}
+              <div className="relative transform transition-all duration-700 ease-out group-hover:-translate-y-8 z-10">
+                <svg 
+                  className="w-10 h-10 transform group-hover:scale-90"
+                  viewBox="0 0 24 60" 
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  {/* Sharp Nose Cone */}
+                  <path 
+                    d="M12 2L9 12L15 12L12 2Z" 
+                    fill="#f5f5f5" 
+                    stroke="#d1d1d1" 
+                    strokeWidth="0.5"
+                  />
+                  
+                  {/* Main Body - Thin and elongated */}
+                  <path 
+                    d="M9 12L9 40L15 40L15 12L9 12Z" 
+                    fill="#f5f5f5" 
+                    stroke="#d1d1d1" 
+                    strokeWidth="0.5"
+                  />
+                  
+                  {/* Separation Line */}
+                  <line 
+                    x1="9" y1="18" x2="15" y2="18" 
+                    stroke="#d1d1d1" 
+                    strokeWidth="0.5"
+                  />
+                  
+                  {/* Fins - Small and realistic */}
+                  <path 
+                    d="M9 35L5 45L9 40L9 35Z" 
+                    fill="#ff6b6b" 
+                    stroke="#d1d1d1" 
+                    strokeWidth="0.5"
+                  />
+                  <path 
+                    d="M15 35L19 45L15 40L15 35Z" 
+                    fill="#ff6b6b" 
+                    stroke="#d1d1d1" 
+                    strokeWidth="0.5"
+                  />
+                  <path 
+                    d="M12 44L9 40L15 40L12 44Z" 
+                    fill="#ff6b6b" 
+                    stroke="#d1d1d1" 
+                    strokeWidth="0.5"
+                  />
+                  
+                  {/* Engine Tube */}
+                  <path 
+                    d="M10 40L10 45L14 45L14 40L10 40Z" 
+                    fill="#cccccc" 
+                    stroke="#d1d1d1" 
+                    strokeWidth="0.5"
+                  />
+                  
+                  {/* Engine Nozzle */}
+                  <path 
+                    d="M10 45L10 47L14 47L14 45L10 45Z" 
+                    fill="#555555" 
+                    stroke="#444444" 
+                    strokeWidth="0.5"
+                  />
+                  
+                  {/* Detail Stripes */}
+                  <line 
+                    x1="9" y1="25" x2="15" y2="25" 
+                    stroke="#ff6b6b" 
+                    strokeWidth="1"
+                  />
+                  <line 
+                    x1="9" y1="30" x2="15" y2="30" 
+                    stroke="#ff6b6b" 
+                    strokeWidth="1"
+                  />
+                  
+                  {/* Brand Label */}
+                  <rect 
+                    x="10.5" y="20" width="3" height="1" 
+                    fill="#2563eb" 
+                    strokeWidth="0"
+                  />
+                </svg>
+              
+                {/* Flame Effects - Attached to rocket bottom */}
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3 opacity-0 group-hover:opacity-100 transition-all duration-300 origin-top">
+                  {/* Main Flame */}
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1 h-3 
+                    bg-gradient-to-t from-orange-500 via-yellow-400 to-red-500 
+                    group-hover:animate-flame rounded-full blur-[2px]"></div>
+                  
+                  {/* Side Flames */}
+                  <div className="absolute top-0 left-1/2 -translate-x-[5px] w-0.5 h-2 
+                    bg-gradient-to-t from-orange-500 via-yellow-400 to-red-500 
+                    group-hover:animate-flame-side-1 rounded-full blur-[1px]"></div>
+                  <div className="absolute top-0 left-1/2 -translate-x-[-1px] w-0.5 h-2 
+                    bg-gradient-to-t from-orange-500 via-yellow-400 to-red-500 
+                    group-hover:animate-flame-side-2 rounded-full blur-[1px]"></div>
+                </div>
+              </div>
+              
+              {/* Smoke/Cloud Particles - These remain at the base position */}
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-10 h-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-8 scale-0 group-hover:scale-100 transition-transform duration-1000">
+                  <div className="absolute w-2 h-2 rounded-full bg-white/30 blur-[3px] group-hover:animate-particle-1"></div>
+                  <div className="absolute w-2 h-2 rounded-full bg-white/20 blur-[4px] group-hover:animate-particle-2 delay-100"></div>
+                  <div className="absolute w-3 h-3 rounded-full bg-white/30 blur-[3px] group-hover:animate-particle-3 delay-150"></div>
+                  <div className="absolute w-2 h-2 rounded-full bg-white/20 blur-[2px] group-hover:animate-particle-4 delay-75"></div>
+                </div>
+              </div>
+              
+              {/* Orbit Ring */}
+              <div className="absolute inset-0 rounded-full border border-white/20 scale-0 group-hover:scale-100 transition-transform duration-1000 group-hover:animate-orbit"></div>
+            </div>
           </button>
+
+          {/* Add CSS Animation Keyframes */}
+          <style>{`
+            @keyframes flame {
+              0%, 100% { height: 3px; opacity: 0.8; }
+              50% { height: 8px; opacity: 1; }
+            }
+            
+            @keyframes flame-side-1 {
+              0%, 100% { transform: translateX(-1px) translateY(0); height: 2px; opacity: 0.6; }
+              50% { transform: translateX(-3px) translateY(-2px); height: 4px; opacity: 0.8; }
+            }
+            
+            @keyframes flame-side-2 {
+              0%, 100% { transform: translateX(1px) translateY(0); height: 2px; opacity: 0.6; }
+              50% { transform: translateX(3px) translateY(-2px); height: 4px; opacity: 0.8; }
+            }
+            
+            @keyframes particle-1 {
+              0% { transform: translate(-5px, 0) scale(0); opacity: 0; }
+              40% { opacity: 0.7; }
+              100% { transform: translate(-10px, -20px) scale(2); opacity: 0; }
+            }
+            
+            @keyframes particle-2 {
+              0% { transform: translate(5px, 0) scale(0); opacity: 0; }
+              40% { opacity: 0.7; }
+              100% { transform: translate(15px, -25px) scale(2.5); opacity: 0; }
+            }
+            
+            @keyframes particle-3 {
+              0% { transform: translate(-8px, 0) scale(0); opacity: 0; }
+              40% { opacity: 0.6; }
+              100% { transform: translate(-18px, -15px) scale(2); opacity: 0; }
+            }
+            
+            @keyframes particle-4 {
+              0% { transform: translate(8px, 0) scale(0); opacity: 0; }
+              40% { opacity: 0.5; }
+              100% { transform: translate(12px, -20px) scale(1.5); opacity: 0; }
+            }
+            
+            @keyframes orbit {
+              0% { transform: scale(0.7) rotate(0deg); }
+              100% { transform: scale(1.2) rotate(360deg); }
+            }
+            
+            .group:hover .animate-flame {
+              animation: flame 0.8s infinite;
+            }
+            
+            .group:hover .animate-flame-side-1 {
+              animation: flame-side-1 0.9s infinite;
+            }
+            
+            .group:hover .animate-flame-side-2 {
+              animation: flame-side-2 0.9s infinite;
+            }
+            
+            .group:hover .animate-particle-1 {
+              animation: particle-1 1.5s ease-out infinite;
+            }
+            
+            .group:hover .animate-particle-2 {
+              animation: particle-2 1.7s ease-out infinite;
+            }
+            
+            .group:hover .animate-particle-3 {
+              animation: particle-3 1.6s ease-out infinite;
+            }
+            
+            .group:hover .animate-particle-4 {
+              animation: particle-4 1.4s ease-out infinite;
+            }
+            
+            .group:hover .animate-orbit {
+              animation: orbit 8s linear infinite;
+            }
+          `}</style>
 
           {/* Footer */}
           <div className="relative">
@@ -1534,8 +1773,8 @@ function App() {
                   <div>
                     <h4 className="font-bold mb-4">İletişim</h4>
                     <ul className="space-y-2 text-gray-400">
-                      <li>E-posta: iletisim@uzinovas.com</li>
-                      <li>Telefon: (0212) 123 45 67</li>
+                      <li>E-posta: info@uzinova.com</li>
+                      <li>Telefon: +90 536 582 19 02</li>
                     </ul>
                   </div>
                   <div>

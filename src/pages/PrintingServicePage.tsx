@@ -121,6 +121,11 @@ export default function PrintingServicePage() {
     
   }, [modelDimensions, selectedMaterial, selectedLayerHeight, selectedInfill, scale, quantity]);
   
+  // Add useEffect to scroll to top on page load
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+  
   const handleModelUpload = (file: File, dimensions: any) => {
     setModelFile(file);
     
