@@ -996,9 +996,12 @@ function App() {
                         </div>
                       </div>
 
+                      {/* For Composite Production Box */}
                       <button className="group/btn bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 md:py-2.5 md:px-5 rounded-full font-bold flex items-center space-x-2 transition-all duration-300 transform hover:translate-x-1 text-sm md:text-base w-fit">
-                        <span>KEŞFET</span>
-                        <ArrowRight className="h-3 w-3 md:h-4 md:w-4 transition-transform group-hover/btn:translate-x-1" />
+                        <a href="https://uzinovas.com/#/services/composite-manufacturing" className="flex items-center space-x-2">
+                          <span>KEŞFET</span>
+                          <ArrowRight className="h-3 w-3 md:h-4 md:w-4 transition-transform group-hover/btn:translate-x-1" />
+                        </a>
                       </button>
                     </div>
                   </div>
@@ -1046,9 +1049,12 @@ function App() {
                         </div>
                       </div>
 
+                      {/* For 3D Printing Box */}
                       <button className="group/btn bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 md:py-2.5 md:px-5 rounded-full font-bold flex items-center space-x-2 transition-all duration-300 transform hover:translate-x-1 text-sm md:text-base w-fit">
-                        <span>KEŞFET</span>
-                        <ArrowRight className="h-3 w-3 md:h-4 md:w-4 transition-transform group-hover/btn:translate-x-1" />
+                        <a href="https://uzinovas.com/#/3d-model" className="flex items-center space-x-2">
+                          <span>KEŞFET</span>
+                          <ArrowRight className="h-3 w-3 md:h-4 md:w-4 transition-transform group-hover/btn:translate-x-1" />
+                        </a>
                       </button>
                     </div>
                   </div>
@@ -1142,9 +1148,12 @@ function App() {
                         <span className="text-gray-300">Kanatçıklar</span>
                       </div>
                     </div>
+                    {/* For Rocket Materials Box */}
                     <button className="group/btn bg-purple-500 hover:bg-purple-600 text-white py-2 px-4 md:py-3 md:px-6 rounded-full font-bold flex items-center space-x-2 transition-all duration-300 transform hover:translate-x-1 w-fit text-sm md:text-base">
-                      <span>KEŞFET</span>
-                      <ArrowRight className="h-3 w-3 md:h-4 md:w-4 transition-transform group-hover/btn:translate-x-1" />
+                      <a href="https://uzinovas.com/#/products" className="flex items-center space-x-2">
+                        <span>KEŞFET</span>
+                        <ArrowRight className="h-3 w-3 md:h-4 md:w-4 transition-transform group-hover/btn:translate-x-1" />
+                      </a>
                     </button>
                   </div>
                 </div>
