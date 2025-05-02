@@ -1012,11 +1012,11 @@ function App() {
               `}
             </style>
             
-            <div className="max-w-[95%] mx-auto px-4 md:px-8 lg:px-12 relative z-10">
+            <div className="max-w-[95%] mx-auto px-4 md:px-8 lg:px-12 relative z-10" >
               {/* Main Header */}
               <div className="text-center mb-16">
                 <div className="flex justify-center mb-4">
-                  <img src={logo} alt="Uzinovas Logo" className="h-20 w-auto" />
+                  <img src={logo} alt="Uzinovas Logo" className="h-20 w-auto" style={{ scale: '5' }} />
                 </div>
                 <h1 className="text-white-600 mx-auto" style={{ fontStyle: 'italic', fontSize: '30px'}}>
                   "Uzinovas İle Tam İrtifa"
@@ -1805,17 +1805,7 @@ function App() {
                     </ul>
                   </div>
                   <div>
-                    <h4 className="font-bold mb-4">Bülten</h4>
-                    <div className="flex">
-                      <input
-                        type="email"
-                        placeholder="E-posta adresiniz"
-                        className="bg-background px-4 py-2 rounded-l"
-                      />
-                      <button className="bg-primary text-primary-foreground px-4 py-2 rounded-r hover:bg-primary/90 transition-colors">
-                        Abone Ol
-                      </button>
-                    </div>
+            
                   </div>
                 </div>
               </div>

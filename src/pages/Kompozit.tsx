@@ -382,21 +382,21 @@ const Kompozit: React.FC = () => {
           </div>
 
           {/* Stats Section */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-16">
+          <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-4 gap-4 xs:gap-6 mb-12 xs:mb-16">
             {([
               { label: 'Başarılı Proje', value: '20+' },
               { label: 'Müşteri Memnuniyeti', value: '%99' },
               { label: 'Yıllık Tecrübe', value: '6+' },
               { label: 'Test Başarı Oranı', value: '%99.9' }
             ] as const).map((stat, index) => (
-              <div key={index} className="bg-black p-6 rounded-lg border border-[rgba(249,115,22,0.2)]">
-                <div className="text-3xl font-bold text-orange-500 mb-2">{stat.value}</div>
-                <div className="text-orange-200/80">{stat.label}</div>
+              <div key={index} className="bg-black p-4 xs:p-6 rounded-lg border border-[rgba(249,115,22,0.2)]">
+                <div className="text-2xl xs:text-3xl sm:text-4xl font-bold text-orange-500 mb-2">{stat.value}</div>
+                <div className="text-sm xs:text-base text-orange-200/80">{stat.label}</div>
               </div>
             ))}
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 xs:gap-10 sm:gap-12">
             {/* Rocket Design Interface */}
             <div className="space-y-8">
               <div className="bg-black rounded-lg p-6 border border-[rgba(249,115,22,0.2)]">

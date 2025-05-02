@@ -91,15 +91,15 @@ export default function GroundStation() {
 
     
       {/* Product Showcase Section */}
-      <div className="max-w-7xl mx-auto px-4 py-24" ref={productsRef}>
+      <div className="max-w-7xl mx-auto px-4 xs:px-6 sm:px-8 py-16 xs:py-20 sm:py-24" ref={productsRef}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="space-y-24"
+          className="space-y-16 xs:space-y-20 sm:space-y-24"
         >
           {/* Yer İstasyonu Product */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 xs:gap-8 sm:gap-10 items-start">
             <div className="relative rounded-xl overflow-hidden border border-blue-500/20 bg-[#0a0a0a] p-4">
               <img 
                 src="https://i.hizliresim.com/swi0tst.gif" 
@@ -107,8 +107,8 @@ export default function GroundStation() {
                 className="w-full aspect-video object-contain rounded-lg"
               />
             </div>
-            <div className="space-y-6">
-              <h3 className="text-3xl font-bold text-white font-mono">Uzinova Sky </h3>
+            <div className="space-y-4 xs:space-y-6">
+              <h3 className="text-2xl xs:text-3xl sm:text-4xl font-bold text-white font-mono">Uzinova Sky</h3>
               <div className="terminal-loader h-full">
                 <div className="terminal-header">
                   <div className="terminal-title">IREC 2023 - Las Cruces, New Mexico, ABD</div>
@@ -123,7 +123,7 @@ export default function GroundStation() {
                   <div className="text">Veri İletim Kalitesi: 2,459/2,446 paket (%99) — BAŞARILI</div>
                   <div className="text">Yükseklik/Veri Gecikme: 10ms/100ft — BAŞARILI</div>
                   <div className="text">Veri Kaydetme: BAŞARILI</div>
-                  <div className="text">Simülasyon Veri Uyumu: %98 — BAŞARILI</div>
+                  <div className="text">Simülasyon Veri Uyumu: %98 —BAŞARILI</div>
                   <div className="text">Çoklu Komut Senaryosu: BAŞARILI</div>
                   <div className="text">Uçuş Süresi Takibi: BAŞARILI</div>
                   <div className="text">Azami Hız Doğrulaması: BAŞARILI</div>
@@ -139,12 +139,12 @@ export default function GroundStation() {
             <div className="relative rounded-xl overflow-hidden border border-blue-500/20 bg-[#0a0a0a] p-4">
               <img 
                 src="https://i.hizliresim.com/33drmam." 
-                alt="ThrustLap" 
+                alt="ThrustLab" 
                 className="w-full aspect-video object-contain rounded-lg"
               />
             </div>
             <div className="space-y-6">
-              <h3 className="text-3xl font-bold text-white font-mono">ThrustLap </h3>
+              <h3 className="text-3xl font-bold text-white font-mono">ThrustLab </h3>
               <div className="terminal-loader h-full">
                 <div className="terminal-header">
                   <div className="terminal-title">TEKNOFEST Dikey İnişli Roket Yarışması - Ankara, Türkiye</div>
@@ -175,33 +175,33 @@ export default function GroundStation() {
       
 
         {/* Modules Grid */}
-        <div className="max-w-7xl mx-auto px-4 py-24">
+        <div className="max-w-7xl mx-auto px-4 xs:px-6 sm:px-8 py-16 xs:py-20 sm:py-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="mb-16"
+          className="mb-12 xs:mb-16"
         >
-          <h2 className="text-3xl font-bold text-white mb-8 font-mono border-b border-blue-500/20 pb-4">Özellikler</h2>
+          <h2 className="text-2xl xs:text-3xl sm:text-4xl font-bold text-white mb-6 xs:mb-8 font-mono border-b border-blue-500/20 pb-4">Özellikler</h2>
           
           {/* First Two Modules */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 xs:gap-8 mb-12 xs:mb-16">
             {modules.slice(0, 2).map((module, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="group relative bg-[#111111] p-6 rounded-xl border border-blue-500/10 hover:border-blue-500/30 transition-all duration-300"
+                className="group relative bg-[#111111] p-4 xs:p-6 rounded-xl border border-blue-500/10 hover:border-blue-500/30 transition-all duration-300"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-cyan-500/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <div className="relative z-10">
                   <div className="flex items-center gap-3 mb-4">
                     <div className="text-blue-500">{module.icon}</div>
-                    <h3 className="text-xl font-bold text-white font-mono">{module.title}</h3>
+                    <h3 className="text-lg xs:text-xl font-bold text-white font-mono">{module.title}</h3>
                   </div>
-                  <p className="text-gray-400 mb-4 font-mono">{module.description}</p>
-                  <p className="text-sm text-blue-400 font-mono">{module.stats}</p>
+                  <p className="text-sm xs:text-base text-gray-400 mb-4 font-mono">{module.description}</p>
+                  <p className="text-xs xs:text-sm text-blue-400 font-mono">{module.stats}</p>
                 </div>
               </motion.div>
             ))}
