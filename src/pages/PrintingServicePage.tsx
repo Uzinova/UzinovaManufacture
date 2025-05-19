@@ -7,6 +7,7 @@ import { ModelUploader } from '../components/ModelUploader';
 import { ModelViewer } from '../components/ModelViewer';
 import { useCart } from '../contexts/CartContext';
 import { useNotification } from '../contexts/NotificationContext';
+import rocketGif from '../../public/0519.gif';
 
 // Define material options
 const MATERIALS = [
@@ -413,7 +414,7 @@ export default function PrintingServicePage() {
             >
               <div className="rounded-2xl overflow-hidden shadow-2xl relative">
                 <img 
-                  src="../../public/0519.gif" 
+                  src={rocketGif}
                   alt="3D Printing Process" 
                   className="w-full object-cover rounded-2xl"
                 />
