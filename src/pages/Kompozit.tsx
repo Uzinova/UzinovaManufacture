@@ -369,7 +369,9 @@ const Kompozit: React.FC = () => {
           ))}
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative" style={{
+        marginTop: '100px'
+        }}>
           {/* Hero Section */}
           <div className="text-center mb-16">
             <h1 className="text-5xl font-bold mb-6 text-orange-500">

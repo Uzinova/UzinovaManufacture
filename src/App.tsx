@@ -1557,7 +1557,7 @@ function App() {
           {/* Floating Rocket Button with Advanced Animation */}
           <button
             onClick={scrollToTop}
-            className={`fixed bottom-8 left-8 z-50 w-16 h-16 rounded-full bg-gradient-to-br from-blue-600 to-indigo-800 text-white shadow-[0_0_15px_rgba(59,130,246,0.5)] transition-all duration-500 transform ${
+            className={`fixed right-6 bottom-24 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-blue-600 to-indigo-800 text-white shadow-[0_0_15px_rgba(59,130,246,0.5)] transition-all duration-500 transform ${
               showScrollTop ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'
             } hover:shadow-[0_0_30px_rgba(59,130,246,0.8)] group overflow-hidden`}
           >
@@ -1573,7 +1573,7 @@ function App() {
               {/* Model Rocket SVG - Thin with pointed tip */}
               <div className={`relative transform transition-all duration-700 ease-out z-10 ${isScrolling ? '-translate-y-8' : 'translate-y-0'}`}>
                 <svg 
-                  className={`w-10 h-10 transform transition-transform duration-300 ${isScrolling ? 'scale-90' : 'scale-100'}`}
+                  className={`w-8 h-8 transform transition-transform duration-300 ${isScrolling ? 'scale-90' : 'scale-100'}`}
                   viewBox="0 0 24 60" 
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -1688,6 +1688,7 @@ function App() {
               <div className={`absolute inset-0 rounded-full border border-white/20 transition-transform duration-1000 ${isScrolling ? 'scale-100 animate-orbit' : 'scale-0'}`}></div>
             </div>
           </button>
+
 
           {/* Add CSS Animation Keyframes */}
           <style>{`
