@@ -210,15 +210,9 @@ function ProductDetail() {
 
             <div className="flex items-center space-x-4">
               <div className="flex items-center">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <Star
-                    key={star}
-                    className="h-5 w-5 text-primary fill-primary"
-                  />
-                ))}
+              
               </div>
-              <span className="text-gray-400">(128 değerlendirme)</span>
-            </div>
+             </div>
 
             <div className="space-y-2">
               <div className="flex items-center">

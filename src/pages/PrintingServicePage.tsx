@@ -11,28 +11,27 @@ import rocketGif from '../../public/0519.gif';
 
 // Define material options
 const MATERIALS = [
-  { id: 'pla', name: 'PLA', description: 'Standard, biodegradable plastic', priceMultiplier: 1.0 },
-  { id: 'abs', name: 'ABS', description: 'Durable, heat-resistant plastic', priceMultiplier: 1.2 },
-  { id: 'petg', name: 'PETG', description: 'Strong, flexible plastic', priceMultiplier: 1.3 },
-  { id: 'tpu', name: 'TPU', description: 'Flexible, rubber-like material', priceMultiplier: 1.5 },
-  { id: 'nylon', name: 'Nylon', description: 'Strong, durable material for functional parts', priceMultiplier: 2.0 }
+  { id: 'pla', name: 'PLA', description: 'Standard, biodegradable plastic' },
+  { id: 'abs', name: 'ABS', description: 'Durable, heat-resistant plastic' },
+  { id: 'petg', name: 'PETG', description: 'Strong, flexible plastic' },
+  { id: 'tpu', name: 'TPU', description: 'Flexible, rubber-like material' }
 ];
 
 // Define layer heights/quality options
 const LAYER_HEIGHTS = [
-  { id: 'draft', value: 0.3, name: 'Draft Quality (0.3mm)', priceMultiplier: 0.8, timeMultiplier: 0.7 },
-  { id: 'standard', value: 0.2, name: 'Standard Quality (0.2mm)', priceMultiplier: 1.0, timeMultiplier: 1.0 },
-  { id: 'high', value: 0.1, name: 'High Quality (0.1mm)', priceMultiplier: 1.3, timeMultiplier: 1.5 },
-  { id: 'ultra', value: 0.05, name: 'Ultra Quality (0.05mm)', priceMultiplier: 1.8, timeMultiplier: 2.2 }
+  { id: 'draft', value: 0.3, name: 'Draft Quality (0.3mm)', timeMultiplier: 0.7 },
+  { id: 'standard', value: 0.2, name: 'Standard Quality (0.2mm)', timeMultiplier: 1.0 },
+  { id: 'high', value: 0.1, name: 'High Quality (0.1mm)', timeMultiplier: 1.5 },
+  { id: 'ultra', value: 0.05, name: 'Ultra Quality (0.05mm)', timeMultiplier: 2.2 }
 ];
 
 // Define infill options
 const INFILL_OPTIONS = [
-  { id: 'hollow', value: 0, name: 'Hollow (0%)', priceMultiplier: 0.7, strengthMultiplier: 0.3 },
-  { id: 'light', value: 15, name: 'Light (15%)', priceMultiplier: 0.85, strengthMultiplier: 0.6 },
-  { id: 'standard', value: 25, name: 'Standard (25%)', priceMultiplier: 1.0, strengthMultiplier: 1.0 },
-  { id: 'strong', value: 50, name: 'Strong (50%)', priceMultiplier: 1.3, strengthMultiplier: 1.5 },
-  { id: 'solid', value: 100, name: 'Solid (100%)', priceMultiplier: 1.8, strengthMultiplier: 2.0 }
+  { id: 'hollow', value: 0, name: 'Hollow (0%)', strengthMultiplier: 0.3 },
+  { id: 'light', value: 15, name: 'Light (15%)', strengthMultiplier: 0.6 },
+  { id: 'standard', value: 25, name: 'Standard (25%)', strengthMultiplier: 1.0 },
+  { id: 'strong', value: 50, name: 'Strong (50%)', strengthMultiplier: 1.5 },
+  { id: 'solid', value: 100, name: 'Solid (100%)', strengthMultiplier: 2.0 }
 ];
 
 // Define color options
@@ -52,6 +51,14 @@ export default function PrintingServicePage() {
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const { showNotification } = useNotification();
+  
+  // Function to scroll to a section by ID
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
   
   // State for uploaded model
   const [modelFile, setModelFile] = useState<File | null>(null);
@@ -73,7 +80,6 @@ export default function PrintingServicePage() {
   
   // State for quotes and additional information
   const [notes, setNotes] = useState('');
-  const [estimatedPrice, setEstimatedPrice] = useState<number | null>(null);
   const [estimatedTime, setEstimatedTime] = useState<string | null>(null);
   
   // Sample showcase items - replace with your actual images
@@ -129,31 +135,19 @@ export default function PrintingServicePage() {
     hover: { scale: 1.05, transition: { duration: 0.2 } }
   };
 
-  // Calculate estimated price and time whenever relevant values change
+  // Calculate estimated time whenever relevant values change
   useEffect(() => {
     if (!modelDimensions) return;
     
     // Get multipliers from selected options
-    const material = MATERIALS.find(m => m.id === selectedMaterial);
     const layerHeight = LAYER_HEIGHTS.find(l => l.id === selectedLayerHeight);
     const infill = INFILL_OPTIONS.find(i => i.id === selectedInfill);
     
-    if (!material || !layerHeight || !infill) return;
+    if (!layerHeight || !infill) return;
     
-    // Calculate volume in cm³ (adjusted for scale and infill)
+    // Calculate volume in cm³ (adjusted for scale)
     const scaleFactor = scale / 100;
     const adjustedVolume = modelDimensions.volume * (scaleFactor ** 3) * (infill.value / 100);
-    
-    // Base price calculation (₺100 per 100cm³ as a starting point)
-    const basePrice = (adjustedVolume / 100) * 100;
-    
-    // Apply multipliers
-    const price = basePrice * material.priceMultiplier * layerHeight.priceMultiplier * infill.priceMultiplier;
-    
-    // Calculate total with quantity
-    const total = price * quantity;
-    
-    setEstimatedPrice(Math.max(50, Math.round(total))); // Minimum price of ₺50
     
     // Calculate estimated time (simplified)
     const baseHours = (adjustedVolume / 20); // Base: 20cm³ per hour
@@ -172,7 +166,7 @@ export default function PrintingServicePage() {
       setEstimatedTime(`${days} gün${hours > 0 ? ` ${hours} saat` : ''}`);
     }
     
-  }, [modelDimensions, selectedMaterial, selectedLayerHeight, selectedInfill, scale, quantity]);
+  }, [modelDimensions, selectedLayerHeight, selectedInfill, scale, quantity]);
   
   const handleModelUpload = (file: File, dimensions: Record<string, number>) => {
     setModelFile(file);
@@ -191,7 +185,7 @@ export default function PrintingServicePage() {
   };
   
   const handleAddToCart = () => {
-    if (!modelFile || !modelDimensions || !estimatedPrice) {
+    if (!modelFile || !modelDimensions) {
       showNotification('error', 'Lütfen önce bir model yükleyin');
       return;
     }
@@ -206,7 +200,7 @@ export default function PrintingServicePage() {
     const customPrintProduct = {
       productId: `custom-print-${Date.now()}`,
       name: `Özel 3D Baskı: ${modelFile.name}`,
-      price: estimatedPrice,
+      price: 0, // Default price of 0
       image: '/images/3d-printing.jpg', // Default image for 3D printing service
       quantity: quantity,
       customData: {
@@ -244,7 +238,7 @@ export default function PrintingServicePage() {
     const customPrintProduct = {
       productId: `custom-print-${Date.now()}`,
       name: `Özel 3D Baskı: ${modelFile.name}`,
-      price: estimatedPrice || 0,
+      price: 0, // Default price of 0
       image: '/images/3d-printing.jpg', // Default image for 3D printing service
       quantity: quantity,
       customData: {
@@ -317,6 +311,7 @@ export default function PrintingServicePage() {
                 className="px-8 py-4 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-all text-lg flex items-center justify-center"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                onClick={() => scrollToSection('upload-model')}
               >
                 <Upload className="mr-2 h-5 w-5" />
                 Model Yükle
@@ -326,6 +321,7 @@ export default function PrintingServicePage() {
                 className="px-8 py-4 bg-accent text-accent-foreground rounded-lg font-medium hover:bg-accent/90 transition-all text-lg flex items-center justify-center"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                onClick={() => scrollToSection('showcase')}
               >
                 <Printer3D className="mr-2 h-5 w-5" />
                 Üretimlerimiz
@@ -882,7 +878,7 @@ export default function PrintingServicePage() {
                   {/* Other Options... */}
                   
                   {/* Estimate and Action Buttons */}
-                  {modelDimensions && estimatedPrice && (
+                  {modelDimensions && (
                     <motion.div 
                       className="mt-8 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl p-6 border border-primary/20"
                       initial={{ opacity: 0, y: 20 }}
@@ -890,11 +886,6 @@ export default function PrintingServicePage() {
                       transition={{ duration: 0.5 }}
                     >
                       <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6">
-                        <div>
-                          <p className="text-sm text-primary font-medium mb-1">Tahmini Fiyat:</p>
-                          <p className="text-3xl font-bold">{estimatedPrice.toLocaleString('tr-TR')} ₺</p>
-                        </div>
-                        
                         <div className="mt-4 md:mt-0 bg-background/50 p-3 rounded-lg">
                           <p className="text-sm text-primary font-medium mb-1">Tahmini Baskı Süresi:</p>
                           <div className="flex items-center">
@@ -902,11 +893,6 @@ export default function PrintingServicePage() {
                             <p className="font-medium">{estimatedTime}</p>
                           </div>
                         </div>
-                      </div>
-                      
-                      <div className="text-xs text-gray-400 mb-6 bg-background/50 p-3 rounded-lg">
-                        * Bu fiyat tahminidir ve kesin fiyat parçanın karmaşıklığına ve diğer faktörlere göre değişebilir.
-                        Kesin fiyat için teklif talebinde bulunun.
                       </div>
                       
                       <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
@@ -1093,7 +1079,7 @@ export default function PrintingServicePage() {
                       <Box className="h-8 w-8 text-primary" />
                     </div>
                     <h3 className="text-xl font-bold mb-3">Premium Malzemeler</h3>
-                    <p className="text-gray-400">Endüstriyel kalitede PLA, ABS, PETG, TPU, Nylon ve daha fazlası.</p>
+                    <p className="text-gray-400">Endüstriyel kalitede PLA, ABS, PETG ve TPU gibi malzemeler.</p>
                     <div className="absolute bottom-0 right-0 p-6 opacity-10">
                       <Box className="h-24 w-24 text-primary" />
                     </div>
@@ -1383,9 +1369,9 @@ export default function PrintingServicePage() {
             >
               <div className="absolute top-0 right-0 w-40 h-40 bg-primary/3 rounded-full -translate-y-1/2 translate-x-1/2"></div>
               <div className="relative z-10">
-                <h4 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">Baskı süresi ne kadar?</h4>
+                <h4 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">Baskı süresi nasıl hesaplanıyor?</h4>
                 <p className="text-gray-400">
-                  Baskı süresi modelin boyutuna, karmaşıklığına ve seçilen kaliteye göre değişir. Küçük bir model birkaç saat sürerken, büyük ve detaylı modeller günler sürebilir. Her sipariş için size özel bir zaman tahmini sunuyoruz.
+                  Baskı süresi modelin hacmi, karmaşıklığı, seçilen kalite ve dolgu yoğunluğuna göre hesaplanır. Karmaşık modeller için uzman ekibimiz ek değerlendirme yapabilir.
                 </p>
               </div>
             </motion.div>
@@ -1471,6 +1457,7 @@ export default function PrintingServicePage() {
               className="px-8 py-4 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg inline-flex items-center transition-colors font-medium"
               whileHover={{ y: -5 }}
               whileTap={{ scale: 0.98 }}
+              onClick={() => navigate('/contact')}
             >
               İletişime Geçin <ChevronRight className="ml-2 h-5 w-5" />
             </motion.button>

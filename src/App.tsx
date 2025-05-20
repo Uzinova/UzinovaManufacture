@@ -12,6 +12,7 @@ import NewsDetail from './pages/NewsDetail';
 import GroundStation from './pages/GroundStation';
 import Kompozit from './pages/Kompozit';
 import ContactPage from './pages/ContactPage';
+import FlightControlPage from './pages/FlightControlPage';
 import './styles/Button17.css';
 import './styles/StarButton.css';
 import './styles/carousel.css';
@@ -787,11 +788,12 @@ function App() {
       <Route path="/ground-station" element={<GroundStation />} />
       <Route path="/services/composite-manufacturing" element={<Kompozit />} />
       <Route path="/contact" element={<ContactPage />} />
+      <Route path="/flight-control" element={<FlightControlPage />} />
       <Route path="/" element={
         <div className="min-h-screen bg-background text-foreground relative" style={{zIndex: 1}}>
           {/* Floating WhatsApp Button */}
           <a
-            href="https://wa.me/905365821902?text=Merhaba, Uzinovas ile ilgili bilgi almak istiyorum."
+            href="https://wa.me/905365821902?text=Merhaba, Uzinova ile ilgili bilgi almak istiyorum."
             target="_blank"
             rel="noopener noreferrer"
             className="fixed right-6 bottom-6 z-50 group"
@@ -872,9 +874,11 @@ function App() {
                 <div className="relative h-24 mb-8 overflow-hidden">
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="text-2xl md:text-3xl font-bold tracking-wider space-text">
-                      <span className="inline-block animate-typing delay-100 text-white space-word">Hayal Et </span> ,
-                      <span className="inline-block animate-typing delay-200 text-white ml-4 space-word">Tasarla </span>,
-                      <span className="inline-block animate-typing delay-300 text-white ml-4 space-word">Fırlat!</span>
+                      <span className="inline-block animate-typing delay-100 text-white space-word">Hayal Et </span>
+                      <span className="inline-block animate-typing delay-150 text-white space-word">,</span>
+                      <span className="inline-block animate-typing delay-200 text-white ml-2 space-word">Tasarla </span>
+                      <span className="inline-block animate-typing delay-250 text-white space-word">,</span>
+                      <span className="inline-block animate-typing delay-300 text-white ml-2 space-word">Fırlat!</span>
                     </div>
                   </div>
                 </div>
@@ -1019,7 +1023,7 @@ function App() {
                   <img src={logo} alt="Uzinovas Logo" className="h-20 w-auto" style={{ scale: '5' }} />
                 </div>
                 <h1 className="text-white-600 mx-auto" style={{ fontStyle: 'italic', fontSize: '30px'}}>
-                  "Uzinovas İle Tam İrtifa"
+                  "Uzinova İle Tam irtifa !"
                 </h1>
               </div>
               
@@ -1134,7 +1138,7 @@ function App() {
                   {/* Background Image */}
                   <div className="absolute inset-0">
                     <img 
-                      src="https://i.hizliresim.com/3v7ileh.jpeg" 
+                      src="https://i.hizliresim.com/35bq1k7.jpg" 
                       alt="Uçuş Kontrol Kartları" 
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     />
@@ -1172,10 +1176,12 @@ function App() {
                         </div>
                       </div>
 
-                      <button className="group/btn bg-green-500 hover:bg-green-600 text-white py-2 px-4 md:py-2.5 md:px-5 rounded-full font-bold flex items-center space-x-2 transition-all duration-300 transform hover:translate-x-1 text-sm md:text-base w-fit">
-                      <span>KEŞFET</span>
-                        <ArrowRight className="h-3 w-3 md:h-4 md:w-4 transition-transform group-hover/btn:translate-x-1" />
-                    </button>
+                      <Link to="/flight-control">
+                        <button className="group/btn bg-green-500 hover:bg-green-600 text-white py-2 px-4 md:py-2.5 md:px-5 rounded-full font-bold flex items-center space-x-2 transition-all duration-300 transform hover:translate-x-1 text-sm md:text-base w-fit">
+                          <span>KEŞFET</span>
+                          <ArrowRight className="h-3 w-3 md:h-4 md:w-4 transition-transform group-hover/btn:translate-x-1" />
+                        </button>
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -1290,10 +1296,10 @@ function App() {
                     <div className="h-12 w-1.5 bg-gradient-to-b from-orange-500 to-red-500 rounded-full"></div>
                     <h2 className="text-3xl md:text-4xl font-black uppercase text-white">ÖNE ÇIKAN ÜRÜNLER</h2>
                   </div>
-                  <button className="flex items-center gap-2 bg-transparent border border-orange-500/50 text-white py-2 px-5 rounded-full text-sm font-bold hover:bg-orange-900/30 transition-colors">
+                  <Link to="/products" className="flex items-center gap-2 bg-transparent border border-orange-500/50 text-white py-2 px-5 rounded-full text-sm font-bold hover:bg-orange-900/30 transition-colors">
                     <span>TÜM ÜRÜNLER</span>
                     <ArrowRight className="h-4 w-4" />
-                  </button>
+                  </Link>
                 </div>
                 
                 <div className="bg-gradient-to-r from-zinc-900/70 via-zinc-900/70 to-zinc-900/70 backdrop-blur-sm p-8 rounded-xl border border-orange-500/20">

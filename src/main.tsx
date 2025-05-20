@@ -15,28 +15,13 @@ import PrintingServicePage from './pages/PrintingServicePage.tsx';
 import Kompozit from './pages/Kompozit.tsx';
 import GroundStation from './pages/GroundStation.tsx';
 import ContactPage from './pages/ContactPage.tsx';
+import FlightControlPage from './pages/FlightControlPage.tsx';
 import { AuthProvider } from './contexts/AuthContext.tsx';
 import { CartProvider } from './contexts/CartContext.tsx';
 import { NotificationProvider } from './contexts/NotificationContext.tsx';
 import { ToastProvider } from './contexts/ToastContext.tsx';
+import { SplashScreen } from './components/SplashScreen.tsx';
 import './index.css';
-
-const SplashScreen = () => {
-  return (
-    <div className="fixed inset-0 bg-black flex items-center justify-center z-[9999]">
-      <div className="text-center">
-        <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="filter drop-shadow-[0_0_15px_rgba(249,115,22,0.5)]">
-          <path d="M60 20L80 90H40L60 20Z" fill="#f97316" className="filter drop-shadow-[0_0_10px_rgba(249,115,22,0.8)]"/>
-          <path d="M40 90L30 100H50L40 90Z" fill="#f97316"/>
-          <path d="M80 90L70 100H90L80 90Z" fill="#f97316"/>
-          <path d="M50 100C50 100 60 120 70 100H50Z" fill="#fbbf24" className="origin-top animate-[flame_0.5s_infinite_alternate]"/>
-        </svg>
-        <h1 className="text-white text-4xl font-bold mt-4">UZINOVAS</h1>
-        <p className="text-orange-500 text-xl mt-2">Geleceği Şekillendiriyoruz</p>
-      </div>
-    </div>
-  );
-};
 
 const AppWrapper = () => {
   const [showSplash, setShowSplash] = useState(() => {
@@ -79,6 +64,7 @@ const AppWrapper = () => {
                       <Route path="/3d-model" element={<PrintingServicePage />} />
                       <Route path="/services/composite-manufacturing" element={<Kompozit />} />
                       <Route path="/ground-station" element={<GroundStation />} />
+                      <Route path="/flight-control" element={<FlightControlPage />} />
                       <Route path="/contact" element={<ContactPage />} />
                     </Routes>
                   )}

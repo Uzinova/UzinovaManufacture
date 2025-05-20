@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingCart, Menu, X, LogOut, User, Settings, Printer as Printer3D, Search, Factory, ChevronDown, Radio, MessageSquare } from 'lucide-react';
+import { ShoppingCart, Menu, X, LogOut, User, Settings, Printer as Printer3D, Search, Factory, ChevronDown, Radio, MessageSquare, Rocket, Cpu } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
 import { db } from '../lib/firebase';
@@ -192,9 +192,9 @@ export function Navbar({ transparent = false }: NavbarProps) {
 
   return (
     <>
-      <nav className={`fixed top-0 left-0 w-full z-50 ${transparent ? 'bg-transparent' : 'bg-background/95 backdrop-blur-sm'} min-h-14`}>
-        <div className="max-w-[1920px] mx-auto px-2 xs:px-3 sm:px-4 md:px-6 lg:px-8 xl:px-10">
-          <div className="flex items-center min-h-14 h-14 xs:h-16 sm:h-16 md:h-18 lg:h-20 w-full">
+      <nav className={`fixed top-0 left-0 w-full z-50 ${transparent ? 'bg-transparent' : 'bg-background/95 backdrop-blur-sm'} overflow-visible`}>
+        <div className="max-w-[1920px] mx-auto px-2 xs:px-3 sm:px-4 md:px-6 lg:px-8 xl:px-10 overflow-visible">
+          <div className="flex items-center justify-between h-14 xs:h-16 sm:h-16 md:h-18 lg:h-20 w-full overflow-visible">
             {/* Logo */}
             <Link to="/" className="flex items-center flex-shrink-0">
               <img 
@@ -248,7 +248,7 @@ export function Navbar({ transparent = false }: NavbarProps) {
             </div>
 
             {/* Desktop Navigation - hidden below 1280px (xl) */}
-            <div className="hidden xl:flex items-center space-x-4 lg:space-x-8 ml-auto overflow-x-auto scrollbar-thin scrollbar-thumb-orange-500/30 scrollbar-track-transparent max-w-full">
+            <div className="hidden xl:flex items-center space-x-4 lg:space-x-8 ml-auto overflow-visible scrollbar-thin scrollbar-thumb-orange-500/30 scrollbar-track-transparent max-w-full">
               {/* Mağaza Dropdown */}
               <div className="relative inline-block" ref={magazaRef}>
                 <button 
@@ -258,7 +258,7 @@ export function Navbar({ transparent = false }: NavbarProps) {
                   }}
                   className="flex items-center space-x-1.5 text-sm text-white/90 hover:text-orange-500 transition-colors py-2 px-1"
                 >
-                  <span>Mağaza</span>
+                  <Rocket className="h-4 w-4 mr-1" />
                   <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${activeDropdown === 'magaza' ? 'rotate-180' : ''}`} />
                 </button>
                 
@@ -336,6 +336,11 @@ export function Navbar({ transparent = false }: NavbarProps) {
                 Yer İstasyonu
               </Link>
 
+              <Link to="/flight-control" className="nav-link flex items-center text-sm text-white/90 hover:text-orange-500 transition-colors">
+                <Cpu className="h-4 w-4 mr-1.5" />
+                Uçuş Kontrol
+              </Link>
+
               <Link to="/3d-model" className="nav-link flex items-center text-sm text-white/90 hover:text-orange-500 transition-colors">
                 <Printer3D className="h-4 w-4 mr-1.5" />
                 3D Model
@@ -407,30 +412,34 @@ export function Navbar({ transparent = false }: NavbarProps) {
               )}
               
               {/* Cart Button */}
-              <Link to="/cart" className="relative">
-                <button className="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors">
-                  <ShoppingCart className="h-5 w-5" />
-                </button>
-                {getTotalItems() > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                    {getTotalItems()}
-                  </span>
-                )}
-              </Link>
+              <div className="relative h-full flex items-center py-1">
+                <Link to="/cart" className="block">
+                  <div className="bg-orange-500 text-white p-1.5 rounded-lg hover:bg-orange-600 transition-colors">
+                    <ShoppingCart className="h-4 w-4" />
+                  </div>
+                  {getTotalItems() > 0 && (
+                    <div className="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-bold rounded-full h-4 w-4 flex items-center justify-center">
+                      {getTotalItems()}
+                    </div>
+                  )}
+                </Link>
+              </div>
             </div>
 
             {/* Mobile Menu Button and Cart - visible <1280px (xl) */}
-            <div className="flex xl:hidden items-center ml-auto space-x-2">
-              <Link to="/cart" className="relative">
-                <button className="bg-orange-500 text-white p-2 rounded-lg hover:bg-orange-600 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center">
-                  <ShoppingCart className="h-6 w-6" />
-                </button>
-                {getTotalItems() > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                    {getTotalItems()}
-                  </span>
-                )}
-              </Link>
+            <div className="flex xl:hidden items-center ml-auto space-x-2 overflow-visible">
+              <div className="relative h-full flex items-center py-1">
+                <Link to="/cart" className="block">
+                  <div className="bg-orange-500 text-white p-2.5 rounded-lg hover:bg-orange-600 transition-colors">
+                    <ShoppingCart className="h-6 w-6" />
+                  </div>
+                  {getTotalItems() > 0 && (
+                    <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                      {getTotalItems()}
+                    </div>
+                  )}
+                </Link>
+              </div>
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className="bg-orange-500 text-white p-2 rounded-lg hover:bg-orange-600 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
@@ -474,7 +483,10 @@ export function Navbar({ transparent = false }: NavbarProps) {
               {/* Mağaza Section */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between bg-orange-500/10 px-4 py-3 rounded-lg border border-orange-500/20">
-                  <span className="text-lg font-medium text-white">Mağaza</span>
+                  <div className="flex items-center">
+                    <Rocket className="h-5 w-5 mr-2 text-orange-500" />
+                    <span className="text-lg font-medium text-white">Ürünler</span>
+                  </div>
                   <button
                     onClick={() => {
                       setActiveDropdown(activeDropdown === 'magaza' ? null : 'magaza');
@@ -589,6 +601,15 @@ export function Navbar({ transparent = false }: NavbarProps) {
                 >
                   <Radio className="h-6 w-6 text-orange-500" />
                   <span className="text-lg font-medium text-white">Yer İstasyonu</span>
+                </Link>
+                
+                <Link 
+                  to="/flight-control"
+                  className="flex items-center gap-3 px-4 py-3 bg-orange-500/10 rounded-lg border border-orange-500/20 hover:bg-orange-500/20 transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <Cpu className="h-6 w-6 text-orange-500" />
+                  <span className="text-lg font-medium text-white">Uçuş Kontrol</span>
                 </Link>
                 
                 <Link 

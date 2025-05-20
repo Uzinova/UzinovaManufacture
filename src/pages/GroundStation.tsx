@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Monitor, Terminal, Wifi, Database, MessageCircle } from 'lucide-react';
 import { Navbar } from '../components/Navbar';
+import { Link } from 'react-router-dom';
 
 export default function GroundStation() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -378,18 +379,18 @@ export default function GroundStation() {
             <p className="text-xl text-gray-400 max-w-2xl mx-auto font-mono">
               Yazılım, takımınızın ihtiyaçlarına göre tamamen özelleştirilebilir bir tasarım sunar
             </p>
-            <button className="group relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-medium rounded-lg bg-gradient-to-r from-blue-500 to-cyan-500 group-hover:from-blue-600 group-hover:to-cyan-600">
+            <Link to="/contact" className="group relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-medium rounded-lg bg-gradient-to-r from-blue-500 to-cyan-500 group-hover:from-blue-600 group-hover:to-cyan-600">
               <span className="relative px-8 py-4 transition-all ease-in duration-75 bg-[#0a0a0a] rounded-lg group-hover:bg-opacity-0 text-lg font-bold text-white font-mono">
                 İletişime Geç
               </span>
-            </button>
+            </Link>
           </motion.div>
         </div>
       </div>
 
       {/* WhatsApp Floating Button */}
       <a
-        href="https://wa.me/905365821902?text=Merhaba, Uzinovas ile ilgili bilgi almak istiyorum."
+        href="https://wa.me/905365821902?text=Merhaba, Uzinova ile ilgili bilgi almak istiyorum."
         target="_blank"
         rel="noopener noreferrer"
         className="fixed right-6 bottom-6 z-50 group"
