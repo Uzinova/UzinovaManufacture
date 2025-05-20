@@ -471,13 +471,7 @@ export default function FlightControlPage() {
                       <p className="text-gray-400 text-sm">MicroUSB bağlantısı ve CR2032 pil yuvası</p>
                     </div>
                   </li>
-                  <li className="flex">
-                    <span className="text-green-500 mr-2">•</span>
-                    <div>
-                      <span className="font-medium">Roket Uyumlu</span>
-                      <p className="text-gray-400 text-sm">Kompakt tasarım ile roket gövdesine tam uyum</p>
-                    </div>
-                  </li>
+             
                 </ul>
               </motion.div>
             </div>
