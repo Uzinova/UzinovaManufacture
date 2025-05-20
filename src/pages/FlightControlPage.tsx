@@ -13,6 +13,11 @@ export default function FlightControlPage() {
   const [activeCard, setActiveCard] = useState<string | null>(null);
   
   useEffect(() => {
+    // Sayfa yüklendiğinde scrollu en üste taşı
+    window.scrollTo(0, 0);
+  }, []);
+  
+  useEffect(() => {
     // For animated background
     const handleMouseMove = (e: MouseEvent) => {
       const x = e.clientX / window.innerWidth;
@@ -46,7 +51,7 @@ export default function FlightControlPage() {
             >
               <p className="text-green-400 font-medium text-sm tracking-wider uppercase mb-4 inline-flex items-center">
                 <span className="mr-2 h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
-                UZINOVA AEROSPACE
+                UZINOVA SPACE SYSTEMS
               </p>
               <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold mb-8 tracking-tight leading-tight">
                 Uzinova <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-300 to-green-500">Uçuş Kontrol</span> Sistemleri
