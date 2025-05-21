@@ -1784,7 +1784,7 @@ function App() {
                   <div>
                     <h4 className="font-bold mb-4">Hakkımızda</h4>
                     <p className="text-gray-400">
-                      2019 yılından biri bu sektörün öncüsü olan firmamız, model roketçilik ve uzay teknolojileri alanında hizmet vermektedir.  <br />
+                    Uzinova, roket teknolojilerinin itki, aviyonik, telemetri ve yer istasyonu bileşenlerini geliştirip üreten, eğitim ve yarışma odaklı çözümler sunan mühendislik girişimidir.  <br />
                       <a 
                         href="https://uzinova.com" 
                         target="_blank" 
