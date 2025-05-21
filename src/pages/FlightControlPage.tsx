@@ -890,7 +890,7 @@ export default function FlightControlPage() {
                     <div className="absolute inset-x-0 bottom-0 p-2 bg-black/70 backdrop-blur-sm text-xs">
                       <div className="flex items-center">
                         <span className="inline-block h-3 w-3 rounded-full bg-green-500 mr-2 animate-pulse"></span>
-                        <span>Dairesel PCB • <span className="text-green-400">ESP8266</span> • WiFi İletişim</span>
+                        <span>SkyLink PCB • <span className="text-green-400">ESP8266</span> • WiFi İletişim</span>
                       </div>
                     </div>
                   )}
