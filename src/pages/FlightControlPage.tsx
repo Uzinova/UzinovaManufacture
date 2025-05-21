@@ -366,7 +366,13 @@ export default function FlightControlPage() {
               </p>
               
               <div className="mt-8">
-                <button className="bg-green-500 hover:bg-green-600 text-white px-8 py-3 rounded-full font-medium inline-flex items-center space-x-2 transition-all shadow-lg shadow-green-500/20 hover:shadow-green-500/40">
+                <button 
+                  onClick={() => {
+                    const productsSection = document.querySelector('.products-showcase');
+                    productsSection?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="bg-green-500 hover:bg-green-600 text-white px-8 py-3 rounded-full font-medium inline-flex items-center space-x-2 transition-all shadow-lg shadow-green-500/20 hover:shadow-green-500/40"
+                >
                   <span>İNCELE</span>
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -493,7 +499,7 @@ export default function FlightControlPage() {
       )}
       
       {/* Products Showcase */}
-      <section className="relative py-20 z-10">
+      <section className="relative py-20 z-10 products-showcase">
         <div className="container mx-auto px-4">
           {/* Section Title */}
           <div className="text-center mb-16">
@@ -1420,6 +1426,102 @@ export default function FlightControlPage() {
                     <div>
                       <span className="font-medium">Hafıza</span>
                       <p className="text-gray-400 text-sm">Harici Bellek Desteği</p>
+                    </div>
+                  </li>
+                </ul>
+              </motion.div>
+
+              <motion.div 
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6 }}
+                className="bg-black/30 border border-green-800/30 rounded-xl p-6"
+              >
+                <h3 className="text-xl font-bold text-green-400 mb-4 flex items-center">
+                  <Cpu className="mr-2 h-5 w-5" /> LandX Özellikleri
+                </h3>
+                <ul className="space-y-4">
+                  <li className="flex">
+                    <span className="text-green-500 mr-2">•</span>
+                    <div>
+                      <span className="font-medium">STM32F407VGT6</span>
+                      <p className="text-gray-400 text-sm">32-bit ARM Cortex-M4, 168 MHz</p>
+                    </div>
+                  </li>
+                  <li className="flex">
+                    <span className="text-green-500 mr-2">•</span>
+                    <div>
+                      <span className="font-medium">Boyutlar</span>
+                      <p className="text-gray-400 text-sm">50 mm x 50 mm 6 katmanlı PCB</p>
+                    </div>
+                  </li>
+                  <li className="flex">
+                    <span className="text-green-500 mr-2">•</span>
+                    <div>
+                      <span className="font-medium">IMU Sensörü</span>
+                      <p className="text-gray-400 text-sm">BNO055 9-DOF IMU sensörü</p>
+                    </div>
+                  </li>
+                  <li className="flex">
+                    <span className="text-green-500 mr-2">•</span>
+                    <div>
+                      <span className="font-medium">Basınç Sensörü</span>
+                      <p className="text-gray-400 text-sm">MS5611 yüksek hassasiyetli basınç sensörü</p>
+                    </div>
+                  </li>
+                  <li className="flex">
+                    <span className="text-green-500 mr-2">•</span>
+                    <div>
+                      <span className="font-medium">Telemetri & GPS</span>
+                      <p className="text-gray-400 text-sm">Lora E22 telemetri modülü ve GPS desteği</p>
+                    </div>
+                  </li>
+                </ul>
+              </motion.div>
+
+              <motion.div 
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6 }}
+                className="bg-black/30 border border-green-800/30 rounded-xl p-6"
+              >
+                <h3 className="text-xl font-bold text-green-400 mb-4 flex items-center">
+                  <Cpu className="mr-2 h-5 w-5" /> UZİNOX-V2 Özellikleri
+                </h3>
+                <ul className="space-y-4">
+                  <li className="flex">
+                    <span className="text-green-500 mr-2">•</span>
+                    <div>
+                      <span className="font-medium">Mikrodenetleyici</span>
+                      <p className="text-gray-400 text-sm">STM32 Cortex-M4 işlemci</p>
+                    </div>
+                  </li>
+                  <li className="flex">
+                    <span className="text-green-500 mr-2">•</span>
+                    <div>
+                      <span className="font-medium">Hafıza</span>
+                      <p className="text-gray-400 text-sm">16MB Flash + MicroSD kart desteği</p>
+                    </div>
+                  </li>
+                  <li className="flex">
+                    <span className="text-green-500 mr-2">•</span>
+                    <div>
+                      <span className="font-medium">IMU Sensörü</span>
+                      <p className="text-gray-400 text-sm">BNO055 9-DOF IMU</p>
+                    </div>
+                  </li>
+                  <li className="flex">
+                    <span className="text-green-500 mr-2">•</span>
+                    <div>
+                      <span className="font-medium">Telemetri</span>
+                      <p className="text-gray-400 text-sm">Lora E22 (900MHz) telemetri modülü</p>
+                    </div>
+                  </li>
+                  <li className="flex">
+                    <span className="text-green-500 mr-2">•</span>
+                    <div>
+                      <span className="font-medium">Boyutlar</span>
+                      <p className="text-gray-400 text-sm">50 mm x 50 mm kompakt tasarım</p>
                     </div>
                   </li>
                 </ul>
