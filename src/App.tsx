@@ -1784,7 +1784,7 @@ function App() {
                   <div>
                     <h4 className="font-bold mb-4">Hakkımızda</h4>
                     <p className="text-gray-400">
-                      2019 yılındna biri bu sektörün öncüsü olan firmamız, model roketçilik ve uzay teknolojileri alanında hizmet vermektedir.  <br />
+                      2019 yılından biri bu sektörün öncüsü olan firmamız, model roketçilik ve uzay teknolojileri alanında hizmet vermektedir.  <br />
                       <a 
                         href="https://uzinova.com" 
                         target="_blank" 
