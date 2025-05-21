@@ -254,7 +254,6 @@ export default function FlightControlPage() {
     }
     
     setPoints(newPoints);
-    await savePointsToFirebase(editingPoint.card, newPoints);
     setEditingPoint(null);
   };
   
@@ -298,7 +297,6 @@ export default function FlightControlPage() {
     }
     
     setPoints(newPoints);
-    await savePointsToFirebase(cardType, newPoints);
   };
   
   useEffect(() => {
@@ -446,6 +444,65 @@ export default function FlightControlPage() {
                 className="bg-green-600 text-white px-3 py-1.5 rounded-md text-xs"
               >
                 UZİNOX-V2 Ekle
+              </button>
+            </div>
+
+            <div className="mt-4 space-y-2">
+              <button 
+                onClick={() => {
+                  const removeDuplicates = (points: PCBPoint[]) => {
+                    const seen = new Set<number>();
+                    return points.filter(point => {
+                      if (seen.has(point.id)) {
+                        return false;
+                      }
+                      seen.add(point.id);
+                      return true;
+                    });
+                  };
+
+                  setUzinoxPoints(prev => removeDuplicates(prev));
+                  setSkylinkPoints(prev => removeDuplicates(prev));
+                  setLandxPoints(prev => removeDuplicates(prev));
+                  setUzinoxV2Points(prev => removeDuplicates(prev));
+                }}
+                className="w-full bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1.5 rounded-md text-xs transition-colors"
+              >
+                Tekrar Eden Noktaları Temizle
+              </button>
+
+              <button 
+                onClick={() => {
+                  const removeNewPoints = (points: PCBPoint[]) => {
+                    return points.filter(point => point.label !== "Yeni Nokta");
+                  };
+
+                  setUzinoxPoints(prev => removeNewPoints(prev));
+                  setSkylinkPoints(prev => removeNewPoints(prev));
+                  setLandxPoints(prev => removeNewPoints(prev));
+                  setUzinoxV2Points(prev => removeNewPoints(prev));
+                }}
+                className="w-full bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-md text-xs transition-colors"
+              >
+                "Yeni Nokta" Etiketlerini Temizle
+              </button>
+
+              <button 
+                onClick={async () => {
+                  try {
+                    await savePointsToFirebase('uzinox', uzinoxPoints);
+                    await savePointsToFirebase('skylink', skylinkPoints);
+                    await savePointsToFirebase('landx', landxPoints);
+                    await savePointsToFirebase('uzinoxV2', uzinoxV2Points);
+                    alert('Tüm değişiklikler kaydedildi!');
+                  } catch (error) {
+                    console.error('Kaydetme hatası:', error);
+                    alert('Kaydetme sırasında bir hata oluştu!');
+                  }
+                }}
+                className="w-full bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-md text-xs transition-colors"
+              >
+                Tüm Değişiklikleri Kaydet
               </button>
             </div>
           </div>
