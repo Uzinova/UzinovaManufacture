@@ -52,6 +52,11 @@ export default function PrintingServicePage() {
   const { addToCart } = useCart();
   const { showNotification } = useNotification();
   
+  // Add scroll to top effect
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+  
   // Function to scroll to a section by ID
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);

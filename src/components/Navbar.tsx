@@ -258,7 +258,7 @@ export function Navbar({ transparent = false }: NavbarProps) {
                   }}
                   className="flex items-center space-x-1.5 text-sm text-white/90 hover:text-orange-500 transition-colors py-2 px-1"
                 >
-                  <Rocket className="h-4 w-4 mr-1" />
+                  <Rocket className="h-5 w-5 mr-1 text-orange-500 transform hover:scale-110 transition-transform duration-300 hover:rotate-12" />
                   <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${activeDropdown === 'magaza' ? 'rotate-180' : ''}`} />
                 </button>
                 
@@ -484,7 +484,7 @@ export function Navbar({ transparent = false }: NavbarProps) {
               <div className="space-y-3">
                 <div className="flex items-center justify-between bg-orange-500/10 px-4 py-3 rounded-lg border border-orange-500/20">
                   <div className="flex items-center">
-                    <Rocket className="h-5 w-5 mr-2 text-orange-500" />
+                    <Rocket className="h-6 w-6 mr-2 text-orange-500 transform hover:scale-110 transition-transform duration-300 hover:rotate-12" />
                     <span className="text-lg font-medium text-white">Ürünler</span>
                   </div>
                   <button

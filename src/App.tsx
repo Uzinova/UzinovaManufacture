@@ -1023,7 +1023,7 @@ function App() {
                   <img src={logo} alt="Uzinovas Logo" className="h-20 w-auto" style={{ scale: '5' }} />
                 </div>
                 <h1 className="text-white-600 mx-auto" style={{ fontStyle: 'italic', fontSize: '30px'}}>
-                  "Uzinova ile Tam İrtifa !"
+                  "Uzinova ile Tam İrtifa!"
                 </h1>
               </div>
               
